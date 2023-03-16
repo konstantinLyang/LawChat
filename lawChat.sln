@@ -3,11 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32228.430
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lawChat.Server", "ConsoleApp1\lawChat.Server.csproj", "{484739B0-3DA6-4243-88F8-C0E0155748C2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lawChat.Clietn.Test", "lawChat.Clietn.Test\lawChat.Clietn.Test.csproj", "{31CA9DF3-BD26-491D-BEE2-9EA60EE97175}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lawChat.Clietn.Test", "lawChat.Clietn.Test\lawChat.Clietn.Test.csproj", "{31CA9DF3-BD26-491D-BEE2-9EA60EE97175}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lawChat.Client", "lawChat.Client\lawChat.Client.csproj", "{8AD74966-9A31-4229-A017-D465D1D8232C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lawChat.Client", "lawChat.Client\lawChat.Client.csproj", "{8AD74966-9A31-4229-A017-D465D1D8232C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,10 +13,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{484739B0-3DA6-4243-88F8-C0E0155748C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{484739B0-3DA6-4243-88F8-C0E0155748C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{484739B0-3DA6-4243-88F8-C0E0155748C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{484739B0-3DA6-4243-88F8-C0E0155748C2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{31CA9DF3-BD26-491D-BEE2-9EA60EE97175}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{31CA9DF3-BD26-491D-BEE2-9EA60EE97175}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{31CA9DF3-BD26-491D-BEE2-9EA60EE97175}.Release|Any CPU.ActiveCfg = Release|Any CPU
