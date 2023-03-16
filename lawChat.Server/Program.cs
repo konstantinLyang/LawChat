@@ -3,7 +3,10 @@ using System.Net.Sockets;
 using System.Text;
 using lawChat.Server.Model;
 
-IPEndPoint endPoint = new(IPAddress.Parse("10.10.11.47"), 23);
+Console.InputEncoding = Encoding.Unicode;
+Console.OutputEncoding = Encoding.Unicode;
+
+IPEndPoint endPoint = new(IPAddress.Parse("127.0.0.1"), 8080);
 Socket serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
 List<Client> clientList = new();
@@ -42,6 +45,11 @@ while (true)
                 receiveMessage = new StringBuilder(Encoding.Unicode.GetString(buffer, 0, size));
 
                 Console.WriteLine(client.Name + ": " + receiveMessage);
+
+                foreach (var connectedClient in clientList)
+                {
+                    if(connectedClient != client) connectedClient.Socket.Send(Encoding.Unicode.GetBytes(client.Name + ": " + receiveMessage));
+                }
             }
         }
         catch
@@ -54,5 +62,6 @@ while (true)
 
         clientList.Remove(client);
     });
+
     Thread.Sleep(100);
 }
