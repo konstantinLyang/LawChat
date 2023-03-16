@@ -2,7 +2,7 @@
 using System.Net.Sockets;
 using System.Text;
 
-IPEndPoint serverEndPoint = new(IPAddress.Parse("10.10.11.47"), 5555);
+IPEndPoint serverEndPoint = new(IPAddress.Parse("10.10.11.47"), 23);
 
 Console.WriteLine("Введите имя: ");
 

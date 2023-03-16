@@ -3,7 +3,7 @@ using System.Net.Sockets;
 using System.Text;
 using lawChat.Server.Model;
 
-IPEndPoint endPoint = new(IPAddress.Any, 5555);
+IPEndPoint endPoint = new(IPAddress.Parse("10.10.11.47"), 23);
 Socket serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
 List<Client> clientList = new();
