@@ -5,7 +5,7 @@ using System.Text;
 Console.InputEncoding = Encoding.Unicode;
 Console.OutputEncoding = Encoding.Unicode;
 
-IPEndPoint serverEndPoint = new(IPAddress.Parse("127.0.0.1"), 8080);
+IPEndPoint serverEndPoint = new(IPAddress.Parse("10.10.11.47"), 8080);
 
 Console.WriteLine("Введите имя: ");
 
