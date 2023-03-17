@@ -6,7 +6,7 @@ using lawChat.Server.Model;
 Console.InputEncoding = Encoding.Unicode;
 Console.OutputEncoding = Encoding.Unicode;
 
-IPEndPoint endPoint = new(IPAddress.Parse("127.0.0.1"), 8080);
+IPEndPoint endPoint = new(IPAddress.Any, 8080);
 Socket serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
 List<Client> clientList = new();
@@ -17,12 +17,12 @@ while (true)
 {
     serverSocket.Listen(5);
 
+    Client client = new();
+
+    client.Socket = serverSocket.Accept();
+
     Task.Factory.StartNew(() =>
     {
-        Client client = new();
-
-        client.Socket = serverSocket.Accept();
-
         clientList.Add(client);
 
         var buffer = new byte[4026];
@@ -62,6 +62,4 @@ while (true)
 
         clientList.Remove(client);
     });
-
-    Thread.Sleep(100);
 }
