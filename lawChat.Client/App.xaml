@@ -2,8 +2,21 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:lawChat.Client"
-             StartupUri="MainWindow.xaml">
+             StartupUri="/View/MainWindow.xaml">
     <Application.Resources>
-         
+
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Assets/Style/TitleBarIconButton.xaml"/>
+                <ResourceDictionary Source="/Assets/Style/TitleBarIcon.xaml"/>
+
+                <ResourceDictionary Source="/Assets/Style/WindowIconButton.xaml"/>
+                <ResourceDictionary Source="/Assets/Style/WindowIcon.xaml"/>
+
+                <ResourceDictionary Source="/Assets/Style/MessageBox.xaml"/>
+                <ResourceDictionary Source="/Assets/Style/BorderTextBox.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+
     </Application.Resources>
 </Application>
