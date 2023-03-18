@@ -4,7 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:lawChat.Client.View"
+        xmlns:viewModel="clr-namespace:lawChat.Client.ViewModel"
         mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance viewModel:MainWindowViewModel, IsDesignTimeCreatable=True}"
         Height="810" Width="850" MinHeight="810" MinWidth="850"
         AllowsTransparency="True"
         ResizeMode="CanResizeWithGrip"
@@ -79,7 +81,7 @@
                     <!--#region Search TextBox-->
                     <TextBox x:Name="SearchTextBox" Style="{DynamicResource BorderTextBox}" Grid.ColumnSpan="2"
                              Grid.Column="0" Margin="15,0"/>
-                    <TextBlock Grid.ColumnSpan="2" Grid.Column="0" Text="поиск.." VerticalAlignment="Center" Margin="28,0,25,0" IsHitTestVisible="False"
+                    <TextBlock Grid.ColumnSpan="2" Grid.Column="0" Text="Поиск" VerticalAlignment="Center" Margin="28,0,25,0" IsHitTestVisible="False"
                                Foreground="Gainsboro">
                         <TextBlock.Style>
                             <Style TargetType="{x:Type TextBlock}">
@@ -111,7 +113,7 @@
                 <!--#region Top chat bar-->
                 <Grid Grid.Column="0" Grid.Row="0" Margin="0.5">
                     <Border Background="#FF191C21">
-                        <TextBlock Text="Name" Padding="15,0,0,0" VerticalAlignment="Center" FontSize="14" Foreground="White" FontFamily="Roboto"/>
+                        <TextBlock Text="{Binding CurrentChatName, UpdateSourceTrigger=PropertyChanged}" Padding="15,0,0,0" VerticalAlignment="Center" FontSize="14" Foreground="White" FontFamily="Roboto"/>
                     </Border>
                 </Grid>
                 <!--#endregion-->
@@ -125,7 +127,7 @@
 
                     <Border Background="#FF191C21" Margin="0.5, 0,0.5,0">
                         <TextBox Background="Transparent" Foreground="White"
-                                 IsReadOnly="True" BorderThickness="0" Padding="5" FontSize="13" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"/>
+                                 IsReadOnly="True" BorderThickness="0" Padding="5" FontSize="14" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"/>
                     </Border>
                     <!--#region TextBox to send message-->
                     <Grid Grid.Row="1" Margin="0.5">
@@ -137,13 +139,13 @@
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
                                     <RowDefinition MinHeight="0"/>
-                                    <RowDefinition MinHeight="40" MaxHeight="40"/>
+                                    <RowDefinition MinHeight="45" MaxHeight="45"/>
                                 </Grid.RowDefinitions>
 
                                 <!--#region MessageTextBox-->
                                 <TextBox Grid.Row="0" Style="{DynamicResource MessageTextBox}"
-                                         Grid.RowSpan="2" Grid.Column="0" x:Name="TextMessageBox" SelectionBrush="#FF93CFFF" SelectionTextBrush="White" CaretBrush="White" ></TextBox>
-                                <TextBlock Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" FontFamily="Roboto" Text="печатать.." VerticalAlignment="Center" Foreground="Gainsboro" Margin="3,0"
+                                         Grid.RowSpan="2" Grid.Column="0" x:Name="TextMessageBox" SelectionBrush="#FF93CFFF" SelectionTextBrush="White" CaretBrush="White"></TextBox>
+                                <TextBlock Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" FontFamily="Roboto" Text="печатать" VerticalAlignment="Center" Foreground="Gainsboro" Margin="13,0"
                                            IsHitTestVisible="False">
                                     <TextBlock.Style>
                                         <Style TargetType="{x:Type TextBlock}">
@@ -165,7 +167,7 @@
                                 <!--#endregion-->
 
                                 <!--#region Send Button-->
-                                <Button Grid.Row="1" Style="{StaticResource WindowIconButton}" Grid.Column="3">
+                                <Button Grid.Row="1" Style="{StaticResource WindowIconButton}" Grid.Column="1" Command="{Binding SendMessageCommandd}">
                                     <Path Data="M1.05446 0.948511C1.08916 0.913726 1.13037 0.886129 1.17575 0.867298C1.22113 0.848468 1.26978 0.838776 1.31891 0.838776C1.36804 0.838776 1.41669 0.848468 1.46207 0.867298C1.50745 0.886129 1.54867 0.913726 1.58336 0.948511L6.06558 5.43073C6.10037 5.46543 6.12796 5.50664 6.14679 5.55202C6.16562 5.5974 6.17532 5.64605 6.17532 5.69518C6.17532 5.74431 6.16562 5.79296 6.14679 5.83834C6.12796 5.88372 6.10037 5.92493 6.06558 5.95963L1.58336 10.4419C1.51323 10.512 1.4181 10.5514 1.31891 10.5514C1.21972 10.5514 1.1246 10.512 1.05446 10.4419C0.984323 10.3717 0.944921 10.2766 0.944921 10.1774C0.944921 10.0782 0.984323 9.98309 1.05446 9.91295L5.27298 5.69518L1.05446 1.47741C1.01968 1.44272 0.992078 1.4015 0.973248 1.35612C0.954417 1.31074 0.944725 1.26209 0.944725 1.21296C0.944725 1.16383 0.954417 1.11518 0.973248 1.0698C0.992078 1.02443 1.01968 0.983207 1.05446 0.948511Z" 
                                   SnapsToDevicePixels="True"
                                   Style="{StaticResource WindowIcon}"/>

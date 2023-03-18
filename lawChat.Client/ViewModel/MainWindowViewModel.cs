@@ -1,6 +1,28 @@
-﻿namespace lawChat.Client.ViewModel
+﻿using System.Windows.Input;
+using lawChat.Client.Infrastructure;
+using lawChat.Client.ViewModel.Base;
+
+namespace lawChat.Client.ViewModel
 {
-    internal class MainWindowViewModel
+    internal class MainWindowViewModel : ViewModelBase
     {
+        private string _currentChatName;
+        public string CurrentChatName 
+        {
+            get => _currentChatName;
+            set => Set(ref _currentChatName, value);
+        }
+
+        private LambdaCommand _sendMessageCommand;
+        public ICommand SendMessageCommand => _sendMessageCommand ??= new(OnSendMessageCommand);
+        private void OnSendMessageCommand()
+        {
+
+        }
+
+        public MainWindowViewModel()
+        {
+            CurrentChatName = "Общий чат";
+        }
     }
 }
