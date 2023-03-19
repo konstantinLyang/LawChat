@@ -4,9 +4,124 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:lawChat.Client.View"
-        mc:Ignorable="d"
-        Title="LoginWindowView" Height="450" Width="800">
+        xmlns:vm="clr-namespace:lawChat.Client.ViewModel"
+        Background="Transparent"
+        SizeToContent="Height"
+        d:DataContext="{d:DesignInstance vm:LoginWindowViewModel, IsDesignTimeCreatable=True}"
+        mc:Ignorable="d" Height="320" Width="500">
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition MinHeight="25" MaxHeight="25"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <!--#region Title bar-->
+        <Border Grid.ColumnSpan="2"
+                Background="#FF21242A">
+
+            <Grid MouseDown="Grid_MouseDown">
+                <TextBlock Text="{Binding Title}"
+                           Margin="10,0,0,0"
+                           VerticalAlignment="Center"
+                           Foreground="#FFB9B9B9" FontFamily="Roboto" FontSize="15" FontWeight="Normal"/>
+
+                <!--#region Window buttons -->
+                <StackPanel HorizontalAlignment="Right"
+                            Orientation="Horizontal">
+
+                    <Button x:Name="BtnHide"
+                            Style="{StaticResource WindowChromeButtonStyle}" Click="BtnHide_Click">
+                        <Path Data="M0 1H9"
+                              Style="{StaticResource TitleBarIcon}"/>
+                    </Button>
+
+                    <Button x:Name="BtnMinimize"
+                            Style="{StaticResource WindowChromeButtonStyle}" Click="BtnMinimize_Click_1">
+                        <Path Data="M1 10V1H10V10H1Z"
+                              Style="{StaticResource TitleBarIcon}"/>
+                    </Button>
+
+                    <Button x:Name="BtnClose"
+                            Style="{StaticResource WindowChromeButtonStyle}" Click="BtnClose_Click">
+                        <Path Data="M1 1L14 14M14 1L1 14"
+                              Style="{StaticResource TitleBarIcon}"/>
+                    </Button>
+
+                </StackPanel>
+                <!--#endregion-->
+
+            </Grid>
+        </Border>
+        <!--#endregion-->
+
+        <Grid Grid.Row="1" Background="Black">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition MaxWidth="50" MinWidth="50"/>
+                <ColumnDefinition/>
+                <ColumnDefinition MaxWidth="50" MinWidth="50"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="1" Margin="0,20,0,45" d:LayoutOverrides="Height" VerticalAlignment="Center">
+                <Label Content="Авторизация" FontSize="25" FontFamily="ROBOTO" Foreground="White"/>
+
+                <Grid Margin="0,10">
+                    <TextBox Background="Transparent" Name="LoginTextBox" BorderBrush="#FFABADB3" Height="40" Foreground="White" SelectionBrush="DarkGray" FontSize="15"
+                             Text="{Binding PasswordTextBox, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center"
+                             Padding="8,0,0,0" SelectionTextBrush="#FF616161"/>
+                    <TextBlock Text="Логин" Foreground="#FFD6D6D6" Margin="11,12,0,11" Padding="0" Height="17" FontSize="13">
+                        <TextBlock.Style>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="TextWrapping" Value="NoWrap"/>
+                                <Setter Property="FontSize" Value="12"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Setter Property="TextTrimming" Value="None"/>
+                                <Setter Property="IsHitTestVisible" Value="False"/>
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Text, ElementName=LoginTextBox}" Value="">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Grid>
+
+                <Grid Margin="0,10">
+                    <TextBox Background="Transparent" Name="PasswordTextBox" BorderBrush="#FFABADB3" Height="40" Foreground="White" SelectionBrush="DarkGray" FontSize="15"
+                                 Text="{Binding PasswordTextBox, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center"
+                                 Padding="8,0,0,0" SelectionTextBrush="#FF616161"/>
+                    <TextBlock Text="Пароль" Foreground="#FFD6D6D6" Margin="11,12,0,11" Padding="0" Height="17" FontSize="13">
+                        <TextBlock.Style>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="TextWrapping" Value="NoWrap"/>
+                                <Setter Property="FontSize" Value="12"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Setter Property="TextTrimming" Value="None"/>
+                                <Setter Property="IsHitTestVisible" Value="False"/>
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Text, ElementName=PasswordTextBox}" Value="">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Grid>
+
+                <Button IsDefault="True" Height="40" Content="Войти" Foreground="White" BorderBrush="{x:Null}" Margin="0,20" FontFamily="Roboto" FontSize="13" Command="{Binding LoginCommand}">
+                    <Button.Background>
+                        <LinearGradientBrush EndPoint="1,1" StartPoint="0,0" Opacity="1">
+                            <GradientStop Color="#FF191938" Offset="0"/>
+                            <GradientStop Color="#FF323237" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Button.Background>
+                </Button>
+
+            </StackPanel>
+
+        </Grid>
+
     </Grid>
 </Window>
