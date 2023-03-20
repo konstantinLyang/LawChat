@@ -2,18 +2,12 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace lawChat.Client.Services.Implementations
 {
     public class ClientObjectService : IClientObject
     {
-        public event NewMessageFromServer NewMessageFromServerEvent;
-        public void OnNewMessageFromServer()
-        {
-            NewMessageFromServerEvent?.Invoke();
-        }
 
         private IServiceProvider _serviceProvider;
         private IUserDialog _userDialog;
@@ -39,7 +33,6 @@ namespace lawChat.Client.Services.Implementations
                 _userDialog.ShowMainWindow();
             };
         }
-
         private string Authorization(string login, string password)
         {
             ClientSocket.Send(Encoding.Unicode.GetBytes($"{login};{password};"));
@@ -50,33 +43,27 @@ namespace lawChat.Client.Services.Implementations
 
             return Encoding.Unicode.GetString(serverBuffer, 0, serverSize);
         }
-        private Thread ListenServerMessage()
+        public void SendTextMessage(int chatId, string message)
         {
-            while (true)
-            {
-                if (ClientSocket.Connected)
-                {
-                    var serverBuffer = new byte[4026];
+            ClientSocket.Send(Encoding.Unicode.GetBytes($"{chatId};{message};"));
 
-                    var serverSize = ClientSocket.Receive(serverBuffer);
-
-                    Encoding.Unicode.GetString(serverBuffer, 0, serverSize);
-
-                    NewMessageFromServerEvent.Invoke();
-                }
-                Thread.Sleep(100);
-            }
-        }
-        public Task<string> SendServerMessage(string clientMessage)
-        {
             var serverBuffer = new byte[4026];
 
             var serverSize = ClientSocket.Receive(serverBuffer);
-
-            ClientSocket.Send(Encoding.Unicode.GetBytes(clientMessage));
-
-            return Task.FromResult(Encoding.Unicode.GetString(serverBuffer, 0, serverSize));
         }
+
+        public Task<string> GetMessageFromServer()
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                var serverBuffer = new byte[4026];
+
+                var serverSize = ClientSocket.Receive(serverBuffer);
+
+                return Encoding.Unicode.GetString(serverBuffer, 0, serverSize);
+            });
+        }
+
         public void CloseConnection()
         {
             ClientSocket.Shutdown(SocketShutdown.Both);

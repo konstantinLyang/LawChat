@@ -1,10 +1,12 @@
-﻿namespace lawChat.Client.Services
+﻿using System.Threading.Tasks;
+
+namespace lawChat.Client.Services
 {
-    public delegate void NewMessageFromServer();
     public interface IClientObject
     {
-        public event NewMessageFromServer NewMessageFromServerEvent;
         public void OpenConnection(string login, string password);
         public void CloseConnection();
+        public void SendTextMessage(int chatId, string message);
+        public Task<string> GetMessageFromServer();
     }
 }

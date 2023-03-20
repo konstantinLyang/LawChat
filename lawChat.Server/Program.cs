@@ -61,11 +61,12 @@ while (true)
                                 int chatId = Convert.ToInt32(receiveMessage.ToString().Split(';')[0]);
                                 string messageText = receiveMessage.ToString().Split(';')[1];
 
-                                Console.WriteLine(client.NickName + ": " + receiveMessage);
+                                Console.WriteLine(client.NickName + ": " + messageText);
 
                                 foreach (var connectedClient in clientList)
                                 {
                                     if (connectedClient != client && connectedClient.Id == chatId) connectedClient.Socket.Send(Encoding.Unicode.GetBytes(client.NickName + ": " + messageText));
+                                    else if (chatId == 0) connectedClient.Socket.Send(Encoding.Unicode.GetBytes(client.NickName + ": " + messageText));
                                 }
                             }
                         }
