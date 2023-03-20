@@ -3,9 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:lawChat.Client.View"
         xmlns:vm="clr-namespace:lawChat.Client.ViewModel"
-        Background="Transparent"
         ResizeMode="NoResize"
         SizeToContent="Height"
         WindowStyle="None"
@@ -106,7 +104,8 @@
                     </TextBlock>
                 </Grid>
 
-                <Button IsDefault="True" Height="40" Content="Войти" Foreground="White" BorderBrush="{x:Null}" Margin="0,20" FontFamily="Roboto" FontSize="13" Background="#FF21242A"/>
+                <Button Height="40" Content="Войти" Foreground="White" BorderBrush="{x:Null}" Margin="0,20" FontFamily="Roboto" FontSize="13" Background="#FF21242A"
+                        Command="{Binding AuthorizationCommand}"/>
 
             </StackPanel>
 

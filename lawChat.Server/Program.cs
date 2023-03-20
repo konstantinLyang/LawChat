@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using lawChat.Server.Data;
 using lawChat.Server.ServerData.Model;
 
 Console.InputEncoding = Encoding.Unicode;
@@ -10,6 +11,7 @@ IPEndPoint endPoint = new(IPAddress.Any, 8080);
 Socket serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
 List<Client> clientList = new();
+List<Chat> chatList = new();
 
 serverSocket.Bind(endPoint);
 
@@ -31,37 +33,62 @@ while (true)
 
         size = client.Socket.Receive(buffer);
 
-        client.NickName = receiveMessage.Append(Encoding.Unicode.GetString(buffer, 0, size)).ToString();
-
-        Console.WriteLine(client.NickName + " подключился");
-
-        client.Socket.Send(Encoding.Unicode.GetBytes("Успешное подключение!"));
-
-        try
+        if (size > 0)
         {
-            while (client.Socket.Connected)
+            string login = receiveMessage.Append(Encoding.Unicode.GetString(buffer, 0, size)).ToString().Split(';')[0];
+            string password = receiveMessage.Append(Encoding.Unicode.GetString(buffer, 0, size)).ToString().Split(';')[1];
+
+            using (var context = new LawChatDbContext())
             {
-                size = client.Socket.Receive(buffer);
-                receiveMessage = new StringBuilder(Encoding.Unicode.GetString(buffer, 0, size));
-
-                int chatId = Convert.ToInt32(receiveMessage.ToString().Split(';')[0]);
-
-                Console.WriteLine(client.NickName + ": " + receiveMessage);
-
-                foreach (var connectedClient in clientList)
+                var user = context.Clients.FirstOrDefault(c => c.Login == login);
+                if (user != null)
                 {
-                    if(connectedClient != client && connectedClient.Id == chatId ) connectedClient.Socket.Send(Encoding.Unicode.GetBytes(client.NickName + ": " + receiveMessage));
+                    if (login == user.Login && password == user.Password)
+                    {
+                        client.NickName = user.NickName;
+
+                        Console.WriteLine($"[{DateTime.Now:dd.MM.yyyy HH:mm}] " + client.NickName + ": подключился");
+
+                        client.Socket.Send(Encoding.Unicode.GetBytes("successful connection"));
+
+                        try
+                        {
+                            while (client.Socket.Connected)
+                            {
+                                size = client.Socket.Receive(buffer);
+                                receiveMessage = new StringBuilder(Encoding.Unicode.GetString(buffer, 0, size));
+
+                                int chatId = Convert.ToInt32(receiveMessage.ToString().Split(';')[0]);
+                                string messageText = receiveMessage.ToString().Split(';')[1];
+
+                                Console.WriteLine(client.NickName + ": " + receiveMessage);
+
+                                foreach (var connectedClient in clientList)
+                                {
+                                    if (connectedClient != client && connectedClient.Id == chatId) connectedClient.Socket.Send(Encoding.Unicode.GetBytes(client.NickName + ": " + messageText));
+                                }
+                            }
+                        }
+                        catch
+                        {
+                            Console.WriteLine(client.NickName + ": разрыв соединения");
+                        }
+
+                        client.Socket.Shutdown(SocketShutdown.Both);
+                        client.Socket.Close();
+
+                        clientList.Remove(client);
+                    }
+                    else
+                    {
+                        client.Socket.Send(Encoding.Unicode.GetBytes("incorrect user data"));
+                    }
+                }
+                else
+                {
+                    client.Socket.Send(Encoding.Unicode.GetBytes("user not found"));
                 }
             }
         }
-        catch
-        {
-            Console.WriteLine(client.NickName + ": разрыв соединения");
-        }
-
-        client.Socket.Shutdown(SocketShutdown.Both);
-        client.Socket.Close();
-
-        clientList.Remove(client);
     });
 }

@@ -6,24 +6,24 @@ namespace lawChat.Client.Infrastructure
     internal class LambdaCommand : Command
     {
         private readonly Delegate _execute;
-        private readonly Delegate? _canExecute;
+        private readonly Delegate _canExecute;
 
-        public LambdaCommand(Action<object> execute, Func<bool>? canExecute = null)
+        public LambdaCommand(Action<object> execute, Func<bool> canExecute = null)
         {
             _execute = execute;
             _canExecute = canExecute;
         }
-        public LambdaCommand(Action<object> execute, Func<object, bool>? canExecute)
+        public LambdaCommand(Action<object> execute, Func<object, bool> canExecute)
         {
             _execute = execute;
             _canExecute = canExecute;
         }
-        public LambdaCommand(Action execute, Func<bool>? canExecute = null)
+        public LambdaCommand(Action execute, Func<bool> canExecute = null)
         {
             _execute = execute;
             _canExecute = canExecute;
         }
-        public LambdaCommand(Action execute, Func<object, bool>? canExecute)
+        public LambdaCommand(Action execute, Func<object, bool> canExecute)
         {
             _execute = execute;
             _canExecute = canExecute;
@@ -46,7 +46,7 @@ namespace lawChat.Client.Infrastructure
             {
                 default:
                     throw new InvalidOperationException(
-                        $"Тип делегата {_canExecute?.GetType()} не поддерживается командой.");
+                        $"Тип делегата {_canExecute.GetType()} не поддерживается командой.");
                 case null: throw new InvalidOperationException("Не указан делегат вызова для команды");
 
                 case Action execute:

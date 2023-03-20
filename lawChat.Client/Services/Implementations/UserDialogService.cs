@@ -36,6 +36,8 @@ namespace lawChat.Client.Services.Implementations
             _mainWindowViewModel = _services.GetRequiredService<MainWindowViewModel>();
             _mainWindow = mainWindow;
 
+            _loginWindow?.Close();
+
             _mainWindow.Show();
         }
     }

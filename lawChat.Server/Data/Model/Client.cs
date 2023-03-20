@@ -1,6 +1,4 @@
-﻿using System.Net.Sockets;
-
-namespace lawChat.Server.Data.Model
+﻿namespace lawChat.Server.Data.Model
 {
     public class Client
     {

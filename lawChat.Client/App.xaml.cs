@@ -19,6 +19,7 @@ namespace lawChat.Client
                     services.AddSingleton<LoginWindowViewModel>();
                     services.AddSingleton<MainWindowViewModel>();
                     services.AddSingleton<IUserDialog, UserDialogService>();
+                    services.AddSingleton<IClientObject, ClientObjectService>();
 
                     services.AddTransient(s =>
                     {
