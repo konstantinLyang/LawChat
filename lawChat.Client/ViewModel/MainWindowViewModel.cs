@@ -6,7 +6,7 @@ namespace lawChat.Client.ViewModel
 {
     internal class MainWindowViewModel : ViewModelBase
     {
-        private string _currentChatName;
+        private string _currentChatName = "Общий чат";
         public string CurrentChatName 
         {
             get => _currentChatName;
@@ -20,9 +20,6 @@ namespace lawChat.Client.ViewModel
 
         }
 
-        public MainWindowViewModel()
-        {
-            CurrentChatName = "Общий чат";
-        }
+        public MainWindowViewModel() { }
     }
 }

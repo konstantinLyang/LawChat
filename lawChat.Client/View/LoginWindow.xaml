@@ -7,8 +7,10 @@
         xmlns:vm="clr-namespace:lawChat.Client.ViewModel"
         Background="Transparent"
         SizeToContent="Height"
+        WindowStyle="None"
         d:DataContext="{d:DesignInstance vm:LoginWindowViewModel, IsDesignTimeCreatable=True}"
-        mc:Ignorable="d" Height="320" Width="500">
+        mc:Ignorable="d" Height="400" Width="500">
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition MinHeight="25" MaxHeight="25"/>
@@ -20,8 +22,7 @@
                 Background="#FF21242A">
 
             <Grid MouseDown="Grid_MouseDown">
-                <TextBlock Text="{Binding Title}"
-                           Margin="10,0,0,0"
+                <TextBlock Margin="10,0,0,0"
                            VerticalAlignment="Center"
                            Foreground="#FFB9B9B9" FontFamily="Roboto" FontSize="15" FontWeight="Normal"/>
 
@@ -54,7 +55,7 @@
         </Border>
         <!--#endregion-->
 
-        <Grid Grid.Row="1" Background="Black">
+        <Grid Grid.Row="1" Background="#FF191C21">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition MaxWidth="50" MinWidth="50"/>
                 <ColumnDefinition/>
@@ -110,14 +111,7 @@
                     </TextBlock>
                 </Grid>
 
-                <Button IsDefault="True" Height="40" Content="Войти" Foreground="White" BorderBrush="{x:Null}" Margin="0,20" FontFamily="Roboto" FontSize="13" Command="{Binding LoginCommand}">
-                    <Button.Background>
-                        <LinearGradientBrush EndPoint="1,1" StartPoint="0,0" Opacity="1">
-                            <GradientStop Color="#FF191938" Offset="0"/>
-                            <GradientStop Color="#FF323237" Offset="1"/>
-                        </LinearGradientBrush>
-                    </Button.Background>
-                </Button>
+                <Button IsDefault="True" Height="40" Content="Войти" Foreground="White" BorderBrush="{x:Null}" Margin="0,20" FontFamily="Roboto" FontSize="13" Background="#FF21242A"/>
 
             </StackPanel>
 
