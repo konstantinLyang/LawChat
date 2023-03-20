@@ -14,27 +14,29 @@ namespace lawChat.Client.Services.Implementations
             _services = services;
         }
 
-        private Window LoginWindow;
-        private Window MainWindow;
+        private Window? _loginWindow;
+        private Window? _mainWindow;
         
-        private MainWindowViewModel _mainWindowViewModel;
+        private MainWindowViewModel? _mainWindowViewModel;
 
         public void ShowLoginWindow()
         {
-            LoginWindow = _services.GetRequiredService<LoginWindow>();
-            LoginWindow.Show();
+            _loginWindow = _services.GetRequiredService<LoginWindow>();
+            _loginWindow.Show();
         }
 
         public void ShowMainWindow()
         {
-            if (MainWindow is { } mainWindow)
+            if (_mainWindow is { } mainWindow)
             {
                 mainWindow.Show(); return;
             }
 
             mainWindow = _services.GetRequiredService<MainWindow>();
             _mainWindowViewModel = _services.GetRequiredService<MainWindowViewModel>();
-            mainWindow.Show();
+            _mainWindow = mainWindow;
+
+            _mainWindow.Show();
         }
     }
 }
