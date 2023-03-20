@@ -8,7 +8,7 @@ namespace lawChat.Client.View
     /// </summary>
     public partial class MainWindow : Window
     {
-        Rect rec = SystemParameters.WorkArea;
+        Rect _rec = SystemParameters.WorkArea;
 
         public MainWindow()
         {
@@ -25,7 +25,7 @@ namespace lawChat.Client.View
         }
         private void BtnMinimize_Click_1(object sender, RoutedEventArgs e)
         {
-            if (Width == rec.Size.Width && Height == rec.Size.Height && Top == rec.Top && Left == rec.Left)
+            if (Width == _rec.Size.Width && Height == _rec.Size.Height && Top == _rec.Top && Left == _rec.Left)
             {
                 Width = MinWidth;
                 Height = MinHeight;
@@ -35,10 +35,10 @@ namespace lawChat.Client.View
 
             else if (this.WindowState == WindowState.Normal)
             {
-                Width = rec.Size.Width;
-                Height = rec.Size.Height;
-                Top = rec.Top;
-                Left = rec.Left;
+                Width = _rec.Size.Width;
+                Height = _rec.Size.Height;
+                Top = _rec.Top;
+                Left = _rec.Left;
             }
         }
         private void Window_StateChanged(object sender, System.EventArgs e)
@@ -46,17 +46,17 @@ namespace lawChat.Client.View
             if (WindowState == WindowState.Maximized)
             {
                 WindowState = WindowState.Normal;
-                Width = rec.Size.Width;
-                Height = rec.Size.Height;
-                Top = rec.Top;
-                Left = rec.Left;
+                Width = _rec.Size.Width;
+                Height = _rec.Size.Height;
+                Top = _rec.Top;
+                Left = _rec.Left;
             }
         }
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                if (Width == rec.Size.Width && Height == rec.Size.Height)
+                if (Width == _rec.Size.Width && Height == _rec.Size.Height)
                 {
                     Width = MinWidth;
                     Height = MinHeight;

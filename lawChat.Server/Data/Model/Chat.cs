@@ -1,4 +1,4 @@
-﻿namespace lawChat.Server.Model
+﻿namespace lawChat.Server.Data.Model
 {
     public class Chat
     {

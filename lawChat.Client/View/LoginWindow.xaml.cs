@@ -8,7 +8,7 @@ namespace lawChat.Client.View
     /// </summary>
     public partial class LoginWindow : Window
     {
-        Rect rec = SystemParameters.WorkArea;
+        Rect _rec = SystemParameters.WorkArea;
 
         public LoginWindow()
         {
@@ -27,7 +27,7 @@ namespace lawChat.Client.View
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                if (Width == rec.Size.Width && Height == rec.Size.Height)
+                if (Width == _rec.Size.Width && Height == _rec.Size.Height)
                 {
                     Width = MinWidth;
                     Height = MinHeight;
