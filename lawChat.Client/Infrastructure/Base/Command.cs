@@ -10,10 +10,12 @@ namespace lawChat.Client.Infrastructure.Base
             add => CommandManager.RequerySuggested += value;
             remove => CommandManager.RequerySuggested -= value;
         }
-        bool ICommand.CanExecute(object? parameter) => CanExecute(parameter);
+        bool ICommand.CanExecute(object? parameter) => parameter != null && CanExecute(parameter);
         void ICommand.Execute(object? parameter)
         {
-            if (((ICommand)this).CanExecute(parameter)) Execute(parameter);
+            if (((ICommand)this).CanExecute(parameter))
+                if (parameter != null)
+                    Execute(parameter);
         }
         protected virtual bool CanExecute(object parameter) => true; // активность визуального элемента
         protected abstract void Execute(object parameter); // логика команды
