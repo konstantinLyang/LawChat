@@ -1,4 +1,4 @@
-﻿<Window x:Class="lawChat.Client.View.LoginWindowView"
+﻿<Window x:Class="lawChat.Client.View.LoginWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:lawChat.Client.View"
         xmlns:vm="clr-namespace:lawChat.Client.ViewModel"
         Background="Transparent"
+        ResizeMode="NoResize"
         SizeToContent="Height"
         WindowStyle="None"
         d:DataContext="{d:DesignInstance vm:LoginWindowViewModel, IsDesignTimeCreatable=True}"
@@ -36,12 +37,6 @@
                               Style="{StaticResource TitleBarIcon}"/>
                     </Button>
 
-                    <Button x:Name="BtnMinimize"
-                            Style="{StaticResource WindowChromeButtonStyle}" Click="BtnMinimize_Click_1">
-                        <Path Data="M1 10V1H10V10H1Z"
-                              Style="{StaticResource TitleBarIcon}"/>
-                    </Button>
-
                     <Button x:Name="BtnClose"
                             Style="{StaticResource WindowChromeButtonStyle}" Click="BtnClose_Click">
                         <Path Data="M1 1L14 14M14 1L1 14"
@@ -67,7 +62,7 @@
 
                 <Grid Margin="0,10">
                     <TextBox Background="Transparent" Name="LoginTextBox" BorderBrush="#FFABADB3" Height="40" Foreground="White" SelectionBrush="DarkGray" FontSize="15"
-                             Text="{Binding PasswordTextBox, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center"
+                             Text="{Binding LoginTextBox, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center"
                              Padding="8,0,0,0" SelectionTextBrush="#FF616161"/>
                     <TextBlock Text="Логин" Foreground="#FFD6D6D6" Margin="11,12,0,11" Padding="0" Height="17" FontSize="13">
                         <TextBlock.Style>

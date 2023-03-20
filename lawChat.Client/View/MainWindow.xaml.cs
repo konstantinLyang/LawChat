@@ -4,13 +4,13 @@ using System.Windows.Input;
 namespace lawChat.Client.View
 {
     /// <summary>
-    /// Логика взаимодействия для MainWindowView.xaml
+    /// Логика взаимодействия для MainWindow.xaml
     /// </summary>
-    public partial class MainWindowView : Window
+    public partial class MainWindow : Window
     {
         Rect rec = SystemParameters.WorkArea;
 
-        public MainWindowView()
+        public MainWindow()
         {
             InitializeComponent();
         }
