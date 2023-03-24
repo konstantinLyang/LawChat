@@ -4,9 +4,9 @@ namespace lawChat.Client.Services
 {
     public interface IClientObject
     {
-        public void OpenConnection(string login, string password);
+        public string OpenConnection(string login, string password);
         public void CloseConnection();
         public void SendTextMessage(int chatId, string message);
-        public Task<string> GetMessageFromServer();
+        public string GetMessageFromServer();
     }
 }

@@ -47,10 +47,10 @@ namespace lawChat.Client.ViewModel
             {
                 if (!string.IsNullOrEmpty(CurrentMessageTextBox))
                 {
-                    var a = CurrentMessageTextBox;
+                    var tempMessageText = CurrentMessageTextBox;
                     CurrentChatTextBox += $"{CurrentMessageTextBox}\n";
                     CurrentMessageTextBox = "";
-                    _clientObject.SendTextMessage(CurrentChatId, a);
+                    _clientObject.SendTextMessage(CurrentChatId, tempMessageText);
                 }
             });
         }
@@ -63,11 +63,9 @@ namespace lawChat.Client.ViewModel
             {
                 while (true)
                 {
-                    CurrentChatTextBox += _clientObject.GetMessageFromServer();
-                    Thread.Sleep(100);
+                    CurrentChatTextBox += _clientObject.GetMessageFromServer() + "\n";
                 }
             });
-
         }
 
         public MainWindowViewModel() { }

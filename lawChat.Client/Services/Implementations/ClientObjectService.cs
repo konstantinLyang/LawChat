@@ -22,16 +22,20 @@ namespace lawChat.Client.Services.Implementations
             ClientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         }
 
-        public void OpenConnection(string login, string password)
+        public string OpenConnection(string login, string password)
         {
-            IPEndPoint serverEndPoint = new(IPAddress.Parse("10.10.11.47"), 8080);
-
-            ClientSocket.Connect(serverEndPoint);
-
-            if (Authorization(login, password).Contains("successful connection"))
+            try
             {
-                _userDialog.ShowMainWindow();
-            };
+                IPEndPoint serverEndPoint = new(IPAddress.Parse("10.10.11.47"), 8080);
+
+                ClientSocket.Connect(serverEndPoint);
+
+                return Authorization(login, password);
+            }
+            catch
+            {
+                return "server error";
+            }
         }
         private string Authorization(string login, string password)
         {
@@ -43,25 +47,18 @@ namespace lawChat.Client.Services.Implementations
 
             return Encoding.Unicode.GetString(serverBuffer, 0, serverSize);
         }
-        public void SendTextMessage(int chatId, string message)
+        public async void SendTextMessage(int chatId, string message)
         {
-            ClientSocket.Send(Encoding.Unicode.GetBytes($"{chatId};{message};"));
+            await Task.Factory.StartNew(() => { ClientSocket.Send(Encoding.Unicode.GetBytes($"{new Guid()};text;{chatId};{message};")); });
+        }
 
+        public string GetMessageFromServer()
+        {
             var serverBuffer = new byte[4026];
 
             var serverSize = ClientSocket.Receive(serverBuffer);
-        }
 
-        public Task<string> GetMessageFromServer()
-        {
-            return Task.Factory.StartNew(() =>
-            {
-                var serverBuffer = new byte[4026];
-
-                var serverSize = ClientSocket.Receive(serverBuffer);
-
-                return Encoding.Unicode.GetString(serverBuffer, 0, serverSize);
-            });
+            return Encoding.Unicode.GetString(serverBuffer, 0, serverSize);
         }
 
         public void CloseConnection()
