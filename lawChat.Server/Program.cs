@@ -89,11 +89,21 @@ while (true)
                     else
                     {
                         client.Socket.Send(Encoding.Unicode.GetBytes("incorrect user data"));
+
+                        client.Socket.Shutdown(SocketShutdown.Both);
+                        client.Socket.Close();
+
+                        clientList.Remove(client);
                     }
                 }
                 else
                 {
                     client.Socket.Send(Encoding.Unicode.GetBytes("user not found"));
+
+                    client.Socket.Shutdown(SocketShutdown.Both);
+                    client.Socket.Close();
+
+                    clientList.Remove(client);
                 }
             }
         }

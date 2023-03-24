@@ -29,11 +29,7 @@
                     Background="#FF21242A">
 
                 <Grid MouseDown="Grid_MouseDown">
-                    <TextBlock Text="{Binding Title}"
-                               Margin="10,0,0,0"
-                               VerticalAlignment="Center"
-                               Foreground="#FFB9B9B9" FontFamily="Roboto" FontSize="15" FontWeight="Normal"/>
-
+                    <Border></Border>
                     <!--#region Window buttons -->
                     <StackPanel HorizontalAlignment="Right"
                                 Orientation="Horizontal">
@@ -58,7 +54,6 @@
 
                     </StackPanel>
                     <!--#endregion-->
-
                 </Grid>
             </Border>
             <!--#endregion-->
@@ -109,7 +104,37 @@
                 <!--#region Contact Block-->
                 <Grid Grid.Row="1" Grid.Column="1" >
                     <Border Background="#FF191C21" Margin="0, 0,0.5,0.5">
-
+                        <ListView Background="Transparent" BorderThickness="0" ItemsSource="{Binding SearchPanelSource}">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderThickness="1">
+                                        <Border Margin="5">
+                                            <StackPanel Orientation="Horizontal">
+                                                <Canvas MinHeight="50" MaxHeight="50" MinWidth="50" MaxWidth="50">
+                                                    <Ellipse Width="50" Height="50">
+                                                        <Ellipse.Fill>
+                                                            <ImageBrush Stretch="UniformToFill"
+                                                                        ImageSource="{Binding ContactPhoto, FallbackValue='/Assets/Image/contactPhotoTest.JPG', TargetNullValue='/Assets/Image/contactPhotoTest.JPG'}"/>
+                                                        </Ellipse.Fill>
+                                                    </Ellipse>
+                                                </Canvas>
+                                                <StackPanel Margin="15, 0,0,0">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition MinWidth="150" MaxWidth="150"/>
+                                                            <ColumnDefinition MinWidth="35" MaxWidth="35"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Text="{Binding Title}" Foreground="White" FontSize="14" FontWeight="DemiBold" Margin="0,0,0,5"/>
+                                                        <TextBlock Grid.Column="1" Text="{Binding LasMessageDateTime}" Foreground="White" FontSize="12" FontWeight="ExtraLight" Margin="0,0,0,5" HorizontalAlignment="Center"/>
+                                                    </Grid>
+                                                    <TextBlock Text="{Binding LastMessage}" Foreground="White" FontSize="11"/>
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </Border>
+                                    </Border>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
                     </Border>
                 </Grid>
                 <!--#endregion-->

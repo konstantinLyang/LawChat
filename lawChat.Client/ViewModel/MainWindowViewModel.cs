@@ -1,7 +1,9 @@
-﻿using System.Threading;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using lawChat.Client.Infrastructure;
+using lawChat.Client.Model;
 using lawChat.Client.Services;
 using lawChat.Client.ViewModel.Base;
 
@@ -10,6 +12,37 @@ namespace lawChat.Client.ViewModel
     internal class MainWindowViewModel : ViewModelBase
     {
         private IClientObject _clientObject;
+
+        private ObservableCollection<SearchPanelModel> _searchPanelSource = new()
+        {
+            new SearchPanelModel()
+            {
+                Title = "Алексей",
+                LastMessage = "ad  lasjdlj alsdjl aslkdj aslkdjaslkdjaslkdjaslkdjaslkdjaslkdjaslkdjaslkdj",
+                LasMessageDateTime = "08:32",
+                ContactPhoto = new Uri(@"D:\User\VisualStudio\lawChat\lawChat\lawChat.Client\Assets\Image\contactPhotoTest.JPG", UriKind.RelativeOrAbsolute)
+            },
+            new SearchPanelModel()
+            {
+                Title = "Валентин",
+                LastMessage = "ad  lasjdlj alsdjl aslkdj",
+                LasMessageDateTime = "08:32",
+                ContactPhoto = new Uri(@"D:\User\VisualStudio\lawChat\lawChat\lawChat.Client\Assets\Image\contactPhotoTest.JPG", UriKind.RelativeOrAbsolute)
+            },
+            new SearchPanelModel()
+            {
+                Title = "Сергей",
+                LastMessage = "ad  lasjdlj alsdjl aslkdj",
+                LasMessageDateTime = "08:32",
+                ContactPhoto = new Uri(@"D:\User\VisualStudio\lawChat\lawChat\lawChat.Client\Assets\Image\contactPhotoTest.JPG", UriKind.RelativeOrAbsolute)
+            }
+        };
+
+        public ObservableCollection<SearchPanelModel> SearchPanelSource
+        {
+            get => _searchPanelSource;
+            set => Set(ref _searchPanelSource, value);
+        }
 
         private string _currentChatName = "Общий чат";
         public string CurrentChatName 
@@ -48,7 +81,7 @@ namespace lawChat.Client.ViewModel
                 if (!string.IsNullOrEmpty(CurrentMessageTextBox))
                 {
                     var tempMessageText = CurrentMessageTextBox;
-                    CurrentChatTextBox += $"{CurrentMessageTextBox}\n";
+                    CurrentChatTextBox += $"{tempMessageText}\n";
                     CurrentMessageTextBox = "";
                     _clientObject.SendTextMessage(CurrentChatId, tempMessageText);
                 }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Net.Sockets;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -83,16 +84,18 @@ namespace lawChat.Client.ViewModel
                     InfoTextBlockVisibility = Visibility.Hidden;
                     LoadingIconVisible = Visibility.Visible;
 
+                    string result = _clientObject.OpenConnection(LoginTextBox, PasswordTextBox);
+
                     dispatcher.Invoke(() => { BorderBrush = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 171, 173, 173)); });
 
-                    if (_clientObject.OpenConnection(LoginTextBox, PasswordTextBox) == "successful connection")
+                    if (result == "successful connection")
                     {
                         dispatcher.Invoke(() =>
                         {
                             _userDialog.ShowMainWindow();
                         });
                     }
-                    else if(_clientObject.OpenConnection(LoginTextBox, PasswordTextBox) == "incorrect user data")
+                    else if(result == "incorrect user data")
                     {
                         dispatcher.Invoke(() =>
                         {
@@ -108,7 +111,7 @@ namespace lawChat.Client.ViewModel
                             PasswordTextBox = "";
                         });
                     }
-                    else if(_clientObject.OpenConnection(LoginTextBox, PasswordTextBox) == "user not found")
+                    else if(result == "user not found")
                     {
                         dispatcher.Invoke(() =>
                         {

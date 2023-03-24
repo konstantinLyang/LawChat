@@ -18,14 +18,14 @@ namespace lawChat.Client.Services.Implementations
         {
             _serviceProvider = serviceProvider;
             _userDialog = userDialog;
-
-            ClientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         }
 
         public string OpenConnection(string login, string password)
         {
             try
             {
+                ClientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
                 IPEndPoint serverEndPoint = new(IPAddress.Parse("10.10.11.47"), 8080);
 
                 ClientSocket.Connect(serverEndPoint);
@@ -59,12 +59,6 @@ namespace lawChat.Client.Services.Implementations
             var serverSize = ClientSocket.Receive(serverBuffer);
 
             return Encoding.Unicode.GetString(serverBuffer, 0, serverSize);
-        }
-
-        public void CloseConnection()
-        {
-            ClientSocket.Shutdown(SocketShutdown.Both);
-            ClientSocket.Close();
         }
     }
 }
