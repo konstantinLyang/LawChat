@@ -8,8 +8,6 @@ namespace lawChat.Client.View
     /// </summary>
     public partial class MainWindow : Window
     {
-        Rect _rec = SystemParameters.WorkArea;
-
         public MainWindow()
         {
             InitializeComponent();
@@ -25,42 +23,57 @@ namespace lawChat.Client.View
         }
         private void BtnMinimize_Click_1(object sender, RoutedEventArgs e)
         {
-            if (Width == _rec.Size.Width && Height == _rec.Size.Height && Top == _rec.Top && Left == _rec.Left)
+            var screen = WpfScreenHelper.Screen.FromWindow(this);
+            if (screen != null)
             {
-                Width = MinWidth;
-                Height = MinHeight;
-                Top = (SystemParameters.FullPrimaryScreenHeight - Height) / 2;
-                Left = (SystemParameters.FullPrimaryScreenWidth - Width) / 2;
-            }
-
-            else if (this.WindowState == WindowState.Normal)
-            {
-                Width = _rec.Size.Width;
-                Height = _rec.Size.Height;
-                Top = _rec.Top;
-                Left = _rec.Left;
+                if (Width == screen.WpfWorkingArea.Width && Height == screen.WpfWorkingArea.Height && Top == screen.WpfWorkingArea.Top && Left == screen.WpfWorkingArea.Left)
+                {
+                    this.WindowState = WindowState.Normal;
+                    this.Left = screen.WpfWorkingArea.Left / 2;
+                    this.Top = screen.WpfWorkingArea.Top / 2;
+                    this.Width = MinWidth;
+                    this.Height = MinHeight;
+                }
+                else if (this.WindowState == WindowState.Normal)
+                {
+                    this.WindowState = WindowState.Normal;
+                    this.Left = screen.WpfWorkingArea.Left;
+                    this.Top = screen.WpfWorkingArea.Top;
+                    this.Width = screen.WpfWorkingArea.Width;
+                    this.Height = screen.WpfWorkingArea.Height;
+                }
             }
         }
         private void Window_StateChanged(object sender, System.EventArgs e)
         {
             if (WindowState == WindowState.Maximized)
             {
-                WindowState = WindowState.Normal;
-                Width = _rec.Size.Width;
-                Height = _rec.Size.Height;
-                Top = _rec.Top;
-                Left = _rec.Left;
+                var screen = WpfScreenHelper.Screen.FromWindow(this);
+                if (screen != null)
+                {
+                    this.WindowState = WindowState.Normal;
+                    this.Left = screen.WpfWorkingArea.Left;
+                    this.Top = screen.WpfWorkingArea.Top;
+                    this.Width = screen.WpfWorkingArea.Width;
+                    this.Height = screen.WpfWorkingArea.Height;
+                }
             }
         }
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            var screen = WpfScreenHelper.Screen.FromWindow(this);
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                if (Width == _rec.Size.Width && Height == _rec.Size.Height)
+                if (Width == screen.WpfWorkingArea.Width
+                    && Height == screen.WpfWorkingArea.Height
+                    && screen != null)
                 {
-                    Width = MinWidth;
-                    Height = MinHeight;
-                    Left = e.GetPosition(null).X - Width / 2;
+
+                    this.WindowState = WindowState.Normal;
+                    this.Left = WpfScreenHelper.MouseHelper.MousePosition.X - MinWidth / 2;
+                    this.Top = screen.WpfWorkingArea.Top;
+                    this.Width = MinWidth;
+                    this.Height = MinHeight;
                 }
                 DragMove();
             }

@@ -11,7 +11,7 @@
         AllowsTransparency="True"
         ResizeMode="CanResizeWithGrip"
         WindowStartupLocation="CenterScreen"
-        WindowStyle="None">
+        WindowStyle="None" WindowState="Normal" StateChanged="Window_StateChanged">
 
 <Window.InputBindings>
     <KeyBinding Key="Enter" Command="{Binding SendMessageCommand}"/>
@@ -26,35 +26,30 @@
 
             <!--#region Title bar-->
             <Border Grid.ColumnSpan="2"
-                    Background="#FF21242A">
+                    Background="#FF21242A" MouseDown="Grid_MouseDown">
+                <!--#region Window buttons -->
+                <StackPanel HorizontalAlignment="Right"
+                            Orientation="Horizontal">
 
-                <Grid MouseDown="Grid_MouseDown">
-                    <Border></Border>
-                    <!--#region Window buttons -->
-                    <StackPanel HorizontalAlignment="Right"
-                                Orientation="Horizontal">
+                    <Button x:Name="BtnHide"
+                            Style="{StaticResource WindowChromeButtonStyle}" Click="BtnHide_Click">
+                        <Path Data="M0 1H9"
+                              Style="{StaticResource TitleBarIcon}"/>
+                    </Button>
 
-                        <Button x:Name="BtnHide"
-                                Style="{StaticResource WindowChromeButtonStyle}" Click="BtnHide_Click">
-                            <Path Data="M0 1H9"
-                                  Style="{StaticResource TitleBarIcon}"/>
-                        </Button>
+                    <Button x:Name="BtnMinimize"
+                            Style="{StaticResource WindowChromeButtonStyle}" Click="BtnMinimize_Click_1">
+                        <Path Data="M1 10V1H10V10H1Z"
+                              Style="{StaticResource TitleBarIcon}"/>
+                    </Button>
 
-                        <Button x:Name="BtnMinimize"
-                                Style="{StaticResource WindowChromeButtonStyle}" Click="BtnMinimize_Click_1">
-                            <Path Data="M1 10V1H10V10H1Z"
-                                  Style="{StaticResource TitleBarIcon}"/>
-                        </Button>
-
-                        <Button x:Name="BtnClose"
-                                Style="{StaticResource WindowChromeButtonStyle}" Click="BtnClose_Click">
-                            <Path Data="M1 1L14 14M14 1L1 14"
-                                  Style="{StaticResource TitleBarIcon}"/>
-                        </Button>
-
-                    </StackPanel>
-                    <!--#endregion-->
-                </Grid>
+                    <Button x:Name="BtnClose"
+                            Style="{StaticResource WindowChromeButtonStyle}" Click="BtnClose_Click">
+                        <Path Data="M1 1L14 14M14 1L1 14"
+                              Style="{StaticResource TitleBarIcon}"/>
+                    </Button>
+                </StackPanel>
+                <!--#endregion-->
             </Border>
             <!--#endregion-->
 
