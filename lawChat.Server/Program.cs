@@ -45,7 +45,10 @@ while (true)
                 {
                     if (login == user.Login && password == user.Password)
                     {
+                        client.Id = user.Id;
                         client.NickName = user.NickName;
+                        client.Telephone = user.Telephone;
+                        client.Login = user.Login;
 
                         Console.WriteLine($"[{DateTime.Now:dd.MM.yyyy HH:mm}] " + client.NickName + ": подключился");
 
