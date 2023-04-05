@@ -19,6 +19,21 @@ namespace lawChat.Server.Migrations
                 .HasAnnotation("ProductVersion", "7.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
+            modelBuilder.Entity("ChatClient", b =>
+                {
+                    b.Property<int>("ChatsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ClientsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ChatsId", "ClientsId");
+
+                    b.HasIndex("ClientsId");
+
+                    b.ToTable("ChatClient");
+                });
+
             modelBuilder.Entity("lawChat.Server.Data.Model.Chat", b =>
                 {
                     b.Property<int>("Id")
@@ -40,6 +55,22 @@ namespace lawChat.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("FatherName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<string>("Login")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -49,6 +80,10 @@ namespace lawChat.Server.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Telephone")
                         .IsRequired()
                         .HasColumnType("longtext");
 
@@ -85,10 +120,25 @@ namespace lawChat.Server.Migrations
                     b.ToTable("Messages");
                 });
 
+            modelBuilder.Entity("ChatClient", b =>
+                {
+                    b.HasOne("lawChat.Server.Data.Model.Chat", null)
+                        .WithMany()
+                        .HasForeignKey("ChatsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("lawChat.Server.Data.Model.Client", null)
+                        .WithMany()
+                        .HasForeignKey("ClientsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("lawChat.Server.Data.Model.Message", b =>
                 {
                     b.HasOne("lawChat.Server.Data.Model.Chat", "Chat")
-                        .WithMany()
+                        .WithMany("Messages")
                         .HasForeignKey("ChatId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -102,6 +152,11 @@ namespace lawChat.Server.Migrations
                     b.Navigation("Chat");
 
                     b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("lawChat.Server.Data.Model.Chat", b =>
+                {
+                    b.Navigation("Messages");
                 });
 #pragma warning restore 612, 618
         }

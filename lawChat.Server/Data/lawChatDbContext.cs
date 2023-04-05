@@ -11,7 +11,7 @@ namespace lawChat.Server.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseMySql("Server=188.127.239.144;User=user615945;Password=R7P-tfQ-mFW-bu9;Database=lawchatdb;",
+            optionsBuilder.UseMySql("Server=188.127.239.143;User=ppomidorka;Password=nPi-6uk-7kR-3Y7;Database=lawchat;",
                 new MySqlServerVersion(new Version(8, 0, 11)));
         }
     }
