@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Windows.Threading;
 using lawChat.Client.Infrastructure;
 using lawChat.Client.Model;
 using lawChat.Client.Services;
@@ -12,31 +15,11 @@ namespace lawChat.Client.ViewModel
     internal class MainWindowViewModel : ViewModelBase
     {
         private IClientObject _clientObject;
+        private IClientData _clientData;
 
-        private ObservableCollection<SearchPanelModel> _searchPanelSource = new()
-        {
-            new SearchPanelModel()
-            {
-                Title = "Алексей",
-                LastMessage = "ad  lasjdlj alsdjl aslkdj aslkdjaslkdjaslkdjaslkdjaslkdjaslkdjaslkdjaslkdj",
-                LasMessageDateTime = "08:32",
-                ContactPhoto = new Uri(@"D:\User\VisualStudio\lawChat\lawChat\lawChat.Client\Assets\Image\contactPhotoTest.JPG", UriKind.RelativeOrAbsolute)
-            },
-            new SearchPanelModel()
-            {
-                Title = "Валентин",
-                LastMessage = "ad  lasjdlj alsdjl aslkdj",
-                LasMessageDateTime = "08:32",
-                ContactPhoto = new Uri(@"D:\User\VisualStudio\lawChat\lawChat\lawChat.Client\Assets\Image\contactPhotoTest.JPG", UriKind.RelativeOrAbsolute)
-            },
-            new SearchPanelModel()
-            {
-                Title = "Сергей",
-                LastMessage = "ad  lasjdlj alsdjl aslkdj",
-                LasMessageDateTime = "08:32",
-                ContactPhoto = new Uri(@"D:\User\VisualStudio\lawChat\lawChat\lawChat.Client\Assets\Image\contactPhotoTest.JPG", UriKind.RelativeOrAbsolute)
-            }
-        };
+        private Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
+
+        private ObservableCollection<SearchPanelModel> _searchPanelSource;
 
         public ObservableCollection<SearchPanelModel> SearchPanelSource
         {
@@ -88,15 +71,45 @@ namespace lawChat.Client.ViewModel
             });
         }
 
-        public MainWindowViewModel(IClientObject clientObject) : this()
+        public MainWindowViewModel(IClientObject clientObject, IClientData clientData) : this()
         {
             _clientObject = clientObject;
+            _clientData = clientData;
+
+            SearchPanelSource = new();
+
+            Task.Factory.StartNew(() =>
+            {
+                _clientObject.ClientSocket.Send(Encoding.Unicode.GetBytes("speccommand|getfriendlist"));
+                while (true)
+                {
+                    if (_clientData.FriendList.Count != 0)
+                    {
+                        foreach (var client in _clientData.FriendList)
+                        {
+                            _dispatcher.Invoke(() =>
+                            {
+                                SearchPanelSource.Add(new()
+                                {
+                                    Title = client.NickName
+                                });
+                            });
+                        }
+                        return;
+                    }
+                    Thread.Sleep(1000);
+                }
+            });
 
             Task.Factory.StartNew(() =>
             {
                 while (true)
                 {
-                    CurrentChatTextBox += _clientObject.GetMessageFromServer() + "\n";
+                    string message = _clientObject.GetMessageFromServer();
+                    if (message != "gaose12h3ksafhai82t")
+                    {
+                        CurrentChatTextBox += message + "\n";
+                    }
                 }
             });
         }

@@ -88,7 +88,7 @@ namespace lawChat.Client.ViewModel
 
                     dispatcher.Invoke(() => { BorderBrush = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 171, 173, 173)); });
 
-                    if (result == "successful connection")
+                    if (result.Contains("successful connection"))
                     {
                         dispatcher.Invoke(() =>
                         {
