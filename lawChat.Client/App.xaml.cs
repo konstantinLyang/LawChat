@@ -21,6 +21,7 @@ namespace lawChat.Client
                     services.AddSingleton<MainWindowViewModel>();
                     services.AddSingleton<IUserDialog, UserDialogService>();
                     services.AddSingleton<IClientObject, ClientObjectService>();
+                    services.AddSingleton<IClientData, ClientDataService>();
 
                     services.AddTransient(s =>
                     {
@@ -36,6 +37,7 @@ namespace lawChat.Client
 
                         return view;
                     });
+
                 }).Build();
         }
 

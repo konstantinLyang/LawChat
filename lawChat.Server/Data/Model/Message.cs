@@ -1,11 +1,17 @@
-﻿namespace lawChat.Server.Data.Model
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace lawChat.Server.Data.Model
 {
     public class Message
     {
         public int Id { get; set; }
+        [Required]
         public DateTime CreateDate { get; set; }
-        public byte[] Data { get; set; }
-        public Client Client { get; set; }
-        public Chat Chat { get; set; }
+        [Required]
+        public byte[]? Data { get; set; }
+        [Required]
+        public Client? Sender { get; set; }
+        public Client? Recipient { get; set; }
+        public Chat? Chat { get; set; }
     }
 }

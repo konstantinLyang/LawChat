@@ -3,6 +3,7 @@ using System.Net.Sockets;
 using System.Text;
 using lawChat.Server.Data;
 using lawChat.Server.ServerData.Model;
+using Newtonsoft.Json;
 
 Console.InputEncoding = Encoding.Unicode;
 Console.OutputEncoding = Encoding.Unicode;
@@ -52,7 +53,7 @@ while (true)
 
                         Console.WriteLine($"[{DateTime.Now:dd.MM.yyyy HH:mm}] " + client.NickName + ": подключился");
 
-                        client.Socket.Send(Encoding.Unicode.GetBytes("successful connection"));
+                        client.Socket.Send(Encoding.Unicode.GetBytes("successful connection;"));
 
                         try
                         {
@@ -62,20 +63,49 @@ while (true)
                                 size = client.Socket.Receive(buffer);
                                 receiveMessage = new StringBuilder(Encoding.Unicode.GetString(buffer, 0, size));
 
-                                Guid messageGuid = Guid.Parse(receiveMessage.ToString().Split(';')[0]);
-                                string messageType = receiveMessage.ToString().Split(';')[1];
-                                int chatId = Convert.ToInt32(receiveMessage.ToString().Split(';')[2]);
-                                string messageText = receiveMessage.ToString().Split(';')[3];
-
-                                Console.WriteLine(client.NickName + ": " + messageText);
-
-                                foreach (var connectedClient in clientList)
+                                if (receiveMessage.ToString().Contains("speccommand"))
                                 {
-                                    if (messageType == "text")
+                                    OnGetCommandMessage(receiveMessage.ToString());
+                                }
+                                else if (receiveMessage.ToString().Contains("message"))
+                                {
+                                    SendTextMessage();
+                                }
+
+                                void SendTextMessage()
+                                {
+                                    string messageType = receiveMessage.ToString().Split(';')[0];
+                                    string typeType = receiveMessage.ToString().Split(';')[1];
+                                    int chatId = Convert.ToInt32(receiveMessage.ToString().Split(';')[2]);
+                                    string messageText = receiveMessage.ToString().Split(';')[3];
+
+                                    Console.WriteLine(client.NickName + ": " + messageText);
+
+                                    foreach (var connectedClient in clientList)
                                     {
-                                        if (connectedClient != client && connectedClient.Id == chatId) connectedClient.Socket.Send(Encoding.Unicode.GetBytes(client.NickName + ": " + messageText));
-                                        else if (chatId == 0) connectedClient.Socket.Send(Encoding.Unicode.GetBytes(client.NickName + ": " + messageText));
+                                        if (messageType == "text")
+                                        {
+                                            if (connectedClient != client && connectedClient.Id == chatId) connectedClient.Socket.Send(Encoding.Unicode.GetBytes(client.NickName + ": " + messageText));
+                                            else if (chatId == 0) connectedClient.Socket.Send(Encoding.Unicode.GetBytes(client.NickName + ": " + messageText));
+                                        }
                                     }
+                                }
+
+                                void OnGetCommandMessage(string message)
+                                {
+                                    if (message.Contains("getfriendlist"))
+                                    {
+                                        SendCommandMessage(JsonConvert.SerializeObject(context.Clients), "speccommand|getfriendlist.OK");
+                                    }
+                                    else if (message.Contains("getchatlist"))
+                                    {
+                                        SendCommandMessage(JsonConvert.SerializeObject(context.Chats), "speccommand|getchatlist.OK");
+                                    }
+                                }
+
+                                void SendCommandMessage(string message, string command)
+                                {
+                                    client.Socket.Send(Encoding.Unicode.GetBytes(command + message));
                                 }
                             }
                         }
