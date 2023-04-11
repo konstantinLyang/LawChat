@@ -18,9 +18,13 @@ namespace lawChat.Client.Services.Implementations
                 FriendList = JsonConvert.DeserializeObject<List<Model.ClientData.Client>>(data);
             });
         }
-        public void GetChatHistory(int chatId)
+        public void GetChatList(string data)
         {
-            throw new System.NotImplementedException();
+            Task.Factory.StartNew(() =>
+            {
+                data = data.Remove(0, "speccommand|getchathistory.OK".Length);
+                ChatList = JsonConvert.DeserializeObject<List<Chat>>(data);
+            });
         }
     }
 }

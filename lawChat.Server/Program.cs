@@ -97,6 +97,10 @@ while (true)
                                     {
                                         SendCommandMessage(JsonConvert.SerializeObject(context.Clients), "speccommand|getfriendlist.OK");
                                     }
+                                    else if (message.Contains("getchatlist"))
+                                    {
+                                        SendCommandMessage(JsonConvert.SerializeObject(context.Chats), "speccommand|getchatlist.OK");
+                                    }
                                 }
 
                                 void SendCommandMessage(string message, string command)

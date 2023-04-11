@@ -72,6 +72,10 @@ namespace lawChat.Client.Services.Implementations
                 {
                     _clientData.GetFriendList(result);
                 }
+                else if (result.Contains("getchatlist.OK"))
+                {
+                    _clientData.GetChatList(result);
+                }
             }
 
             return "gaose12h3ksafhai82t";

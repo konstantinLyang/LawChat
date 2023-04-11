@@ -55,12 +55,14 @@ namespace lawChat.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<int?>("ClientId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("FatherName")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("FirstName")
@@ -84,10 +86,11 @@ namespace lawChat.Server.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("Telephone")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
 
                     b.ToTable("Clients");
                 });
@@ -98,10 +101,7 @@ namespace lawChat.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("ChatId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ClientId")
+                    b.Property<int?>("ChatId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreateDate")
@@ -111,11 +111,19 @@ namespace lawChat.Server.Migrations
                         .IsRequired()
                         .HasColumnType("longblob");
 
+                    b.Property<int?>("RecipientId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SenderId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ChatId");
 
-                    b.HasIndex("ClientId");
+                    b.HasIndex("RecipientId");
+
+                    b.HasIndex("SenderId");
 
                     b.ToTable("Messages");
                 });
@@ -135,28 +143,44 @@ namespace lawChat.Server.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("lawChat.Server.Data.Model.Client", b =>
+                {
+                    b.HasOne("lawChat.Server.Data.Model.Client", null)
+                        .WithMany("Friends")
+                        .HasForeignKey("ClientId");
+                });
+
             modelBuilder.Entity("lawChat.Server.Data.Model.Message", b =>
                 {
                     b.HasOne("lawChat.Server.Data.Model.Chat", "Chat")
                         .WithMany("Messages")
-                        .HasForeignKey("ChatId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ChatId");
 
-                    b.HasOne("lawChat.Server.Data.Model.Client", "Client")
+                    b.HasOne("lawChat.Server.Data.Model.Client", "Recipient")
                         .WithMany()
-                        .HasForeignKey("ClientId")
+                        .HasForeignKey("RecipientId");
+
+                    b.HasOne("lawChat.Server.Data.Model.Client", "Sender")
+                        .WithMany()
+                        .HasForeignKey("SenderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Chat");
 
-                    b.Navigation("Client");
+                    b.Navigation("Recipient");
+
+                    b.Navigation("Sender");
                 });
 
             modelBuilder.Entity("lawChat.Server.Data.Model.Chat", b =>
                 {
                     b.Navigation("Messages");
+                });
+
+            modelBuilder.Entity("lawChat.Server.Data.Model.Client", b =>
+                {
+                    b.Navigation("Friends");
                 });
 #pragma warning restore 612, 618
         }
