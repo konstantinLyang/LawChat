@@ -83,10 +83,10 @@ while (true)
 
                                     foreach (var connectedClient in clientList)
                                     {
-                                        if (messageType == "text")
+                                        if (typeType == "TYPE|text")
                                         {
                                             if (connectedClient != client && connectedClient.Id == chatId) connectedClient.Socket.Send(Encoding.Unicode.GetBytes(client.NickName + ": " + messageText));
-                                            else if (chatId == 0) connectedClient.Socket.Send(Encoding.Unicode.GetBytes(client.NickName + ": " + messageText));
+                                            else if (chatId == 0 && connectedClient != client) connectedClient.Socket.Send(Encoding.Unicode.GetBytes(client.NickName + ": " + messageText));
                                         }
                                     }
                                 }
