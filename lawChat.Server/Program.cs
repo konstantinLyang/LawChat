@@ -80,7 +80,7 @@ while (true)
 
                                     foreach (var connectedClient in clientList)
                                     {
-                                        if (messageType == "text")
+                                        if (typeType == "TYPE|text")
                                         {
                                             if (connectedClient != client && connectedClient.Id == chatId)
                                             {

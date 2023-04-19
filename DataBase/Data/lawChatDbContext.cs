@@ -11,7 +11,7 @@ namespace DataBase.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseMySql("Server=188.127.239.143;User=ppomidorka;Password=nPi-6uk-7kR-3Y7;Database=lawchat;",
+            optionsBuilder.UseMySql("Server=188.127.239.143;User=lawchatserver;Password=cN6bV5tX4e;Database=lawchat;",
                 new MySqlServerVersion(new Version(8, 0, 11)));
         }
     }
