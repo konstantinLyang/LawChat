@@ -78,28 +78,6 @@ namespace lawChat.Client.ViewModel
 
             SearchPanelSource = new();
 
-            Task.Factory.StartNew(() =>
-            {
-                _clientObject.ClientSocket.Send(Encoding.Unicode.GetBytes("speccommand|getfriendlist"));
-                while (true)
-                {
-                    if (_clientData.FriendList.Count != 0)
-                    {
-                        foreach (var client in _clientData.FriendList)
-                        {
-                            _dispatcher.Invoke(() =>
-                            {
-                                SearchPanelSource.Add(new()
-                                {
-                                    Title = client.NickName
-                                });
-                            });
-                        }
-                        return;
-                    }
-                    Thread.Sleep(1000);
-                }
-            });
 
             Task.Factory.StartNew(() =>
             {

@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using lawChat.Server.Data;
+using DataBase.Data;
 using lawChat.Server.ServerData.Model;
 using Newtonsoft.Json;
 
@@ -63,11 +63,7 @@ while (true)
                                 size = client.Socket.Receive(buffer);
                                 receiveMessage = new StringBuilder(Encoding.Unicode.GetString(buffer, 0, size));
 
-                                if (receiveMessage.ToString().Contains("speccommand"))
-                                {
-                                    OnGetCommandMessage(receiveMessage.ToString());
-                                }
-                                else if (receiveMessage.ToString().Contains("message"))
+                                if (receiveMessage.ToString().Contains("message"))
                                 {
                                     SendTextMessage();
                                 }
@@ -80,32 +76,22 @@ while (true)
                                     string messageText = receiveMessage.ToString().Split(';')[3];
 
                                     Console.WriteLine(client.NickName + ": " + messageText);
+                                    
 
                                     foreach (var connectedClient in clientList)
                                     {
                                         if (messageType == "text")
                                         {
-                                            if (connectedClient != client && connectedClient.Id == chatId) connectedClient.Socket.Send(Encoding.Unicode.GetBytes(client.NickName + ": " + messageText));
-                                            else if (chatId == 0) connectedClient.Socket.Send(Encoding.Unicode.GetBytes(client.NickName + ": " + messageText));
+                                            if (connectedClient != client && connectedClient.Id == chatId)
+                                            {
+                                                connectedClient.Socket.Send(Encoding.Unicode.GetBytes(client.NickName + ": " + messageText));
+                                            }
+                                            else if (chatId == 0)
+                                            {
+                                                connectedClient.Socket.Send(Encoding.Unicode.GetBytes(client.NickName + ": " + messageText));
+                                            }
                                         }
                                     }
-                                }
-
-                                void OnGetCommandMessage(string message)
-                                {
-                                    if (message.Contains("getfriendlist"))
-                                    {
-                                        SendCommandMessage(JsonConvert.SerializeObject(context.Clients), "speccommand|getfriendlist.OK");
-                                    }
-                                    else if (message.Contains("getchatlist"))
-                                    {
-                                        SendCommandMessage(JsonConvert.SerializeObject(context.Chats), "speccommand|getchatlist.OK");
-                                    }
-                                }
-
-                                void SendCommandMessage(string message, string command)
-                                {
-                                    client.Socket.Send(Encoding.Unicode.GetBytes(command + message));
                                 }
                             }
                         }

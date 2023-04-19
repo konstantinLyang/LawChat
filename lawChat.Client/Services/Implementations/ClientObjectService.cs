@@ -11,24 +11,25 @@ namespace lawChat.Client.Services.Implementations
         private IServiceProvider _serviceProvider;
         private IUserDialog _userDialog;
         private IClientData _clientData;
+        private Socket _clientSocket;
 
-        public ClientObjectService(IServiceProvider serviceProvider, IUserDialog userDialog, IClientData clientData)
+        public ClientObjectService(IServiceProvider serviceProvider, IUserDialog userDialog, IClientData clientData, Socket clientSocket)
         {
             _serviceProvider = serviceProvider;
             _userDialog = userDialog;
             _clientData = clientData;
+            _clientSocket = clientSocket;
         }
-        public Socket ClientSocket { get; set; }
 
         public string OpenConnection(string login, string password)
         {
             try
             {
-                ClientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                _clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
                 IPEndPoint serverEndPoint = new(IPAddress.Parse("127.0.0.1"), 8080);
 
-                ClientSocket.Connect(serverEndPoint);
+                _clientSocket.Connect(serverEndPoint);
 
                 return Authorization(login, password);
             }
@@ -39,11 +40,11 @@ namespace lawChat.Client.Services.Implementations
         }
         private string Authorization(string login, string password)
         {
-            ClientSocket.Send(Encoding.Unicode.GetBytes($"{login};{password};"));
+            _clientSocket.Send(Encoding.Unicode.GetBytes($"{login};{password};"));
 
             var serverBuffer = new byte[4026];
 
-            var serverSize = ClientSocket.Receive(serverBuffer);
+            var serverSize = _clientSocket.Receive(serverBuffer);
 
             string result = Encoding.Unicode.GetString(serverBuffer, 0, serverSize);
 
@@ -51,14 +52,14 @@ namespace lawChat.Client.Services.Implementations
         }
         public async void SendTextMessage(int chatId, string message)
         {
-            await Task.Factory.StartNew(() => { ClientSocket.Send(Encoding.Unicode.GetBytes($"message;TYPE|text;{chatId};{message};")); });
+            await Task.Factory.StartNew(() => { _clientSocket.Send(Encoding.Unicode.GetBytes($"message;TYPE|text;{chatId};{message};")); });
         }
 
         public string GetMessageFromServer()
         {
             var serverBuffer = new byte[4026];
 
-            var serverSize = ClientSocket.Receive(serverBuffer);
+            var serverSize = _clientSocket.Receive(serverBuffer);
 
             string result = Encoding.Unicode.GetString(serverBuffer, 0, serverSize);
 

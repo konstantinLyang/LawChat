@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace lawChat.Server.Data.Model
+namespace DataBase.Data.Model
 {
     public class Message
     {

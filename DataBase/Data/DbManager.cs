@@ -1,4 +1,4 @@
-﻿namespace lawChat.Server.Data
+﻿namespace DataBase.Data
 {
     public static class DbManager
     {

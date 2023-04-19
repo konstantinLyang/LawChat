@@ -1,7 +1,7 @@
-﻿using lawChat.Server.Data.Model;
+﻿using DataBase.Data.Model;
 using Microsoft.EntityFrameworkCore;
 
-namespace lawChat.Server.Data
+namespace DataBase.Data
 {
     public class LawChatDbContext : DbContext
     {
