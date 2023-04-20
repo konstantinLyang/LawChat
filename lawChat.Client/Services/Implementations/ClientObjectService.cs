@@ -8,17 +8,12 @@ namespace lawChat.Client.Services.Implementations
 {
     public class ClientObjectService : IClientObject
     {
-        private IServiceProvider _serviceProvider;
-        private IUserDialog _userDialog;
-        private IClientData _clientData;
+        private readonly IClientData _clientData;
         private Socket _clientSocket;
 
-        public ClientObjectService(IServiceProvider serviceProvider, IUserDialog userDialog, IClientData clientData, Socket clientSocket)
+        public ClientObjectService(IClientData clientData)
         {
-            _serviceProvider = serviceProvider;
-            _userDialog = userDialog;
             _clientData = clientData;
-            _clientSocket = clientSocket;
         }
 
         public string OpenConnection(string login, string password)
@@ -48,13 +43,18 @@ namespace lawChat.Client.Services.Implementations
 
             string result = Encoding.Unicode.GetString(serverBuffer, 0, serverSize);
 
+            if(result.Contains("successful connection")) _clientData.GetUserData(login, password);
+
             return result;
         }
         public async void SendTextMessage(int chatId, string message)
         {
-            await Task.Factory.StartNew(() => { _clientSocket.Send(Encoding.Unicode.GetBytes($"message;TYPE|text;{chatId};{message};")); });
+            await Task.Factory.StartNew(() => { _clientSocket.Send(Encoding.Unicode.GetBytes($"message|CHAT;TYPE|text;{chatId};{message};")); });
         }
-
+        public async void SendPrivateTextMessage(int recipient, string message)
+        {
+            await Task.Factory.StartNew(() => { _clientSocket.Send(Encoding.Unicode.GetBytes($"message|PRIVATE;TYPE|text;{recipient};{message};")); });
+        }
         public string GetMessageFromServer()
         {
             var serverBuffer = new byte[4026];
@@ -66,17 +66,6 @@ namespace lawChat.Client.Services.Implementations
             if (!result.Contains("speccommand"))
             {
                 return Encoding.Unicode.GetString(serverBuffer, 0, serverSize);
-            }
-            else
-            {
-                if (result.Contains("getfriendlist.OK"))
-                {
-                    _clientData.GetFriendList(result);
-                }
-                else if (result.Contains("getchatlist.OK"))
-                {
-                    _clientData.GetChatList(result);
-                }
             }
 
             return "gaose12h3ksafhai82t";

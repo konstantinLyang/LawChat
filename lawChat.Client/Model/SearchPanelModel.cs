@@ -1,12 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using DataBase.Data.Model;
 
 namespace lawChat.Client.Model
 {
     public class SearchPanelModel
     {
-        public string Title { get; set; }
-        public string LastMessage { get; set; }
-        public string LasMessageDateTime { get; set; }
-        public Uri ContactPhoto { get; set; }
+        public string? Title { get; set; }
+        public int RecipientId { get; set; }
+        public ObservableCollection<Message> Messages { get; set; }
     }
 }

@@ -65,10 +65,48 @@ while (true)
 
                                 if (receiveMessage.ToString().Contains("message"))
                                 {
-                                    SendTextMessage();
+                                    if (receiveMessage.ToString().Contains("PRIVATE"))
+                                    {
+                                        SendPrivateMessage();
+                                    }
+                                    else
+                                    {
+                                        SendChatMessage();
+                                    }
                                 }
 
-                                void SendTextMessage()
+                                void SendPrivateMessage()
+                                {
+                                    string messageType = receiveMessage.ToString().Split(';')[0];
+                                    string typeType = receiveMessage.ToString().Split(';')[1];
+                                    int recipient = Convert.ToInt32(receiveMessage.ToString().Split(';')[2]);
+                                    string messageText = receiveMessage.ToString().Split(';')[3];
+
+                                    Console.WriteLine(client.NickName + ": " + messageText);
+
+                                    context.Messages.Add(new()
+                                    {
+                                        CreateDate = DateTime.Now,
+                                        Recipient = context.Clients.FirstOrDefault(x => x.Id == recipient),
+                                        Sender = context.Clients.FirstOrDefault(x => x.Id == client.Id),
+                                        Text = messageText
+                                    });
+                                    context.SaveChanges();
+
+                                    foreach (var connectedClient in clientList)
+                                    {
+                                        if (typeType == "TYPE|text")
+                                        {
+                                            if (connectedClient != client && connectedClient.Id == recipient)
+                                            {
+                                                connectedClient.Socket.Send(
+                                                    Encoding.Unicode.GetBytes(client.Id + ";" + messageText));
+                                            }
+                                        }
+                                    }
+                                }
+
+                                void SendChatMessage()
                                 {
                                     string messageType = receiveMessage.ToString().Split(';')[0];
                                     string typeType = receiveMessage.ToString().Split(';')[1];
@@ -76,7 +114,14 @@ while (true)
                                     string messageText = receiveMessage.ToString().Split(';')[3];
 
                                     Console.WriteLine(client.NickName + ": " + messageText);
-                                    
+
+                                    context.Messages.Add(new()
+                                    {
+                                        CreateDate = DateTime.Now,
+                                        Chat = context.Chats.FirstOrDefault(x => x.Id == chatId),
+                                        Sender = context.Clients.FirstOrDefault(x => x.Id == client.Id),
+                                        Text = messageText
+                                    });
 
                                     foreach (var connectedClient in clientList)
                                     {
@@ -85,8 +130,8 @@ while (true)
                                             if (connectedClient != client && connectedClient.Id == chatId)
                                             {
                                                 connectedClient.Socket.Send(Encoding.Unicode.GetBytes(client.NickName + ": " + messageText));
-                                            }
-                                            else if (chatId == 0)
+                                            } 
+                                            else if (chatId == 0 && connectedClient.Id == chatId)
                                             {
                                                 connectedClient.Socket.Send(Encoding.Unicode.GetBytes(client.NickName + ": " + messageText));
                                             }

@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using DataBase.Data;
 using DataBase.Data.Model;
-using Newtonsoft.Json;
 
 namespace lawChat.Client.Services.Implementations
 {
@@ -12,7 +11,6 @@ namespace lawChat.Client.Services.Implementations
         public DataBase.Data.Model.Client ClientData { get; set; } = new();
         public List<Chat>? ChatList { get; set; } = new();
         public List<DataBase.Data.Model.Client>? FriendList { get; set; } = new();
-
         public void GetUserData(string login, string password)
         {
             Task.Factory.StartNew(() =>
@@ -23,17 +21,21 @@ namespace lawChat.Client.Services.Implementations
                 }
             });
         }
-        public void GetFriendList(string data)
-        { 
-            Task.Factory.StartNew(() =>
+        public void GetFriendList()
+        {
+            using (var context = new LawChatDbContext())
             {
-                using (var context = new LawChatDbContext())
-                {
-                    FriendList = context.Clients.ToList();
-                }
-            });
+                FriendList = context.Clients.ToList();
+            }
         }
-        public void GetChatList(string data)
+        public string GetLastMessage(int chatId)
+        {
+            using (var context = new LawChatDbContext())
+            {
+                return context.Messages.LastOrDefault(x => x.Chat.Id == chatId).Text;
+            }
+        }
+        public void GetChatList()
         {
             Task.Factory.StartNew(() =>
             {

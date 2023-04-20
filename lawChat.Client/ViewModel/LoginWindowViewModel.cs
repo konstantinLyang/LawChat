@@ -1,5 +1,4 @@
-﻿using System.Net.Sockets;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -38,21 +37,21 @@ namespace lawChat.Client.ViewModel
             set => Set(ref _infoTextBlock, value);
         }
 
-        private Brush _borderBrush = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255,171,173,173)); 
+        private Brush _borderBrush = new SolidColorBrush(Color.FromArgb(255,171,173,173)); 
         public Brush BorderBrush
         {
             get => _borderBrush;
             set => Set(ref _borderBrush, value);
         }
 
-        private Brush _textBlocForegroundBrush = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255,255,255,255)); 
+        private Brush _textBlocForegroundBrush = new SolidColorBrush(Color.FromArgb(255,255,255,255)); 
         public Brush TextBlocForegroundBrush
         {
             get => _textBlocForegroundBrush;
             set => Set(ref _textBlocForegroundBrush, value);
         }
 
-        private Brush _foregroundInfoTextBlock = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255,255,255,255)); 
+        private Brush _foregroundInfoTextBlock = new SolidColorBrush(Color.FromArgb(255,255,255,255)); 
         public Brush ForegroundInfoTextBlock
         {
             get => _foregroundInfoTextBlock;
@@ -86,7 +85,7 @@ namespace lawChat.Client.ViewModel
 
                     string result = _clientObject.OpenConnection(LoginTextBox, PasswordTextBox);
 
-                    dispatcher.Invoke(() => { BorderBrush = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 171, 173, 173)); });
+                    dispatcher.Invoke(() => { BorderBrush = new SolidColorBrush(Color.FromArgb(255, 171, 173, 173)); });
 
                     if (result.Contains("successful connection"))
                     {
@@ -104,8 +103,8 @@ namespace lawChat.Client.ViewModel
 
                             InfoTextBlock = "Неверный пароль или логин";
 
-                            BorderBrush = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 255, 88, 88));
-                            TextBlocForegroundBrush = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 255, 88, 88));
+                            BorderBrush = new SolidColorBrush(Color.FromArgb(255, 255, 88, 88));
+                            TextBlocForegroundBrush = new SolidColorBrush(Color.FromArgb(255, 255, 88, 88));
 
                             LoginTextBox = "";
                             PasswordTextBox = "";
@@ -116,7 +115,7 @@ namespace lawChat.Client.ViewModel
                         dispatcher.Invoke(() =>
                         {
                             LoadingIconVisible = Visibility.Hidden;
-                            ForegroundInfoTextBlock = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 255, 88, 88));
+                            ForegroundInfoTextBlock = new SolidColorBrush(Color.FromArgb(255, 255, 88, 88));
                             InfoTextBlockVisibility = Visibility.Visible;
 
                             InfoTextBlock = "Пользователь не найден";
@@ -129,7 +128,7 @@ namespace lawChat.Client.ViewModel
                         dispatcher.Invoke(() =>
                         {
                             LoadingIconVisible = Visibility.Hidden;
-                            ForegroundInfoTextBlock = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 255, 88,88));
+                            ForegroundInfoTextBlock = new SolidColorBrush(Color.FromArgb(255, 255, 88,88));
 
                             InfoTextBlockVisibility = Visibility.Visible;
 

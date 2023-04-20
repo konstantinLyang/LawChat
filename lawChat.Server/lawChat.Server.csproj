@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DataBase\DataBase.csproj" />
+    <ProjectReference Include="..\lawChat.Database\lawChat.Database.csproj" />
   </ItemGroup>
 
 </Project>

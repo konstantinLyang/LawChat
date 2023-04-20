@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:lawChat.Client.View"
+        xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:viewModel="clr-namespace:lawChat.Client.ViewModel"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance viewModel:MainWindowViewModel, IsDesignTimeCreatable=True}"
@@ -99,7 +100,15 @@
                 <!--#region Contact Block-->
                 <Grid Grid.Row="1" Grid.Column="1" >
                     <Border Background="#FF191C21" Margin="0, 0,0.5,0.5">
-                        <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch" Background="Transparent" BorderThickness="0" ItemsSource="{Binding SearchPanelSource}">
+                        <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                 HorizontalContentAlignment="Stretch"
+                                 Background="Transparent" SelectedItem="{Binding SelectedChat}"
+                                 BorderThickness="0" ItemsSource="{Binding SearchPanelSource}">
+                            <b:Interaction.Triggers>
+                                <b:EventTrigger EventName="MouseLeftButtonUp">
+                                    <b:InvokeCommandAction Command="{Binding ChangeCurrentChat}"/>
+                                </b:EventTrigger>
+                            </b:Interaction.Triggers>
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <Border BorderThickness="1" >
@@ -133,7 +142,7 @@
                 <!--#region Top chat bar-->
                 <Grid Grid.Column="0" Grid.Row="0" Margin="0.5">
                     <Border Background="#FF191C21">
-                        <TextBlock Text="{Binding CurrentChatName, UpdateSourceTrigger=PropertyChanged}" Padding="15,0,0,0" VerticalAlignment="Center" FontSize="14" Foreground="White" FontFamily="Roboto"/>
+                        <TextBlock Padding="15,0,0,0" Text="{Binding SelectedChat.Title}" VerticalAlignment="Center" FontSize="14" Foreground="White"/>
                     </Border>
                 </Grid>
                 <!--#endregion-->
@@ -146,8 +155,22 @@
                     </Grid.RowDefinitions>
 
                     <Border Background="#FF191C21" Margin="0.5, 0,0.5,0">
-                        <TextBox Background="Transparent" Foreground="White" Text="{Binding CurrentChatTextBox}"
-                                 IsReadOnly="True" BorderThickness="0" Padding="5" FontSize="14" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"/>
+                        <ListView Background="Transparent" BorderThickness="0" SelectionMode="Multiple"  ItemsSource="{Binding SelectedChat.Messages}" VerticalAlignment="Bottom">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Border  CornerRadius="15"  Background="#FF3D4A5D">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Margin="15,8,15,8" Grid.Column="0" Foreground="AliceBlue" FontWeight="Normal" FontSize="14" Text="{Binding Text}"/>
+                                            <TextBlock Grid.Column="1" FontSize="12" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,3" Foreground="AliceBlue" Text="{Binding CreateDate}"/>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
                     </Border>
                     <!--#region TextBox to send message-->
                     <Grid Grid.Row="1" Margin="0.5">
