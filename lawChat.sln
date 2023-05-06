@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lawChat.Client", "lawChat.C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lawChat.Server", "lawChat.Server\lawChat.Server.csproj", "{1BE8C7E1-E64D-4D34-B724-47584BB96106}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lawChat.Database", "lawChat.Database\lawChat.Database.csproj", "{129A67C4-64E3-4E89-9726-FE2210255EFD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lawChat.API", "lawChat.Database\lawChat.API.csproj", "{129A67C4-64E3-4E89-9726-FE2210255EFD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

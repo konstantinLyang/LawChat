@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\lawChat.Database\lawChat.Database.csproj" />
+    <ProjectReference Include="..\lawChat.Database\lawChat.API.csproj" />
   </ItemGroup>
 
 </Project>

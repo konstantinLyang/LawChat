@@ -13,6 +13,7 @@ using DataBase.Data.Model;
 using lawChat.Client.Infrastructure;
 using lawChat.Client.Model;
 using lawChat.Client.Services;
+using lawChat.Client.Services.Implementations;
 using lawChat.Client.ViewModel.Base;
 
 namespace lawChat.Client.ViewModel
@@ -84,14 +85,9 @@ namespace lawChat.Client.ViewModel
             _clientObject = clientObject;
 
             SearchPanelSource = new();
-
-            Task.Factory.StartNew(() =>
-            {
-                StartListener();
-            });
         }
 
-        private async void StartListener()
+        private void StartListener()
         {
             while (true)
             {
