@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Hosting;
 using System.Windows;
 using lawChat.Client.Services;
 using lawChat.Client.Services.Implementations;

@@ -29,27 +29,36 @@
             <Border Grid.ColumnSpan="2"
                     Background="#FF21242A" MouseDown="Grid_MouseDown">
                 <!--#region Window buttons -->
-                <StackPanel HorizontalAlignment="Right"
-                            Orientation="Horizontal">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
 
-                    <Button x:Name="BtnHide"
-                            Style="{StaticResource WindowChromeButtonStyle}" Click="BtnHide_Click">
-                        <Path Data="M0 1H9"
-                              Style="{StaticResource TitleBarIcon}"/>
-                    </Button>
+                    <TextBlock Grid.Column="0" Margin="10, 0, 0, 0" Text="{Binding UserNameTextBlock}" VerticalAlignment="Center" Foreground="Chartreuse"/>
 
-                    <Button x:Name="BtnMinimize"
-                            Style="{StaticResource WindowChromeButtonStyle}" Click="BtnMinimize_Click_1">
-                        <Path Data="M1 10V1H10V10H1Z"
-                              Style="{StaticResource TitleBarIcon}"/>
-                    </Button>
+                    <StackPanel HorizontalAlignment="Right" Grid.Column="1"
+                                Orientation="Horizontal">
+                        <Button x:Name="BtnHide"
+                                Style="{StaticResource WindowChromeButtonStyle}" Click="BtnHide_Click">
+                            <Path Data="M0 1H9"
+                                  Style="{StaticResource TitleBarIcon}"/>
+                        </Button>
 
-                    <Button x:Name="BtnClose"
-                            Style="{StaticResource WindowChromeButtonStyle}" Click="BtnClose_Click">
-                        <Path Data="M1 1L14 14M14 1L1 14"
-                              Style="{StaticResource TitleBarIcon}"/>
-                    </Button>
-                </StackPanel>
+                        <Button x:Name="BtnMinimize"
+                                Style="{StaticResource WindowChromeButtonStyle}" Click="BtnMinimize_Click_1">
+                            <Path Data="M1 10V1H10V10H1Z"
+                                  Style="{StaticResource TitleBarIcon}"/>
+                        </Button>
+
+                        <Button x:Name="BtnClose"
+                                Style="{StaticResource WindowChromeButtonStyle}" Click="BtnClose_Click">
+                            <Path Data="M1 1L14 14M14 1L1 14"
+                                  Style="{StaticResource TitleBarIcon}"/>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+                
                 <!--#endregion-->
             </Border>
             <!--#endregion-->
@@ -61,7 +70,7 @@
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition MinWidth="260" MaxWidth="430" Width="260"/>
+                    <ColumnDefinition MinWidth="270" MaxWidth="430" Width="260"/>
                 </Grid.ColumnDefinitions>
 
                 <!--#region Search Block-->
@@ -113,23 +122,25 @@
                                 <DataTemplate>
                                     <Border BorderThickness="1" >
                                         <Border Margin="5">
-                                            <StackPanel Orientation="Horizontal" CanHorizontallyScroll="False">
-                                                <Canvas MinHeight="50" MaxHeight="50" MinWidth="50" MaxWidth="50">
-                                                    <Ellipse Width="50" Height="50">
-                                                        <Ellipse.Fill>
-                                                            <ImageBrush Stretch="UniformToFill"
-                                                                        ImageSource="{Binding ContactPhoto, FallbackValue='/Assets/Image/contactPhotoTest.JPG', TargetNullValue='/Assets/Image/contactPhotoTest.JPG'}"/>
-                                                        </Ellipse.Fill>
-                                                    </Ellipse>
-                                                </Canvas>
-                                                <StackPanel Margin="15, 0,0,0">
-                                                    <StackPanel Orientation="Horizontal" >
-                                                        <TextBlock Width="135" Text="{Binding Title}" Foreground="White" FontSize="14" FontWeight="DemiBold"/>
-                                                        <TextBlock Text="{Binding LasMessageDateTime}" Foreground="White" FontSize="12" FontWeight="DemiBold"/>
+                                            <Grid>
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                                    <Canvas MinHeight="50" MaxHeight="50" MinWidth="50" MaxWidth="50">
+                                                        <Ellipse Width="50" Height="50">
+                                                            <Ellipse.Fill>
+                                                                <ImageBrush Stretch="UniformToFill"
+                                                                            ImageSource="{Binding ContactPhoto, FallbackValue='C://Program Files (x86)/LawChat/userdata/Images/no_photo.jpg', TargetNullValue='C://Program Files (x86)/LawChat/userdata/Images/no_photo.jpg'}"/>
+                                                            </Ellipse.Fill>
+                                                        </Ellipse>
+                                                    </Canvas>
+                                                    <StackPanel Margin="10, 0,0,0" VerticalAlignment="Center">
+                                                        <TextBlock Text="{Binding Title}" Foreground="White" FontSize="13" FontWeight="DemiBold"/>
+                                                        <TextBlock TextWrapping="Wrap" Text="{Binding LastMessage}" Foreground="#FFB8C0C3" Margin="0,5,0,0" FontWeight="Light" FontSize="13"/>
                                                     </StackPanel>
-                                                    <TextBlock TextWrapping="Wrap" Text="{Binding LastMessage}" Foreground="White" FontSize="11"/>
                                                 </StackPanel>
-                                            </StackPanel>
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                                    <TextBlock Margin="20, 5, 0, 0" Text="{Binding LastMessageDateTime}" Foreground="#FFB8C0C3" FontSize="13" FontWeight="Light"/>
+                                                </StackPanel>
+                                            </Grid>
                                         </Border>
                                     </Border>
                                 </DataTemplate>
@@ -155,17 +166,17 @@
                     </Grid.RowDefinitions>
 
                     <Border Background="#FF191C21" Margin="0.5, 0,0.5,0">
-                        <ListView Background="Transparent" BorderThickness="0" SelectionMode="Multiple"  ItemsSource="{Binding SelectedChat.Messages}" VerticalAlignment="Bottom">
+                        <ListView Background="Transparent" BorderThickness="0" SelectionMode="Multiple" ItemsSource="{Binding SelectedChat.Messages}" VerticalAlignment="Bottom">
                             <ListView.ItemTemplate>
                                 <DataTemplate>
-                                    <Border  CornerRadius="15"  Background="#FF3D4A5D">
+                                    <Border CornerRadius="15" Background="#FF3D4A5D">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition/>
                                                 <ColumnDefinition/>
                                             </Grid.ColumnDefinitions>
-                                            <TextBlock Margin="15,8,15,8" Grid.Column="0" Foreground="AliceBlue" FontWeight="Normal" FontSize="14" Text="{Binding Text}"/>
-                                            <TextBlock Grid.Column="1" FontSize="12" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,3" Foreground="AliceBlue" Text="{Binding CreateDate}"/>
+                                            <TextBlock Margin="15,8,15,8" Grid.Column="0" Foreground="White" TextWrapping="Wrap" FontWeight="Normal" FontSize="14" Text="{Binding Text}"/>
+                                            <TextBlock Grid.Column="1" FontSize="12" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,3" Foreground="#FFB8C0C3" Text="{Binding CreateDate, Converter={StaticResource DateTimeToDateConverter}}"/>
                                         </Grid>
                                     </Border>
                                 </DataTemplate>

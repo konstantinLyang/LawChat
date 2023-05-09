@@ -1,11 +1,11 @@
-﻿using DataBase.Data.Model;
+﻿using lawChat.API.Data.Model;
 using Microsoft.EntityFrameworkCore;
 
-namespace DataBase.Data
+namespace lawChat.API.Data
 {
     public class LawChatDbContext : DbContext
     {
-        public DbSet<Client> Clients { get; set; }
+        public DbSet<User> Clients { get; set; }
         public DbSet<Chat> Chats { get; set; }
         public DbSet<Message> Messages { get; set; }
 

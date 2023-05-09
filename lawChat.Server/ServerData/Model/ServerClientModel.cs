@@ -2,7 +2,7 @@
 
 namespace lawChat.Server.ServerData.Model
 {
-    public class Client
+    public class ServerClientModel
     {
         public int Id { get; set; }
         public Socket Socket { get; set; }
@@ -14,6 +14,6 @@ namespace lawChat.Server.ServerData.Model
         public string Email { get; set; }
         public string Login { get; set; }
         public string Password { get; set; }
-        public List<Chat> Chats { get; set; } = new List<Chat>();
+        public List<ServerChatModel> Chats { get; set; } = new List<ServerChatModel>();
     }
 }

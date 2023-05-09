@@ -2,19 +2,14 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Net;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Threading;
-using DataBase.Data.Model;
 using lawChat.Client.Infrastructure;
 using lawChat.Client.Model;
 using lawChat.Client.Services;
-using lawChat.Client.Services.Implementations;
 using lawChat.Client.ViewModel.Base;
+using lawChat.Server.Data.Model;
 
 namespace lawChat.Client.ViewModel
 {
@@ -59,6 +54,13 @@ namespace lawChat.Client.ViewModel
             set => Set(ref _currentMessageTextBox, value);
         }
 
+        private string _userNameTextBlock;
+        public string UserNameTextBlock
+        {
+            get => _userNameTextBlock;
+            set => Set(ref _userNameTextBlock, value);
+        }
+
         private LambdaCommand _sendMessageCommand;
         public ICommand SendMessageCommand => _sendMessageCommand ??= new(OnSendMessageCommand);
         private void OnSendMessageCommand()
@@ -85,6 +87,10 @@ namespace lawChat.Client.ViewModel
             _clientObject = clientObject;
 
             SearchPanelSource = new();
+
+            Thread listener = new Thread(StartListener);
+
+            listener.Start();
         }
 
         private void StartListener()

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace DataBase.Data.Model
+namespace lawChat.API.Data.Model
 {
     public class Message
     {
@@ -14,9 +14,9 @@ namespace DataBase.Data.Model
         public int RecipientId { get; set; }
         [Required]
         [ForeignKey("SenderId")]
-        public Client? Sender { get; set; }
+        public User? Sender { get; set; }
         [ForeignKey("RecipientId")]
-        public Client? Recipient { get; set; }
+        public User? Recipient { get; set; }
         public Chat? Chat { get; set; }
     }
 }

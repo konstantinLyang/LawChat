@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lawChat.Client", "lawChat.C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lawChat.Server", "lawChat.Server\lawChat.Server.csproj", "{1BE8C7E1-E64D-4D34-B724-47584BB96106}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lawChat.API", "lawChat.Database\lawChat.API.csproj", "{129A67C4-64E3-4E89-9726-FE2210255EFD}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{1BE8C7E1-E64D-4D34-B724-47584BB96106}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1BE8C7E1-E64D-4D34-B724-47584BB96106}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1BE8C7E1-E64D-4D34-B724-47584BB96106}.Release|Any CPU.Build.0 = Release|Any CPU
-		{129A67C4-64E3-4E89-9726-FE2210255EFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{129A67C4-64E3-4E89-9726-FE2210255EFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{129A67C4-64E3-4E89-9726-FE2210255EFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{129A67C4-64E3-4E89-9726-FE2210255EFD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

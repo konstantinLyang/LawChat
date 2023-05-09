@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace DataBase.Data.Model
+namespace lawChat.API.Data.Model
 {
-    public class Client
+    public class User
     {
         public int Id { get; set; }
         [Required]
@@ -20,6 +20,6 @@ namespace DataBase.Data.Model
         [Required]
         public string? Password { get; set; }
         public List<Chat> Chats { get; set; } = new List<Chat>(); 
-        public List<Client> Friends{ get; set; } = new List<Client>(); 
+        public List<User> Friends{ get; set; } = new List<User>(); 
     }
 }

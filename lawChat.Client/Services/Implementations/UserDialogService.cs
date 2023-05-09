@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using System.Windows.Documents;
-using DataBase.Data;
-using DataBase.Data.Model;
 using lawChat.Client.View;
 using lawChat.Client.ViewModel;
+using lawChat.Server.Data;
+using lawChat.Server.Data.Model;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace lawChat.Client.Services.Implementations
@@ -53,15 +51,29 @@ namespace lawChat.Client.Services.Implementations
             {
                 foreach (var friend in _clientData.FriendList)
                 {
-                    _mainWindowViewModel.SearchPanelSource.Add(new()
+                    if (friend.NickName == _clientData.UserData.NickName)
                     {
-                        Title = friend.NickName,
-                        RecipientId = _clientData.FriendList.FirstOrDefault(x => x.NickName == friend.NickName).Id,
-                        Messages = GetMessages(_clientData.ClientData.Id, _clientData.FriendList.FirstOrDefault(x => x.NickName == friend.NickName).Id)
-                    });
+                        _mainWindowViewModel.SearchPanelSource.Add(new()
+                        {
+                            Title = "Избранное",
+                            RecipientId = _clientData.FriendList.FirstOrDefault(x => x.NickName == friend.NickName).Id,
+                            Messages = GetMessages(_clientData.UserData.Id, _clientData.FriendList.FirstOrDefault(x => x.NickName == friend.NickName).Id)
+                        });
+                    }
+                    else
+                    {
+                        _mainWindowViewModel.SearchPanelSource.Add(new()
+                        {
+                            Title = friend.NickName,
+                            RecipientId = _clientData.FriendList.FirstOrDefault(x => x.NickName == friend.NickName).Id,
+                            Messages = GetMessages(_clientData.UserData.Id, _clientData.FriendList.FirstOrDefault(x => x.NickName == friend.NickName).Id)
+                        });
+                    }
                 }
                 _mainWindowViewModel.Chats = _clientData.ChatList;
             });
+
+            _mainWindowViewModel.UserNameTextBlock = _clientData.UserData?.NickName;
 
             ObservableCollection<Message> GetMessages(int sender, int recipient)
             {
