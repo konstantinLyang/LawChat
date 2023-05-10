@@ -57,7 +57,9 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="1" Margin="0,20,0,45" d:LayoutOverrides="Height" VerticalAlignment="Center">
-                <Label Content="Авторизация" FontSize="25" FontFamily="roboto" Foreground="White" Margin="0,0,0,20"/>
+                <Label Content="Приветствую, пользователь!" FontSize="18" FontFamily="roboto" Foreground="White" FontWeight="Normal" Margin="0,0,0,5"/>
+                <TextBlock TextWrapping="Wrap" Width="200" HorizontalAlignment="Left" Text="Пожалуйста, авторизируйтесь. Если вы тут впервые, прошу пройти регистрацию."
+                           FontSize="10" FontFamily="roboto" Foreground="#FF686F79" FontWeight="Light" Margin="5,0,0,10"/>
 
                     <Grid Margin="0,10">
                     <TextBox Name="LoginTextBox" Style="{StaticResource LoginWindowTextBoxStyle}"
