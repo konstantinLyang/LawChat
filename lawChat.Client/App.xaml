@@ -20,6 +20,7 @@
 
             </ResourceDictionary.MergedDictionaries>
             <converters:DateTimeToDateConverter x:Key="DateTimeToDateConverter" />
+            <converters:LastMessageDateTimeConverter x:Key="LastMessageDateTimeConverter" />
         </ResourceDictionary>
 
     </Application.Resources>

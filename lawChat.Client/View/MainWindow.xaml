@@ -109,16 +109,11 @@
                 <!--#region Contact Block-->
                 <Grid Grid.Row="1" Grid.Column="1" >
                     <Border Background="#FF191C21" Margin="0, 0,0.5,0.5">
-                        <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                        <ListView ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                  HorizontalContentAlignment="Stretch"
                                  Background="Transparent" SelectedItem="{Binding SelectedChat}"
-                                 BorderThickness="0" ItemsSource="{Binding SearchPanelSource}">
-                            <b:Interaction.Triggers>
-                                <b:EventTrigger EventName="MouseLeftButtonUp">
-                                    <b:InvokeCommandAction Command="{Binding ChangeCurrentChat}"/>
-                                </b:EventTrigger>
-                            </b:Interaction.Triggers>
-                            <ListBox.ItemTemplate>
+                                 BorderThickness="0" ItemsSource="{Binding SearchPanelSource, UpdateSourceTrigger=PropertyChanged}">
+                            <ListView.ItemTemplate>
                                 <DataTemplate>
                                     <Border BorderThickness="1" >
                                         <Border Margin="5">
@@ -133,19 +128,19 @@
                                                         </Ellipse>
                                                     </Canvas>
                                                     <StackPanel Margin="10, 0,0,0" VerticalAlignment="Center">
-                                                        <TextBlock Text="{Binding Title}" Foreground="White" FontSize="13" FontWeight="DemiBold"/>
-                                                        <TextBlock TextWrapping="Wrap" Text="{Binding LastMessage}" Foreground="#FFB8C0C3" Margin="0,5,0,0" FontWeight="Light" FontSize="13"/>
+                                                        <TextBlock Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" Foreground="White" FontSize="13" FontWeight="DemiBold"/>
+                                                        <TextBlock TextWrapping="Wrap" Text="{Binding LastMessage, UpdateSourceTrigger=PropertyChanged}" Foreground="#FFB8C0C3" Margin="0,5,0,0" FontWeight="Light" FontSize="13"/>
                                                     </StackPanel>
                                                 </StackPanel>
                                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                                    <TextBlock Margin="20, 5, 0, 0" Text="{Binding LastMessageDateTime}" Foreground="#FFB8C0C3" FontSize="13" FontWeight="Light"/>
+                                                    <TextBlock Margin="0, 5, 0, 0" Text="{Binding LastMessageDateTime, Converter={StaticResource LastMessageDateTimeConverter}, UpdateSourceTrigger=PropertyChanged}" Foreground="#FFB8C0C3" FontSize="13" FontWeight="Light"/>
                                                 </StackPanel>
                                             </Grid>
                                         </Border>
                                     </Border>
                                 </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
+                            </ListView.ItemTemplate>
+                        </ListView>
                     </Border>
                 </Grid>
                 <!--#endregion-->
@@ -166,17 +161,18 @@
                     </Grid.RowDefinitions>
 
                     <Border Background="#FF191C21" Margin="0.5, 0,0.5,0">
-                        <ListView Background="Transparent" BorderThickness="0" SelectionMode="Multiple" ItemsSource="{Binding SelectedChat.Messages}" VerticalAlignment="Bottom">
+                        <ListView ScrollViewer.CanContentScroll="True" HorizontalContentAlignment="Left" ScrollViewer.HorizontalScrollBarVisibility="Hidden" AllowDrop="True" ScrollViewer.ScrollChanged="ScrollViewer_OnScrollChanged"
+                                  Background="Transparent" BorderThickness="0" SelectionMode="Multiple" ItemsSource="{Binding SelectedChat.Messages}" VerticalAlignment="Bottom">
                             <ListView.ItemTemplate>
                                 <DataTemplate>
-                                    <Border CornerRadius="15" Background="#FF3D4A5D">
+                                    <Border Width="Auto" Height="Auto" CornerRadius="15" Background="#FF3D4A5D">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition/>
-                                                <ColumnDefinition/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
                                             </Grid.ColumnDefinitions>
                                             <TextBlock Margin="15,8,15,8" Grid.Column="0" Foreground="White" TextWrapping="Wrap" FontWeight="Normal" FontSize="14" Text="{Binding Text}"/>
-                                            <TextBlock Grid.Column="1" FontSize="12" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,3" Foreground="#FFB8C0C3" Text="{Binding CreateDate, Converter={StaticResource DateTimeToDateConverter}}"/>
+                                            <TextBlock Grid.Column="1" FontSize="12" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,14,3" Foreground="#FFB8C0C3" Text="{Binding CreateDate, Converter={StaticResource DateTimeToDateConverter}}"/>
                                         </Grid>
                                     </Border>
                                 </DataTemplate>

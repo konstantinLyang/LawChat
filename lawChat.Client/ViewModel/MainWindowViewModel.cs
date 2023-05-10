@@ -10,6 +10,7 @@ using lawChat.Client.Model;
 using lawChat.Client.Services;
 using lawChat.Client.ViewModel.Base;
 using lawChat.Server.Data.Model;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace lawChat.Client.ViewModel
 {
@@ -31,20 +32,13 @@ namespace lawChat.Client.ViewModel
             set => Set(ref _selectedChat, value);
         }
 
-        public Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
+        public Dispatcher Dispatcher = Dispatcher.CurrentDispatcher;
 
         private ObservableCollection<SearchPanelModel> _searchPanelSource;
         public ObservableCollection<SearchPanelModel> SearchPanelSource
         {
             get => _searchPanelSource;
             set => Set(ref _searchPanelSource, value);
-        }
-
-        private string _currentChatTextBox;
-        public string CurrentChatTextBox
-        {
-            get => _currentChatTextBox;
-            set => Set(ref _currentChatTextBox, value);
         }
 
         private string _currentMessageTextBox;
@@ -71,15 +65,17 @@ namespace lawChat.Client.ViewModel
                 SearchPanelSource.FirstOrDefault(x => x.RecipientId == SelectedChat.RecipientId)!.Messages.Add(new Message()
                 {
                     Text = CurrentMessageTextBox,
+                    CreateDate = DateTime.Now,
                 });
+
+                Dispatcher.Invoke(() =>
+                {
+                    SearchPanelSource.FirstOrDefault(x => x.RecipientId == SelectedChat.RecipientId)!.LastMessage = CurrentMessageTextBox;
+                    SearchPanelSource.FirstOrDefault(x => x.RecipientId == SelectedChat.RecipientId)!.LastMessageDateTime = DateTime.Now;
+                });
+                
                 CurrentMessageTextBox = "";
             }
-        }
-
-        private LambdaCommand _changeCurrentChat;
-        public ICommand ChangeCurrentChat => _changeCurrentChat ??= new(OnChangeCurrentChat);
-        private void OnChangeCurrentChat()
-        {
         }
 
         public MainWindowViewModel(IClientObject clientObject, IClientData clientData) : this()
@@ -97,19 +93,21 @@ namespace lawChat.Client.ViewModel
         {
             while (true)
             {
-                string a = "A";
                 string message = _clientObject.GetMessageFromServer();
 
                 int senderId = Convert.ToInt32(message.Split(';')[0]);
                 string text = message.Split(';')[1];
 
-                _dispatcher.Invoke(() =>
+                Dispatcher.Invoke(() =>
                 {
                     SearchPanelSource.FirstOrDefault(x => x.RecipientId == senderId)!.Messages.Add(new Message()
                     {
                         Text = text,
+                        CreateDate = DateTime.Now,
                     });
                 });
+                SearchPanelSource.FirstOrDefault(x => x.RecipientId == senderId)!.LastMessage = text;
+                SearchPanelSource.FirstOrDefault(x => x.RecipientId == senderId)!.LastMessageDateTime = DateTime.Now;
             }
         }
 

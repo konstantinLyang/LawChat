@@ -167,7 +167,7 @@ namespace lawChat.Server
                                 if (client != connectedClient && client.Id == recipient)
                                 {
                                     client.Socket.Send(
-                                        Encoding.Unicode.GetBytes(client.Id + ";" + messageText));
+                                        Encoding.Unicode.GetBytes(connectedClient.Id + ";" + messageText));
                                 }
                             }
                         }

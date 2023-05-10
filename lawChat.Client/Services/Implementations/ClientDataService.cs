@@ -28,13 +28,6 @@ namespace lawChat.Client.Services.Implementations
                 FriendList = context.Clients.ToList();
             }
         }
-        public string GetLastMessage(int chatId)
-        {
-            using (var context = new LawChatDbContext())
-            {
-                return context.Messages.LastOrDefault(x => x.Chat.Id == chatId).Text;
-            }
-        }
         public void GetChatList()
         {
             Task.Factory.StartNew(() =>

@@ -47,27 +47,63 @@ namespace lawChat.Client.Services.Implementations
             
             _loginWindow?.Close();
 
-            _mainWindowViewModel._dispatcher.Invoke(() =>
+            _mainWindowViewModel.Dispatcher.Invoke(() =>
             {
                 foreach (var friend in _clientData.FriendList)
                 {
+                    var messages = GetMessages(_clientData.UserData.Id,
+                        _clientData.FriendList.FirstOrDefault(x => x.NickName == friend.NickName).Id);
                     if (friend.NickName == _clientData.UserData.NickName)
                     {
-                        _mainWindowViewModel.SearchPanelSource.Add(new()
+                        if (messages.Count != 0)
                         {
-                            Title = "Избранное",
-                            RecipientId = _clientData.FriendList.FirstOrDefault(x => x.NickName == friend.NickName).Id,
-                            Messages = GetMessages(_clientData.UserData.Id, _clientData.FriendList.FirstOrDefault(x => x.NickName == friend.NickName).Id)
-                        });
+                            _mainWindowViewModel.SearchPanelSource.Add(new()
+                            {
+                                Title = "Избранное",
+                                RecipientId = _clientData.FriendList.FirstOrDefault(x => x.NickName == friend.NickName).Id,
+                                Messages = messages,
+                                LastMessage = messages.Last().Text,
+                                LastMessageDateTime = messages.Last().CreateDate
+
+                            });
+                        }
+                        else
+                        {
+                            _mainWindowViewModel.SearchPanelSource.Add(new()
+                            {
+                                Title = "Избранное",
+                                RecipientId = _clientData.FriendList.FirstOrDefault(x => x.NickName == friend.NickName).Id,
+                                Messages = messages,
+                                LastMessage = "...",
+                                LastMessageDateTime = null
+
+                            });
+                        }
                     }
                     else
                     {
-                        _mainWindowViewModel.SearchPanelSource.Add(new()
+                        if (messages.Count != 0)
                         {
-                            Title = friend.NickName,
-                            RecipientId = _clientData.FriendList.FirstOrDefault(x => x.NickName == friend.NickName).Id,
-                            Messages = GetMessages(_clientData.UserData.Id, _clientData.FriendList.FirstOrDefault(x => x.NickName == friend.NickName).Id)
-                        });
+                            _mainWindowViewModel.SearchPanelSource.Add(new()
+                            {
+                                Title = friend.NickName,
+                                RecipientId = _clientData.FriendList.FirstOrDefault(x => x.NickName == friend.NickName).Id,
+                                Messages = messages,
+                                LastMessage = messages.Last().Text,
+                                LastMessageDateTime = messages.Last().CreateDate
+                            });
+                        }
+                        else
+                        {
+                            _mainWindowViewModel.SearchPanelSource.Add(new()
+                            {
+                                Title = friend.NickName,
+                                RecipientId = _clientData.FriendList.FirstOrDefault(x => x.NickName == friend.NickName).Id,
+                                Messages = messages,
+                                LastMessage = "...",
+                                LastMessageDateTime = null
+                            });
+                        }
                     }
                 }
                 _mainWindowViewModel.Chats = _clientData.ChatList;

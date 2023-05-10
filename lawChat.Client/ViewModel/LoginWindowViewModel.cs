@@ -11,7 +11,7 @@ namespace lawChat.Client.ViewModel
 {
     internal class LoginWindowViewModel : ViewModelBase
     {
-        Dispatcher dispatcher = Dispatcher.CurrentDispatcher;
+        Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
 
         private readonly IClientObject _clientObject;
         private readonly IUserDialog _userDialog;
@@ -85,18 +85,18 @@ namespace lawChat.Client.ViewModel
 
                     string result = _clientObject.OpenConnection(LoginTextBox, PasswordTextBox);
 
-                    dispatcher.Invoke(() => { BorderBrush = new SolidColorBrush(Color.FromArgb(255, 171, 173, 173)); });
+                    _dispatcher.Invoke(() => { BorderBrush = new SolidColorBrush(Color.FromArgb(255, 171, 173, 173)); });
 
                     if (result.Contains("successful connection"))
                     {
-                        dispatcher.Invoke(() =>
+                        _dispatcher.Invoke(() =>
                         {
                             _userDialog.ShowMainWindow();
                         });
                     }
                     else if(result == "incorrect user data")
                     {
-                        dispatcher.Invoke(() =>
+                        _dispatcher.Invoke(() =>
                         {
                             LoadingIconVisible = Visibility.Hidden;
                             InfoTextBlockVisibility = Visibility.Visible;
@@ -112,7 +112,7 @@ namespace lawChat.Client.ViewModel
                     }
                     else if(result == "user not found")
                     {
-                        dispatcher.Invoke(() =>
+                        _dispatcher.Invoke(() =>
                         {
                             LoadingIconVisible = Visibility.Hidden;
                             ForegroundInfoTextBlock = new SolidColorBrush(Color.FromArgb(255, 255, 88, 88));
@@ -125,7 +125,7 @@ namespace lawChat.Client.ViewModel
                     }
                     else
                     {
-                        dispatcher.Invoke(() =>
+                        _dispatcher.Invoke(() =>
                         {
                             LoadingIconVisible = Visibility.Hidden;
                             ForegroundInfoTextBlock = new SolidColorBrush(Color.FromArgb(255, 255, 88,88));

@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace lawChat.Client.View
@@ -76,6 +78,15 @@ namespace lawChat.Client.View
                     this.Height = MinHeight;
                 }
                 DragMove();
+            }
+        }
+
+        private void ScrollViewer_OnScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            if (e.OriginalSource is ScrollViewer scrollViewer &&
+                Math.Abs(e.ExtentHeightChange) > 0.0)
+            {
+                scrollViewer.ScrollToBottom();
             }
         }
     }
