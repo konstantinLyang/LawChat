@@ -15,6 +15,9 @@
 
                 <ResourceDictionary Source="/Assets/Style/MessageBox.xaml"/>
                 <ResourceDictionary Source="/Assets/Style/BorderTextBox.xaml"/>
+                <ResourceDictionary Source="/Assets/Style/LoginWindow/LoginWindowtextBox.xaml"/>
+                <ResourceDictionary Source="/Assets/Style/LoginWindow/LoginWindowButton.xaml"/>
+
             </ResourceDictionary.MergedDictionaries>
             <converters:DateTimeToDateConverter x:Key="DateTimeToDateConverter" />
         </ResourceDictionary>

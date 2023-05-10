@@ -18,8 +18,23 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\lawChat.Database\lawChat.API.csproj" />
     <ProjectReference Include="..\lawChat.Server\lawChat.Server.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Assets\Style\LoginWindow\LoginWindowButton.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Assets\Style\LoginWindow\LoginWindowTextBox.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Assets\Style\MainWindow\" />
+    <Folder Include="Assets\Style\GeneralWindow\" />
   </ItemGroup>
 
 </Project>
