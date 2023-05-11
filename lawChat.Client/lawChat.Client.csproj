@@ -8,18 +8,33 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Model\**" />
-    <Compile Remove="ViewModel\**" />
-    <Compile Remove="View\**" />
-    <EmbeddedResource Remove="Model\**" />
-    <EmbeddedResource Remove="ViewModel\**" />
-    <EmbeddedResource Remove="View\**" />
-    <None Remove="Model\**" />
-    <None Remove="ViewModel\**" />
-    <None Remove="View\**" />
-    <Page Remove="Model\**" />
-    <Page Remove="ViewModel\**" />
-    <Page Remove="View\**" />
+    <PackageReference Include="FontAwesome.WPF" Version="4.7.0.9" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
+    <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.3" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="WpfScreenHelper" Version="2.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\lawChat.Server\lawChat.Server.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Assets\Style\LoginWindow\LoginWindowButton.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Assets\Style\LoginWindow\LoginWindowTextBox.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Assets\Style\MainWindow\" />
+    <Folder Include="Assets\Style\GeneralWindow\" />
   </ItemGroup>
 
 </Project>

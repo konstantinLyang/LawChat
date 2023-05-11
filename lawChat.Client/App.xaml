@@ -2,8 +2,26 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:lawChat.Client"
-             StartupUri="MainWindow.xaml">
+             xmlns:converters="clr-namespace:lawChat.Client.Assets.Converters">
     <Application.Resources>
-         
+
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Assets/Style/TitleBarIconButton.xaml"/>
+                <ResourceDictionary Source="/Assets/Style/TitleBarIcon.xaml"/>
+
+                <ResourceDictionary Source="/Assets/Style/WindowIconButton.xaml"/>
+                <ResourceDictionary Source="/Assets/Style/WindowIcon.xaml"/>
+
+                <ResourceDictionary Source="/Assets/Style/MessageBox.xaml"/>
+                <ResourceDictionary Source="/Assets/Style/BorderTextBox.xaml"/>
+                <ResourceDictionary Source="/Assets/Style/LoginWindow/LoginWindowtextBox.xaml"/>
+                <ResourceDictionary Source="/Assets/Style/LoginWindow/LoginWindowButton.xaml"/>
+
+            </ResourceDictionary.MergedDictionaries>
+            <converters:DateTimeToDateConverter x:Key="DateTimeToDateConverter" />
+            <converters:LastMessageDateTimeConverter x:Key="LastMessageDateTimeConverter" />
+        </ResourceDictionary>
+
     </Application.Resources>
 </Application>
