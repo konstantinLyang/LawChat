@@ -11,23 +11,20 @@
         </Setter>
     </Style>
     <SolidColorBrush x:Key="Button.Static.Background" Color="#FF506681"/>
-    <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#FFBEE6FD"/>
-    <SolidColorBrush x:Key="Button.MouseOver.Border" Color="#FF3C7FB1"/>
-    <SolidColorBrush x:Key="Button.Pressed.Background" Color="#FFC4E5F6"/>
-    <SolidColorBrush x:Key="Button.Pressed.Border" Color="#FF2C628B"/>
+    <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#FF586F8A"/>
+    <SolidColorBrush x:Key="Button.Pressed.Background" Color="#FF58718E"/>
     <SolidColorBrush x:Key="Button.Disabled.Background" Color="#FFF4F4F4"/>
-    <SolidColorBrush x:Key="Button.Disabled.Border" Color="#FFADB2B5"/>
     <SolidColorBrush x:Key="Button.Disabled.Foreground" Color="#FF838383"/>
     <Style TargetType="{x:Type Button}" x:Key="LoginWindowButtonStyle">
         <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
         <Setter Property="Background" Value="{StaticResource Button.Static.Background}"/>
         <Setter Property="BorderBrush" Value="{x:Null}"/>
         <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="Height" Value="40"/>
+        <Setter Property="Height" Value="44"/>
         <Setter Property="FontFamily" Value="roboto"/>
         <Setter Property="FontSize" Value="15"/>
         <Setter Property="Foreground" Value="White"/>
-        <Setter Property="Margin" Value="0, 20"/>
+        <Setter Property="Margin" Value="0, 35"/>
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="Padding" Value="1"/>
