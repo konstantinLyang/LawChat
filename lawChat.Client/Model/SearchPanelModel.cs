@@ -28,7 +28,7 @@ namespace lawChat.Client.Model
             set => Set(ref _lastMessageDateTime, value);
         }
 
-        public ObservableCollection<Message> Messages { get; set; }
+        public ObservableCollection<ProcessedMessage> Messages { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null!) =>

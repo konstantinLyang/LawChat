@@ -21,7 +21,6 @@
             </ResourceDictionary.MergedDictionaries>
             <converters:DateTimeToDateConverter x:Key="DateTimeToDateConverter" />
             <converters:LastMessageDateTimeConverter x:Key="LastMessageDateTimeConverter" />
-            <converters:HorizontalAlignmentMessageConverter x:Key="HorizontalAlignmentMessageConverter" />
         </ResourceDictionary>
 
     </Application.Resources>

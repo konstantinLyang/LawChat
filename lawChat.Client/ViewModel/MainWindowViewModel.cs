@@ -62,7 +62,7 @@ namespace lawChat.Client.ViewModel
             if (!string.IsNullOrEmpty(CurrentMessageTextBox) && SelectedChat != null)
             {
                 _clientObject.SendPrivateTextMessage(SelectedChat.RecipientId, CurrentMessageTextBox);
-                SearchPanelSource.FirstOrDefault(x => x.RecipientId == SelectedChat.RecipientId)!.Messages.Add(new Message()
+                SearchPanelSource.FirstOrDefault(x => x.RecipientId == SelectedChat.RecipientId)!.Messages.Add(new ProcessedMessage()
                 {
                     Text = CurrentMessageTextBox,
                     CreateDate = DateTime.Now,
@@ -100,7 +100,7 @@ namespace lawChat.Client.ViewModel
 
                 Dispatcher.Invoke(() =>
                 {
-                    SearchPanelSource.FirstOrDefault(x => x.RecipientId == senderId)!.Messages.Add(new Message()
+                    SearchPanelSource.FirstOrDefault(x => x.RecipientId == senderId)!.Messages.Add(new ProcessedMessage()
                     {
                         Text = text,
                         CreateDate = DateTime.Now,

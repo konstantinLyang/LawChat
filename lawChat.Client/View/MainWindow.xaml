@@ -164,7 +164,7 @@
                                   Background="Transparent" BorderThickness="0" SelectionMode="Multiple" ItemsSource="{Binding SelectedChat.Messages}" VerticalAlignment="Bottom">
                             <ListView.ItemTemplate>
                                 <DataTemplate>
-                                    <Border HorizontalAlignment="{Binding Path=RecipientId, Converter={StaticResource HorizontalAlignmentMessageConverter}, ConverterParameter={Binding RecipientId}}"  CornerRadius="15"  Background="#FF3D4A5D">
+                                    <Border>
                                         <Grid>
                                             <Grid.RowDefinitions>
                                                 <RowDefinition/>
@@ -173,6 +173,22 @@
                                             <TextBlock MaxWidth="450" Margin="15,8,15,0" Grid.Column="0" Foreground="White" TextWrapping="Wrap" FontWeight="Normal" FontSize="14" Text="{Binding Text}"/>
                                             <TextBlock Grid.Row="1" FontSize="12" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="50,0,14,3" Foreground="#FFB8C0C3" Text="{Binding CreateDate, Converter={StaticResource DateTimeToDateConverter}}"/>
                                         </Grid>
+                                        <Border.Style>
+                                            <Style TargetType="{x:Type Border}">
+                                                <Setter Property="Background" Value="#FF3D4A5D"/>
+                                                <Setter Property="CornerRadius" Value="15"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsReceivedMessage}" Value="True">
+                                                        <Setter Property="HorizontalAlignment" Value="Right"/>
+                                                        <Setter Property="Background" Value="#464695"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding IsReceivedMessage}" Value="False">
+                                                        <Setter Property="HorizontalAlignment" Value="Left"/>
+                                                        <Setter Property="Background" Value="#32323E"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
                                     </Border>
                                 </DataTemplate>
                             </ListView.ItemTemplate>

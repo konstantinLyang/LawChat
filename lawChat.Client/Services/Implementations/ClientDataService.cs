@@ -8,9 +8,9 @@ namespace lawChat.Client.Services.Implementations
 {
     public class ClientDataService : IClientData
     {
-        public Server.Data.Model.User UserData { get; set; } = new();
+        public User UserData { get; set; } = new();
         public List<Chat>? ChatList { get; set; } = new();
-        public List<Server.Data.Model.User>? FriendList { get; set; } = new();
+        public List<User>? FriendList { get; set; } = new();
         public void GetUserData(string login, string password)
         {
             Task.Factory.StartNew(() =>

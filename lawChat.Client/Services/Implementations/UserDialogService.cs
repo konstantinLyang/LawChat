@@ -2,6 +2,8 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Threading;
+using lawChat.Client.Model;
 using lawChat.Client.View;
 using lawChat.Client.ViewModel;
 using lawChat.Server.Data;
@@ -111,9 +113,9 @@ namespace lawChat.Client.Services.Implementations
 
             _mainWindowViewModel.UserNameTextBlock = _clientData.UserData?.NickName;
 
-            ObservableCollection<Message> GetMessages(int sender, int recipient)
+            ObservableCollection<ProcessedMessage> GetMessages(int sender, int recipient)
             {
-                ObservableCollection<Message> result = new();
+                ObservableCollection<ProcessedMessage> result = new();
 
                 using (var context = new LawChatDbContext())
                 {
@@ -121,14 +123,37 @@ namespace lawChat.Client.Services.Implementations
                     {
                         try
                         {
-                            if (message.RecipientId == recipient && message.SenderId == sender) result.Add(message);
-                            if (message.RecipientId == sender && message.SenderId == recipient) result.Add(message);
+                            if (message.RecipientId == recipient && message.SenderId == sender)
+                                result.Add(new ProcessedMessage()
+                                {
+                                    CreateDate = message.CreateDate,
+                                    Id = message.Id,
+                                    Text = message.Text,
+                                    IsReceivedMessage = IsReceivedMessage(message.SenderId)
+                                });
+                            if (message.RecipientId == sender && message.SenderId == recipient)
+                                result.Add(new ProcessedMessage()
+                                {
+                                    CreateDate = message.CreateDate,
+                                    Id = message.Id,
+                                    Text = message.Text,
+                                    IsReceivedMessage = IsReceivedMessage(message.SenderId)
+                                });
                         }
-                        catch {}
+                        catch
+                        {
+                            throw new Exception();
+                        }
                     }
                 }
 
                 return result;
+            }
+
+            bool IsReceivedMessage(int sender)
+            {
+                if(_clientData.UserData.Id == sender) return true;
+                return false;
             }
 
             _mainWindow.Show();
