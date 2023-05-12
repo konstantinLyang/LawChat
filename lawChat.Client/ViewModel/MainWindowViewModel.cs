@@ -66,6 +66,7 @@ namespace lawChat.Client.ViewModel
                 {
                     Text = CurrentMessageTextBox,
                     CreateDate = DateTime.Now,
+                    IsReceivedMessage = false
                 });
 
                 Dispatcher.Invoke(() =>
@@ -104,6 +105,7 @@ namespace lawChat.Client.ViewModel
                     {
                         Text = text,
                         CreateDate = DateTime.Now,
+                        IsReceivedMessage = true
                     });
                 });
                 SearchPanelSource.FirstOrDefault(x => x.RecipientId == senderId)!.LastMessage = text;
