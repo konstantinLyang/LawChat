@@ -1,14 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text;
+using System.Threading;
 using System.Windows;
-using System.Windows.Threading;
 using lawChat.Client.Model;
 using lawChat.Client.View;
 using lawChat.Client.ViewModel;
 using lawChat.Server.Data;
 using lawChat.Server.Data.Model;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 
 namespace lawChat.Client.Services.Implementations
 {
@@ -16,9 +19,13 @@ namespace lawChat.Client.Services.Implementations
     {
         private readonly IServiceProvider _services;
         private readonly IClientData _clientData;
-        public UserDialogService(IServiceProvider services, IClientData clientData)
+        private readonly IClientObject _clientObject;
+
+        public UserDialogService(IServiceProvider services, IClientData clientData, IClientObject clientObject)
         {
             _services = services;
+            _clientData = clientData;
+            _clientObject = clientObject;
             _clientData = clientData;
         }
 
@@ -35,8 +42,13 @@ namespace lawChat.Client.Services.Implementations
 
         public void ShowMainWindow()
         {
-            _clientData.GetFriendList();
-            _clientData.GetChatList();
+            _clientObject.SendServerCommandMessage("getdialoglist;");
+
+            _clientData.CommandServerReceivedHandler(_clientObject.GetMessageFromServer());
+
+            _clientObject.SendServerCommandMessage("getuserdata;");
+
+            _clientData.CommandServerReceivedHandler(_clientObject.GetMessageFromServer());
 
             if (_mainWindow is { } mainWindow)
             {
@@ -46,23 +58,21 @@ namespace lawChat.Client.Services.Implementations
             mainWindow = _services.GetRequiredService<MainWindow>();
             _mainWindowViewModel = _services.GetRequiredService<MainWindowViewModel>();
             _mainWindow = mainWindow;
-            
-            _loginWindow?.Close();
 
             _mainWindowViewModel.Dispatcher.Invoke(() =>
             {
                 foreach (var friend in _clientData.FriendList)
                 {
-                    var messages = GetMessages(_clientData.UserData.Id,
-                        _clientData.FriendList.FirstOrDefault(x => x.NickName == friend.NickName).Id);
-                    if (friend.NickName == _clientData.UserData.NickName)
+                    var messages = GetMessages(_clientData.UserData.Id, friend.Id);
+
+                    if (friend.Id == _clientData.UserData.Id)
                     {
                         if (messages.Count != 0)
                         {
                             _mainWindowViewModel.SearchPanelSource.Add(new()
                             {
                                 Title = "Избранное",
-                                RecipientId = _clientData.FriendList.FirstOrDefault(x => x.NickName == friend.NickName).Id,
+                                RecipientId = friend.Id,
                                 Messages = messages,
                                 LastMessage = messages.Last().Text,
                                 LastMessageDateTime = messages.Last().CreateDate
@@ -74,7 +84,7 @@ namespace lawChat.Client.Services.Implementations
                             _mainWindowViewModel.SearchPanelSource.Add(new()
                             {
                                 Title = "Избранное",
-                                RecipientId = _clientData.FriendList.FirstOrDefault(x => x.NickName == friend.NickName).Id,
+                                RecipientId = friend.Id,
                                 Messages = messages,
                                 LastMessage = "...",
                                 LastMessageDateTime = null
@@ -89,7 +99,7 @@ namespace lawChat.Client.Services.Implementations
                             _mainWindowViewModel.SearchPanelSource.Add(new()
                             {
                                 Title = friend.NickName,
-                                RecipientId = _clientData.FriendList.FirstOrDefault(x => x.NickName == friend.NickName).Id,
+                                RecipientId = friend.Id,
                                 Messages = messages,
                                 LastMessage = messages.Last().Text,
                                 LastMessageDateTime = messages.Last().CreateDate
@@ -100,7 +110,7 @@ namespace lawChat.Client.Services.Implementations
                             _mainWindowViewModel.SearchPanelSource.Add(new()
                             {
                                 Title = friend.NickName,
-                                RecipientId = _clientData.FriendList.FirstOrDefault(x => x.NickName == friend.NickName).Id,
+                                RecipientId = friend.Id,
                                 Messages = messages,
                                 LastMessage = "...",
                                 LastMessageDateTime = null
@@ -117,9 +127,14 @@ namespace lawChat.Client.Services.Implementations
             {
                 ObservableCollection<ProcessedMessage> result = new();
 
-                using (var context = new LawChatDbContext())
-                {
-                    foreach (var message in context.Messages)
+                _clientObject.SendServerCommandMessage($"getmessages;{sender};{recipient}");
+
+                string a = _clientObject.GetMessageFromServer();
+
+                var messages = JsonConvert.DeserializeObject<List<Message>>(a.Split(';')[2]);
+
+                if (messages != null)
+                    foreach (var message in messages)
                     {
                         try
                         {
@@ -145,16 +160,21 @@ namespace lawChat.Client.Services.Implementations
                             throw new Exception();
                         }
                     }
-                }
 
                 return result;
             }
 
             bool IsReceivedMessage(int sender)
             {
-                if(_clientData.UserData.Id == sender) return true;
-                return false;
+                if(_clientData.UserData.Id == sender) return false;
+                return true;
             }
+
+            _loginWindow?.Close();
+
+            Thread listener = new Thread(_mainWindowViewModel.StartListener);
+
+            listener.Start();
 
             _mainWindow.Show();
         }

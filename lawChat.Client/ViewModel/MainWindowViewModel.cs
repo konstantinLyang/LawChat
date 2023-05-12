@@ -10,7 +10,6 @@ using lawChat.Client.Model;
 using lawChat.Client.Services;
 using lawChat.Client.ViewModel.Base;
 using lawChat.Server.Data.Model;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace lawChat.Client.ViewModel
 {
@@ -34,7 +33,7 @@ namespace lawChat.Client.ViewModel
 
         public Dispatcher Dispatcher = Dispatcher.CurrentDispatcher;
 
-        private ObservableCollection<SearchPanelModel> _searchPanelSource;
+        private ObservableCollection<SearchPanelModel> _searchPanelSource = new();
         public ObservableCollection<SearchPanelModel> SearchPanelSource
         {
             get => _searchPanelSource;
@@ -66,6 +65,7 @@ namespace lawChat.Client.ViewModel
                 {
                     Text = CurrentMessageTextBox,
                     CreateDate = DateTime.Now,
+                    IsReceivedMessage = false
                 });
 
                 Dispatcher.Invoke(() =>
@@ -81,33 +81,31 @@ namespace lawChat.Client.ViewModel
         public MainWindowViewModel(IClientObject clientObject, IClientData clientData) : this()
         {
             _clientObject = clientObject;
-
-            SearchPanelSource = new();
-
-            Thread listener = new Thread(StartListener);
-
-            listener.Start();
         }
 
-        private void StartListener()
+        public void StartListener()
         {
             while (true)
             {
                 string message = _clientObject.GetMessageFromServer();
 
-                int senderId = Convert.ToInt32(message.Split(';')[0]);
-                string text = message.Split(';')[1];
-
-                Dispatcher.Invoke(() =>
+                if (message.Split(';')[0] != "command" && !string.IsNullOrEmpty(message))
                 {
-                    SearchPanelSource.FirstOrDefault(x => x.RecipientId == senderId)!.Messages.Add(new ProcessedMessage()
+                    int senderId = Convert.ToInt32(message.Split(';')[0]);
+                    string text = message.Split(';')[1];
+
+                    Dispatcher.Invoke(() =>
                     {
-                        Text = text,
-                        CreateDate = DateTime.Now,
+                        SearchPanelSource.FirstOrDefault(x => x.RecipientId == senderId)!.Messages.Add(new ProcessedMessage()
+                        {
+                            Text = text,
+                            CreateDate = DateTime.Now,
+                            IsReceivedMessage = true
+                        });
                     });
-                });
-                SearchPanelSource.FirstOrDefault(x => x.RecipientId == senderId)!.LastMessage = text;
-                SearchPanelSource.FirstOrDefault(x => x.RecipientId == senderId)!.LastMessageDateTime = DateTime.Now;
+                    SearchPanelSource.FirstOrDefault(x => x.RecipientId == senderId)!.LastMessage = text;
+                    SearchPanelSource.FirstOrDefault(x => x.RecipientId == senderId)!.LastMessageDateTime = DateTime.Now;
+                }
             }
         }
 

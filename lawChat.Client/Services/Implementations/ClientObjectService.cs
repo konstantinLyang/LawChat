@@ -34,40 +34,27 @@ namespace lawChat.Client.Services.Implementations
         }
         private string Authorization(string login, string password)
         {
-            _clientSocket.Send(Encoding.Unicode.GetBytes($"{login};{password};"));
-
-            var serverBuffer = new byte[4026];
-
-            var serverSize = _clientSocket.Receive(serverBuffer);
-
-            string result = Encoding.Unicode.GetString(serverBuffer, 0, serverSize);
-
-            if(result.Contains("successful connection")) _clientData.GetUserData(login, password);
-
-            return result;
+            _clientSocket.Send(Encoding.UTF8.GetBytes($"{login};{password};"));
+            
+            return GetMessageFromServer();
         }
-        public async void SendTextMessage(int chatId, string message)
+        public void SendPrivateTextMessage(int recipient, string message)
         {
-            await Task.Factory.StartNew(() => { _clientSocket.Send(Encoding.Unicode.GetBytes($"message|CHAT;TYPE|text;{chatId};{message};")); });
+            _clientSocket.Send(Encoding.UTF8.GetBytes($"message;PRIVATE;text;{recipient};{message};"));
         }
-        public async void SendPrivateTextMessage(int recipient, string message)
+        public void SendServerCommandMessage(string commandMessage)
         {
-            await Task.Factory.StartNew(() => { _clientSocket.Send(Encoding.Unicode.GetBytes($"message|PRIVATE;TYPE|text;{recipient};{message};")); });
+            _clientSocket.Send(Encoding.UTF8.GetBytes($"command;{commandMessage}"));
         }
         public string GetMessageFromServer()
         {
-            var serverBuffer = new byte[4026];
+            var serverBuffer = new byte[180000];
 
             var serverSize = _clientSocket.Receive(serverBuffer);
 
-            string result = Encoding.Unicode.GetString(serverBuffer, 0, serverSize);
+            string result = Encoding.UTF8.GetString(serverBuffer, 0, serverSize);
 
-            if (!result.Contains("speccommand"))
-            {
-                return Encoding.Unicode.GetString(serverBuffer, 0, serverSize);
-            }
-
-            return "gaose12h3ksafhai82t";
+            return result;
         }
     }
 }

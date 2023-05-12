@@ -178,11 +178,11 @@
                                                 <Setter Property="Background" Value="#FF3D4A5D"/>
                                                 <Setter Property="CornerRadius" Value="15"/>
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsReceivedMessage}" Value="True">
+                                                    <DataTrigger Binding="{Binding IsReceivedMessage}" Value="False">
                                                         <Setter Property="HorizontalAlignment" Value="Right"/>
                                                         <Setter Property="Background" Value="#464695"/>
                                                     </DataTrigger>
-                                                    <DataTrigger Binding="{Binding IsReceivedMessage}" Value="False">
+                                                    <DataTrigger Binding="{Binding IsReceivedMessage}" Value="True">
                                                         <Setter Property="HorizontalAlignment" Value="Left"/>
                                                         <Setter Property="Background" Value="#32323E"/>
                                                     </DataTrigger>

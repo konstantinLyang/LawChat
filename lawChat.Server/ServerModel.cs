@@ -3,6 +3,9 @@ using System.Net;
 using lawChat.Server.ServerData.Model;
 using System.Text;
 using lawChat.Server.Data;
+using Newtonsoft.Json;
+using lawChat.Server.Data.Model;
+using System.Reflection;
 
 namespace lawChat.Server
 {
@@ -54,7 +57,7 @@ namespace lawChat.Server
 
                 size = connectedClient.Socket.Receive(buffer);
 
-                if (Authorization(receiveMessage.Append(Encoding.Unicode.GetString(buffer, 0, size)).ToString(), connectedClient))
+                if (Authorization(receiveMessage.Append(Encoding.UTF8.GetString(buffer, 0, size)).ToString(), connectedClient))
                 {
                     MessagesHandler(connectedClient);
                 }
@@ -79,13 +82,13 @@ namespace lawChat.Server
 
                         Console.WriteLine($"[{DateTime.Now:dd.MM.yyyy HH:mm}] " + user.NickName + ": подключился");
 
-                        connectedClient.Socket.Send(Encoding.Unicode.GetBytes("successful connection;"));
+                        connectedClient.Socket.Send(Encoding.UTF8.GetBytes("successful connection;"));
 
                         return true;
                     }
                     else
                     {
-                        connectedClient.Socket.Send(Encoding.Unicode.GetBytes("incorrect user data"));
+                        connectedClient.Socket.Send(Encoding.UTF8.GetBytes("incorrect user data"));
 
                         connectedClient.Socket.Shutdown(SocketShutdown.Both);
                         connectedClient.Socket.Close();
@@ -97,7 +100,7 @@ namespace lawChat.Server
                 }
                 else
                 {
-                    connectedClient.Socket.Send(Encoding.Unicode.GetBytes("user not found"));
+                    connectedClient.Socket.Send(Encoding.UTF8.GetBytes("user not found"));
 
                     connectedClient.Socket.Shutdown(SocketShutdown.Both);
                     connectedClient.Socket.Close();
@@ -109,7 +112,7 @@ namespace lawChat.Server
             }
             catch(Exception ex)
             {
-                connectedClient.Socket.Send(Encoding.Unicode.GetBytes("user not found"));
+                connectedClient.Socket.Send(Encoding.UTF8.GetBytes("user not found"));
 
                 connectedClient.Socket.Shutdown(SocketShutdown.Both);
                 connectedClient.Socket.Close();
@@ -128,11 +131,11 @@ namespace lawChat.Server
                 {
                     byte[] buffer = new byte[4026];
                     int size = connectedClient.Socket.Receive(buffer);
-                    var receiveMessage = new StringBuilder(Encoding.Unicode.GetString(buffer, 0, size));
+                    var receiveMessage = new StringBuilder(Encoding.UTF8.GetString(buffer, 0, size));
 
-                    if (receiveMessage.ToString().Contains("message"))
+                    if (receiveMessage.ToString().Split(';')[0] == "message")
                     {
-                        if (receiveMessage.ToString().Contains("PRIVATE"))
+                        if (receiveMessage.ToString().Split(';')[1] == ("PRIVATE"))
                         {
                             SendPrivateMessage();
                         }
@@ -141,13 +144,50 @@ namespace lawChat.Server
                             SendChatMessage();
                         }
                     }
+                    else if (receiveMessage.ToString().Split(';')[0] == "command")
+                    {
+                        string asasd = receiveMessage.ToString().Split(';')[1];
+
+                        if (receiveMessage.ToString().Split(';')[1] == "getuserdata")
+                        {
+                            var a = JsonConvert.SerializeObject(
+                                _context.Clients.FirstOrDefault(x => x.Id == connectedClient.Id));
+                            connectedClient.Socket.Send(Encoding.UTF8.GetBytes($"command;userdata;{a}"));
+                        }
+                        else if (receiveMessage.ToString().Split(';')[1] == "getdialoglist")
+                        {
+                            connectedClient.Socket.Send(Encoding.UTF8.GetBytes("command;dialogresult;" + JsonConvert.SerializeObject(_context.Clients)));
+                        }
+                        else if (receiveMessage.ToString().Split(';')[1] == "getmessages")
+                        {
+                            List<Message> resultMessages = new();
+
+                            foreach (var message in _context.Messages)
+                            {
+                                try
+                                {
+                                    if (message.RecipientId == Convert.ToInt32(receiveMessage.ToString().Split(';')[3]) && message.SenderId == Convert.ToInt32(receiveMessage.ToString().Split(';')[2]))
+                                        resultMessages.Add(message);
+                                    if (message.RecipientId == Convert.ToInt32(receiveMessage.ToString().Split(';')[2]) && message.SenderId == Convert.ToInt32(receiveMessage.ToString().Split(';')[3]))
+                                        resultMessages.Add(message);
+                                }
+                                catch
+                                {
+                                    throw new Exception();
+                                }
+                            }
+
+                            connectedClient.Socket.Send(Encoding.UTF8.GetBytes("command;messages;" + JsonConvert.SerializeObject(resultMessages)));
+                        }
+                    }
 
                     void SendPrivateMessage()
                     {
-                        string messageType = receiveMessage.ToString().Split(';')[0];
-                        string typeType = receiveMessage.ToString().Split(';')[1];
-                        int recipient = Convert.ToInt32(receiveMessage.ToString().Split(';')[2]);
-                        string messageText = receiveMessage.ToString().Split(';')[3];
+                        string command = receiveMessage.ToString().Split(';')[0];
+                        string messageType = receiveMessage.ToString().Split(';')[1];
+                        string dataType = receiveMessage.ToString().Split(';')[2];
+                        int recipient = Convert.ToInt32(receiveMessage.ToString().Split(';')[3]);
+                        string messageText = receiveMessage.ToString().Split(';')[4];
 
                         Console.WriteLine(connectedClient.NickName + ": " + messageText);
 
@@ -162,23 +202,23 @@ namespace lawChat.Server
 
                         foreach (var client in Users)
                         {
-                            if (typeType == "TYPE|text")
+                            if (dataType == "text")
                             {
                                 if (client != connectedClient && client.Id == recipient)
                                 {
                                     client.Socket.Send(
-                                        Encoding.Unicode.GetBytes(connectedClient.Id + ";" + messageText));
+                                        Encoding.UTF8.GetBytes(connectedClient.Id + ";" + messageText));
                                 }
                             }
                         }
                     }
-
                     void SendChatMessage()
                     {
-                        string messageType = receiveMessage.ToString().Split(';')[0];
-                        string typeType = receiveMessage.ToString().Split(';')[1];
-                        int chatId = Convert.ToInt32(receiveMessage.ToString().Split(';')[2]);
-                        string messageText = receiveMessage.ToString().Split(';')[3];
+                        string command = receiveMessage.ToString().Split(';')[0];
+                        string messageType = receiveMessage.ToString().Split(';')[1];
+                        string dataType = receiveMessage.ToString().Split(';')[2];
+                        int chatId = Convert.ToInt32(receiveMessage.ToString().Split(';')[3]);
+                        string messageText = receiveMessage.ToString().Split(';')[4];
 
                         Console.WriteLine(connectedClient.NickName + ": " + messageText);
 
@@ -192,18 +232,22 @@ namespace lawChat.Server
 
                         foreach (var client in Users)
                         {
-                            if (typeType == "TYPE|text")
+                            if (dataType == "text")
                             {
                                 if (client != connectedClient && client.Id == chatId)
                                 {
-                                    client.Socket.Send(Encoding.Unicode.GetBytes(client.NickName + ": " + messageText));
+                                    client.Socket.Send(Encoding.UTF8.GetBytes(client.NickName + ": " + messageText));
                                 }
                                 else if (chatId == 0 && client.Id == chatId)
                                 {
-                                    client.Socket.Send(Encoding.Unicode.GetBytes(client.NickName + ": " + messageText));
+                                    client.Socket.Send(Encoding.UTF8.GetBytes(client.NickName + ": " + messageText));
                                 }
                             }
                         }
+                    }
+                    void SendFriendListCommand()
+                    {
+
                     }
                 }
             }

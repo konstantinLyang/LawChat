@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using lawChat.Server.Data;
 using lawChat.Server.Data.Model;
+using Newtonsoft.Json;
 
 namespace lawChat.Client.Services.Implementations
 {
@@ -11,32 +9,20 @@ namespace lawChat.Client.Services.Implementations
         public User UserData { get; set; } = new();
         public List<Chat>? ChatList { get; set; } = new();
         public List<User>? FriendList { get; set; } = new();
-        public void GetUserData(string login, string password)
+
+        public void CommandServerReceivedHandler(string commandMessage)
         {
-            Task.Factory.StartNew(() =>
+            string commandType = commandMessage.Split(';')[1];
+
+            if (commandType == "userdata")
             {
-                using (var context = new LawChatDbContext())
-                {
-                    UserData = context.Clients.FirstOrDefault(x => x.Login == login && x.Password == password);
-                }
-            });
-        }
-        public void GetFriendList()
-        {
-            using (var context = new LawChatDbContext())
+                UserData = JsonConvert.DeserializeObject<User>(commandMessage.Split(';')[2]);
+            }
+            else if (commandType == "dialogresult")
             {
-                FriendList = context.Clients.ToList();
+                FriendList = JsonConvert.DeserializeObject<List<User>>(commandMessage.Split(';')[2]);
             }
         }
-        public void GetChatList()
-        {
-            Task.Factory.StartNew(() =>
-            {
-                using (var context = new LawChatDbContext())
-                {
-                    ChatList = context.Chats.ToList();
-                }
-            });
-        }
+        
     }
 }
