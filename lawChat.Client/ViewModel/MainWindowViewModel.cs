@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
+using GongSolutions.Wpf.DragDrop;
 using lawChat.Client.Infrastructure;
 using lawChat.Client.Model;
 using lawChat.Client.Services;
@@ -58,12 +61,12 @@ namespace lawChat.Client.ViewModel
         public ICommand SendMessageCommand => _sendMessageCommand ??= new(OnSendMessageCommand);
         private void OnSendMessageCommand()
         {
-            if (!string.IsNullOrEmpty(CurrentMessageTextBox) && SelectedChat != null)
+            if (!string.IsNullOrWhiteSpace(CurrentMessageTextBox) && SelectedChat != null)
             {
-                _clientObject.SendPrivateTextMessage(SelectedChat.RecipientId, CurrentMessageTextBox);
+                _clientObject.SendPrivateTextMessage(SelectedChat.RecipientId, CurrentMessageTextBox.Trim());
                 SearchPanelSource.FirstOrDefault(x => x.RecipientId == SelectedChat.RecipientId)!.Messages.Add(new ProcessedMessage()
                 {
-                    Text = CurrentMessageTextBox,
+                    Text = CurrentMessageTextBox.Trim(),
                     CreateDate = DateTime.Now,
                     IsReceivedMessage = false
                 });
@@ -110,5 +113,10 @@ namespace lawChat.Client.ViewModel
         }
 
         public MainWindowViewModel() { }
+        public void OnFileDrop(object sender, DragEventArgs e)
+        {
+            string[] file = (string[])e.Data.GetData(DataFormats.FileDrop);
+            _clientObject.SendPrivateFileMessage(SelectedChat.RecipientId, file[0]);
+        }
     }
 }

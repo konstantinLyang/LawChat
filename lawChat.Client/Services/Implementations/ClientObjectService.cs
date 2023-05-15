@@ -21,7 +21,7 @@ namespace lawChat.Client.Services.Implementations
             {
                 _clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-                IPEndPoint serverEndPoint = new(IPAddress.Parse("127.0.0.1"), 8080);
+                IPEndPoint serverEndPoint = new(IPAddress.Parse("10.10.11.47"), 8080);
 
                 _clientSocket.Connect(serverEndPoint);
 
@@ -42,13 +42,17 @@ namespace lawChat.Client.Services.Implementations
         {
             _clientSocket.Send(Encoding.UTF8.GetBytes($"message;PRIVATE;text;{recipient};{message};"));
         }
+        public void SendPrivateFileMessage(int recipient, string filePath)
+        {
+            _clientSocket.SendFile(filePath, Encoding.UTF8.GetBytes($"message;PRIVATE;file;{recipient};"), Encoding.UTF8.GetBytes($"message;PRIVATE;file;{recipient};"), TransmitFileOptions.UseDefaultWorkerThread);
+        }
         public void SendServerCommandMessage(string commandMessage)
         {
             _clientSocket.Send(Encoding.UTF8.GetBytes($"command;{commandMessage}"));
         }
         public string GetMessageFromServer()
         {
-            var serverBuffer = new byte[180000];
+            var serverBuffer = new byte[4078];
 
             var serverSize = _clientSocket.Receive(serverBuffer);
 

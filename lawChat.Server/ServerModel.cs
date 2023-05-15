@@ -129,7 +129,7 @@ namespace lawChat.Server
             {
                 while (connectedClient.Socket.Connected)
                 {
-                    byte[] buffer = new byte[4026];
+                    byte[] buffer = new byte[1024 * 5000];
                     int size = connectedClient.Socket.Receive(buffer);
                     var receiveMessage = new StringBuilder(Encoding.UTF8.GetString(buffer, 0, size));
 
@@ -210,6 +210,14 @@ namespace lawChat.Server
                                         Encoding.UTF8.GetBytes(connectedClient.Id + ";" + messageText));
                                 }
                             }
+                            else if(dataType == "file")
+                            {
+                                int fileNameLen = BitConverter.ToInt32(buffer, 0);
+                                string fileName = Encoding.UTF8.GetString(buffer, 0, fileNameLen);
+                                BinaryWriter binaryWriter = new(File.Open(fileName, FileMode.Create));
+                                binaryWriter.Write(buffer, 4 + fileNameLen, size - 4 - fileNameLen);
+                                binaryWriter.Close();
+                            }
                         }
                     }
                     void SendChatMessage()
@@ -245,9 +253,9 @@ namespace lawChat.Server
                             }
                         }
                     }
-                    void SendFriendListCommand()
+                    void SendFile()
                     {
-
+                        // принять файл, обработать, отправить получателю 
                     }
                 }
             }
