@@ -21,7 +21,7 @@ namespace lawChat.Client.Services.Implementations
             {
                 _clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-                IPEndPoint serverEndPoint = new(IPAddress.Parse("10.10.11.47"), 8080);
+                IPEndPoint serverEndPoint = new(IPAddress.Parse("127.0.0.1"), 8080);
 
                 _clientSocket.Connect(serverEndPoint);
 
