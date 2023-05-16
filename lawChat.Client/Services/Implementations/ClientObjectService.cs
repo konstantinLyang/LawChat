@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.IO;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,7 +9,16 @@ namespace lawChat.Client.Services.Implementations
     public class ClientObjectService : IClientObject
     {
         private readonly IClientData _clientData;
+
         private Socket _clientSocket;
+
+        private TcpClient _tcpClient;
+
+        public static StreamReader StreamReader;
+
+        public static StreamWriter StreamWriter;
+
+        public static NetworkStream NetworkStream;
 
         public ClientObjectService(IClientData clientData)
         {
@@ -19,11 +29,20 @@ namespace lawChat.Client.Services.Implementations
         {
             try
             {
-                _clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                using _tcpClient
 
-                IPEndPoint serverEndPoint = new(IPAddress.Parse("10.10.11.47"), 8080);
 
-                _clientSocket.Connect(serverEndPoint);
+                _clientSoc = new TcpClient();
+                
+                _clientSoc.Connect(IPAddress.Parse("10.10.11.47"), 8080);
+
+                StreamReader = new StreamReader(_clientSoc.GetStream());
+                
+                StreamWriter = new StreamWriter(_clientSoc.GetStream());
+
+                NetworkStream = _clientSoc.GetStream();
+
+                StreamWriter.AutoFlush = true;
 
                 return Authorization(login, password);
             }
@@ -34,29 +53,38 @@ namespace lawChat.Client.Services.Implementations
         }
         private string Authorization(string login, string password)
         {
-            _clientSocket.Send(Encoding.UTF8.GetBytes($"{login};{password};"));
+            SendToServer($"{login};{password};");
             
             return GetMessageFromServer();
         }
+
+        private void SendToServer(string message)
+        {
+            StreamWriter.WriteLine(message);
+        }
         public void SendPrivateTextMessage(int recipient, string message)
         {
-            _clientSocket.Send(Encoding.UTF8.GetBytes($"message;PRIVATE;text;{recipient};{message};"));
+            SendToServer($"message;PRIVATE;text;{recipient};{message};");
         }
-        public void SendPrivateFileMessage(int recipient, string filePath)
+        public void SendPrivateFileMessage(int recipient, string filePath, string fileName)
         {
-            _clientSocket.SendFile(filePath, Encoding.UTF8.GetBytes($"message;PRIVATE;file;{recipient};"), Encoding.UTF8.GetBytes($"message;PRIVATE;file;{recipient};"), TransmitFileOptions.UseDefaultWorkerThread);
+            Stream FileStream = File.OpenRead(filePath);
+
+            byte[] FileBuffer = new byte[FileStream.Length];
+
+            FileStream.Read(FileBuffer, 0, (int)FileStream.Length);
+
+            NetworkStream.Write(FileBuffer, 0, FileBuffer.GetLength(0));
+
+            NetworkStream.Close();
         }
         public void SendServerCommandMessage(string commandMessage)
         {
-            _clientSocket.Send(Encoding.UTF8.GetBytes($"command;{commandMessage}"));
+            SendToServer($"command;{commandMessage}");
         }
         public string GetMessageFromServer()
         {
-            var serverBuffer = new byte[4078];
-
-            var serverSize = _clientSocket.Receive(serverBuffer);
-
-            string result = Encoding.UTF8.GetString(serverBuffer, 0, serverSize);
+            var result = StreamReader.ReadLine();
 
             return result;
         }

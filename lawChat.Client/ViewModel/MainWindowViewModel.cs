@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
@@ -94,20 +95,33 @@ namespace lawChat.Client.ViewModel
 
                 if (message.Split(';')[0] != "command" && !string.IsNullOrEmpty(message))
                 {
-                    int senderId = Convert.ToInt32(message.Split(';')[0]);
-                    string text = message.Split(';')[1];
-
-                    Dispatcher.Invoke(() =>
+                    if (message.Split(';')[2] == "file")
                     {
-                        SearchPanelSource.FirstOrDefault(x => x.RecipientId == senderId)!.Messages.Add(new ProcessedMessage()
+                        int senderId = Convert.ToInt32(message.Split(';')[0]);
+                        string fileData = message.Split(';')[1];
+
+                        FileStream file = new FileStream(@"D:\Program Files (x86)\chatTest\DownloadFiles\1.jpg", FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None);
+
+                        file.Write(Encoding.UTF8.GetBytes(fileData), 0, Encoding.UTF8.GetBytes(fileData).Length);
+                        file.Close();
+                    }
+                    else if(message.Split(';')[2] == "text")
+                    {
+                        int senderId = Convert.ToInt32(message.Split(';')[0]);
+                        string text = message.Split(';')[1];
+
+                        Dispatcher.Invoke(() =>
                         {
-                            Text = text,
-                            CreateDate = DateTime.Now,
-                            IsReceivedMessage = true
+                            SearchPanelSource.FirstOrDefault(x => x.RecipientId == senderId)!.Messages.Add(new ProcessedMessage()
+                            {
+                                Text = text,
+                                CreateDate = DateTime.Now,
+                                IsReceivedMessage = true
+                            });
                         });
-                    });
-                    SearchPanelSource.FirstOrDefault(x => x.RecipientId == senderId)!.LastMessage = text;
-                    SearchPanelSource.FirstOrDefault(x => x.RecipientId == senderId)!.LastMessageDateTime = DateTime.Now;
+                        SearchPanelSource.FirstOrDefault(x => x.RecipientId == senderId)!.LastMessage = text;
+                        SearchPanelSource.FirstOrDefault(x => x.RecipientId == senderId)!.LastMessageDateTime = DateTime.Now;
+                    }
                 }
             }
         }
@@ -116,7 +130,8 @@ namespace lawChat.Client.ViewModel
         public void OnFileDrop(object sender, DragEventArgs e)
         {
             string[] file = (string[])e.Data.GetData(DataFormats.FileDrop);
-            _clientObject.SendPrivateFileMessage(SelectedChat.RecipientId, file[0]);
+            FileInfo fileInfo = new FileInfo(file[0]);
+            _clientObject.SendPrivateFileMessage(SelectedChat.RecipientId, file[0], fileInfo.Name);
         }
     }
 }
