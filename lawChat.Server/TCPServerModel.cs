@@ -1,10 +1,7 @@
 ﻿using System.Net.Sockets;
 using System.Net;
 using lawChat.Server.ServerData.Model;
-using System.Text;
 using lawChat.Server.Data;
-using Newtonsoft.Json;
-using lawChat.Server.Data.Model;
 
 namespace lawChat.Server
 {
@@ -43,7 +40,14 @@ namespace lawChat.Server
 
                     lock (_clients)
                     {
-                        _clients.Add(new Connection(client, c => { lock (_clients) { _clients.Remove(c); } c.Dispose(); }));
+                        _clients.Add(new Connection(client, c =>
+                        {
+                            lock (_clients)
+                            {
+                                _clients.Remove(c);
+                            }
+                            c.Dispose();
+                        }));
                     }
                 }
             }
@@ -82,5 +86,7 @@ namespace lawChat.Server
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
+        ~TCPServerModel() => Dispose(false);
     }
 }

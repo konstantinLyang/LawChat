@@ -1,8 +1,8 @@
 ﻿using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading.Tasks;
+using lawChat.Client.Model;
 
 namespace lawChat.Client.Services.Implementations
 {
@@ -13,6 +13,8 @@ namespace lawChat.Client.Services.Implementations
         private Socket _clientSocket;
 
         private TcpClient _tcpClient;
+
+        private Connection connection;
 
         public static StreamReader StreamReader;
 
@@ -29,25 +31,18 @@ namespace lawChat.Client.Services.Implementations
         {
             try
             {
-                using _tcpClient
+                _tcpClient = new TcpClient("127.0.0.1", 8080);
 
+                connection = new Connection(_tcpClient);
 
-                _clientSoc = new TcpClient();
-                
-                _clientSoc.Connect(IPAddress.Parse("10.10.11.47"), 8080);
+                connection.SendMessageAsync("успех");
 
-                StreamReader = new StreamReader(_clientSoc.GetStream());
-                
-                StreamWriter = new StreamWriter(_clientSoc.GetStream());
-
-                NetworkStream = _clientSoc.GetStream();
-
-                StreamWriter.AutoFlush = true;
-
-                return Authorization(login, password);
+                return "s";
             }
             catch
             {
+                connection.Dispose();
+
                 return "server error";
             }
         }
@@ -60,7 +55,7 @@ namespace lawChat.Client.Services.Implementations
 
         private void SendToServer(string message)
         {
-            StreamWriter.WriteLine(message);
+            connection.SendMessageAsync(message);
         }
         public void SendPrivateTextMessage(int recipient, string message)
         {
