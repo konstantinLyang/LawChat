@@ -1,27 +1,22 @@
 ﻿using System.Net.Sockets;
 using System.Net;
-using lawChat.Server.ServerData.Model;
 using lawChat.Server.Data;
 
-namespace lawChat.Server
+namespace lawChat.Server.ServerData.Model
 {
-    public class TCPServerModel : IDisposable
+    public class TcpServerModel : IDisposable
     {
         private readonly TcpListener _listener;
 
-        private LawChatDbContext _context;
-
         private bool disposed;
 
-        public List<Connection> _clients { get; private set; }
+        public List<ServerConnection> _clients { get; private set; }
 
-        public TCPServerModel(int port)
+        public TcpServerModel(int port)
         {
             _listener = new(IPAddress.Any, port);
 
             _clients = new();
-
-            _context = new();
         }
 
         public async Task ListenAsync()
@@ -40,7 +35,7 @@ namespace lawChat.Server
 
                     lock (_clients)
                     {
-                        _clients.Add(new Connection(client, c =>
+                        _clients.Add(new ServerConnection(client, c =>
                         {
                             lock (_clients)
                             {
@@ -60,7 +55,7 @@ namespace lawChat.Server
         private void Dispose(bool disposing)
         {
             if (disposed)
-                throw new ObjectDisposedException(typeof(TCPServerModel).FullName);
+                throw new ObjectDisposedException(typeof(TcpServerModel).FullName);
             disposed = true;
             _listener.Stop();
             if (disposing)
@@ -87,6 +82,6 @@ namespace lawChat.Server
             GC.SuppressFinalize(this);
         }
 
-        ~TCPServerModel() => Dispose(false);
+        ~TcpServerModel() => Dispose(false);
     }
 }

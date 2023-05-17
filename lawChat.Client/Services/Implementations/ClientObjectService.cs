@@ -1,67 +1,30 @@
-﻿using System.IO;
-using System.Net;
+﻿using System;
+using System.IO;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading.Tasks;
-using lawChat.Client.Model;
+using lawChat.Network.Abstractions;
+using lawChat.Network.Abstractions.Models;
 
 namespace lawChat.Client.Services.Implementations
 {
     public class ClientObjectService : IClientObject
     {
+        public event EventHandler<Message>? MessageReceived;
+
         private readonly IClientData _clientData;
+        
+        private readonly IConnection _connection;
 
-        private Socket _clientSocket;
-
-        private TcpClient _tcpClient;
-
-        private Connection connection;
-
-        public static StreamReader StreamReader;
-
-        public static StreamWriter StreamWriter;
-
-        public static NetworkStream NetworkStream;
-
-        public ClientObjectService(IClientData clientData)
+        public ClientObjectService(IClientData clientData, IConnection connection)
         {
+            _connection = connection;
             _clientData = clientData;
+
+            _connection.MessageReceived += HandlerMessageReceive;
         }
 
-        public string OpenConnection(string login, string password)
-        {
-            try
-            {
-                _tcpClient = new TcpClient("127.0.0.1", 8080);
-
-                connection = new Connection(_tcpClient);
-
-                connection.SendMessageAsync("успех");
-
-                return "s";
-            }
-            catch
-            {
-                connection.Dispose();
-
-                return "server error";
-            }
-        }
-        private string Authorization(string login, string password)
-        {
-            SendToServer($"{login};{password};");
-            
-            return GetMessageFromServer();
-        }
-
-        private void SendToServer(string message)
-        {
-            connection.SendMessageAsync(message);
-        }
-        public void SendPrivateTextMessage(int recipient, string message)
-        {
-            SendToServer($"message;PRIVATE;text;{recipient};{message};");
-        }
-        public void SendPrivateFileMessage(int recipient, string filePath, string fileName)
+        /*public void SendPrivateFileMessage(int recipient, string filePath, string fileName)
         {
             Stream FileStream = File.OpenRead(filePath);
 
@@ -72,16 +35,41 @@ namespace lawChat.Client.Services.Implementations
             NetworkStream.Write(FileBuffer, 0, FileBuffer.GetLength(0));
 
             NetworkStream.Close();
-        }
-        public void SendServerCommandMessage(string commandMessage)
+        }*/
+
+        public Task SendMessageAsync(Message message)
         {
-            SendToServer($"command;{commandMessage}");
+            throw new NotImplementedException();
         }
+
+        public string OpenConnection(string login, string password)
+        {
+            _connection.Connect("127.0.0.1", 8080);
+
+            _connection.SendMessageAsync(new Message()
+            {
+                Header = new Header()
+                {
+
+                },
+                Data = Encoding.UTF8.GetBytes($"{login};{password}")
+            });
+
+            return "ХУЙ";
+        }
+
         public string GetMessageFromServer()
         {
-            var result = StreamReader.ReadLine();
+            throw new NotImplementedException();
+        }
 
-            return result;
+        public void SendServerCommandMessage(string commandMessage)
+        {
+            throw new NotImplementedException();
+        }
+        private void HandlerMessageReceive(object sender, Message message)
+        {
+            MessageReceived?.Invoke(this, message);
         }
     }
 }

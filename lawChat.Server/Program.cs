@@ -1,5 +1,5 @@
 ﻿using System.Text;
-using lawChat.Server;
+using lawChat.Server.ServerData.Model;
 
 class Program
 {
@@ -10,7 +10,7 @@ class Program
 
         Console.WriteLine("Запуск сервера....");
 
-        using (TCPServerModel server = new TCPServerModel(8080))
+        using (TcpServerModel server = new TcpServerModel(8080))
         {
             Task serverTask = server.ListenAsync();
 

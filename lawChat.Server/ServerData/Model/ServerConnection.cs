@@ -1,49 +1,56 @@
-﻿using System;
-using System.Buffers.Binary;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net.Sockets;
+﻿using System.Buffers.Binary;
 using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Channels;
-using System.Threading.Tasks;
+using lawChat.Network.Abstractions.Enums;
+using lawChat.Network.Abstractions.Models;
+using lawChat.Server.Data;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
-namespace lawChat.Client.Model
+namespace lawChat.Server.ServerData.Model
 {
-    public class Connection : IDisposable
+    public class ServerConnection
     {
         private readonly TcpClient _client;
         private readonly NetworkStream _stream;
-        private readonly EndPoint? _remoteEndPoint;
+        private readonly EndPoint _remoteEndPoint;
         private readonly Task _readingTask;
         private readonly Task _writingTask;
+        private readonly Action<ServerConnection> _disposeCallback;
         private readonly Channel<string> _channel;
-        bool _disposed;
+        private LawChatDbContext _context;
+        bool disposed;
+        bool _isSigned;
 
-        public Connection(TcpClient client)
+        public ServerConnection(TcpClient client, Action<ServerConnection> disposeCallback)
         {
             _client = client;
             _stream = client.GetStream();
             _remoteEndPoint = client.Client.RemoteEndPoint;
+            _disposeCallback = disposeCallback;
             _channel = Channel.CreateUnbounded<string>();
             _readingTask = RunReadingLoop();
             _writingTask = RunWritingLoop();
+            _context = new LawChatDbContext();
         }
 
         private async Task RunReadingLoop()
         {
+            await Task.Yield(); // https://ru.stackoverflow.com/a/1422205/373567
             try
             {
-                byte[] headerBuffer = new byte[4];
+                byte[] lengthMessageHeader = new byte[4];
 
                 while (true)
                 {
-                    int bytesReceived = await _stream.ReadAsync(headerBuffer, 0, headerBuffer.Length);
+                    int bytesReceived = await _stream.ReadAsync(lengthMessageHeader, 0, 4);
 
-                    if (bytesReceived != 4) break;
+                    if (bytesReceived != 4)
+                        break;
 
-                    int length = BinaryPrimitives.ReadInt32LittleEndian(headerBuffer);
+                    int length = BinaryPrimitives.ReadInt32LittleEndian(lengthMessageHeader);
 
                     byte[] buffer = new byte[length];
 
@@ -55,26 +62,31 @@ namespace lawChat.Client.Model
                         count += bytesReceived;
                     }
 
-                    string message = Encoding.UTF8.GetString(buffer);
-
-                    MessageHandler(Encoding.UTF8.GetString(buffer)); // полученное сообщение
+                    SendMessageAsync(JsonConvert.SerializeObject(new Message()
+                    {
+                        Header = new Header()
+                        {
+                            MessageType = MessageType.Text
+                        }
+                    }));
                 }
-                // сервер закрыл подключение
+                
+                Console.WriteLine($"Клиент {_remoteEndPoint} отключился.");
+
                 _stream.Close();
             }
             catch (IOException)
             {
-                // подключение закрытор
+                Console.WriteLine($"Подключение к {_remoteEndPoint} закрыто сервером.");
             }
             catch (Exception ex)
             {
-                // ошибка
+                Console.WriteLine(ex.GetType().Name + ": " + ex.Message);
             }
         }
-
-        private void MessageHandler(string message)
+        public async Task MessageHandler(string message)
         {
-            
+
         }
 
         public async Task SendMessageAsync(string message)
@@ -84,16 +96,16 @@ namespace lawChat.Client.Model
 
         private async Task RunWritingLoop()
         {
-            byte[] header = new byte[4];
+            byte[] lenghtMessage = new byte[4];
 
             await foreach (string message in _channel.Reader.ReadAllAsync())
             {
                 byte[] buffer = Encoding.UTF8.GetBytes(message);
 
-                BinaryPrimitives.WriteInt32LittleEndian(header, buffer.Length);
+                BinaryPrimitives.WriteInt32LittleEndian(lenghtMessage, buffer.Length);
 
-                await _stream.WriteAsync(header, 0, header.Length);
-
+                await _stream.WriteAsync(lenghtMessage, 0, lenghtMessage.Length);
+                
                 await _stream.WriteAsync(buffer, 0, buffer.Length);
             }
         }
@@ -106,9 +118,9 @@ namespace lawChat.Client.Model
 
         protected virtual void Dispose(bool disposing)
         {
-            if (_disposed)
+            if (disposed)
                 throw new ObjectDisposedException(GetType().FullName);
-            _disposed = true;
+            disposed = true;
             if (_client.Connected)
             {
                 _channel.Writer.Complete();
@@ -120,7 +132,5 @@ namespace lawChat.Client.Model
                 _client.Dispose();
             }
         }
-
-        ~Connection() => Dispose(false);
     }
 }

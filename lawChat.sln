@@ -7,6 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lawChat.Client", "lawChat.C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lawChat.Server", "lawChat.Server\lawChat.Server.csproj", "{1BE8C7E1-E64D-4D34-B724-47584BB96106}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lawChat.Network.Abstractions", "lawChat.Network\lawChat.Network.Abstractions.csproj", "{82129C68-9180-45F3-9C51-8B3CBD6FB7DD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LawChat.Network.Implementations", "LawChat.Network.Implementations\LawChat.Network.Implementations.csproj", "{521E8FA5-3091-499D-9AD6-F56ACD953883}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{1BE8C7E1-E64D-4D34-B724-47584BB96106}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1BE8C7E1-E64D-4D34-B724-47584BB96106}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1BE8C7E1-E64D-4D34-B724-47584BB96106}.Release|Any CPU.Build.0 = Release|Any CPU
+		{82129C68-9180-45F3-9C51-8B3CBD6FB7DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82129C68-9180-45F3-9C51-8B3CBD6FB7DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82129C68-9180-45F3-9C51-8B3CBD6FB7DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82129C68-9180-45F3-9C51-8B3CBD6FB7DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{521E8FA5-3091-499D-9AD6-F56ACD953883}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{521E8FA5-3091-499D-9AD6-F56ACD953883}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{521E8FA5-3091-499D-9AD6-F56ACD953883}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{521E8FA5-3091-499D-9AD6-F56ACD953883}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

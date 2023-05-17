@@ -42,14 +42,6 @@ namespace lawChat.Client.Services.Implementations
 
         public void ShowMainWindow()
         {
-            _clientObject.SendServerCommandMessage("getdialoglist;");
-
-            _clientData.CommandServerReceivedHandler(_clientObject.GetMessageFromServer());
-
-            _clientObject.SendServerCommandMessage("getuserdata;");
-
-            _clientData.CommandServerReceivedHandler(_clientObject.GetMessageFromServer());
-
             if (_mainWindow is { } mainWindow)
             {
                 mainWindow.Show(); return;
@@ -59,7 +51,7 @@ namespace lawChat.Client.Services.Implementations
             _mainWindowViewModel = _services.GetRequiredService<MainWindowViewModel>();
             _mainWindow = mainWindow;
 
-            _mainWindowViewModel.Dispatcher.Invoke(() =>
+            /*_mainWindowViewModel.Dispatcher.Invoke(() =>
             {
                 foreach (var friend in _clientData.FriendList)
                 {
@@ -119,19 +111,13 @@ namespace lawChat.Client.Services.Implementations
                     }
                 }
                 _mainWindowViewModel.Chats = _clientData.ChatList;
-            });
+            });*/
 
             _mainWindowViewModel.UserNameTextBlock = _clientData.UserData?.NickName;
 
-            ObservableCollection<ProcessedMessage> GetMessages(int sender, int recipient)
+            ObservableCollection<ProcessedMessage> GetMessages(List<Message> messages, int recipient, int sender)
             {
                 ObservableCollection<ProcessedMessage> result = new();
-
-                _clientObject.SendServerCommandMessage($"getmessages;{sender};{recipient}");
-
-                string a = _clientObject.GetMessageFromServer();
-
-                var messages = JsonConvert.DeserializeObject<List<Message>>(a.Split(';')[2]);
 
                 if (messages != null)
                     foreach (var message in messages)
@@ -171,10 +157,6 @@ namespace lawChat.Client.Services.Implementations
             }
 
             _loginWindow?.Close();
-
-            Thread listener = new Thread(_mainWindowViewModel.StartListener);
-
-            listener.Start();
 
             _mainWindow.Show();
         }

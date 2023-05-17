@@ -1,32 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
-using GongSolutions.Wpf.DragDrop;
 using lawChat.Client.Infrastructure;
 using lawChat.Client.Model;
 using lawChat.Client.Services;
 using lawChat.Client.ViewModel.Base;
-using lawChat.Server.Data.Model;
+using lawChat.Network.Abstractions.Models;
 
 namespace lawChat.Client.ViewModel
 {
     internal class MainWindowViewModel : ViewModelBase
     {
-        private IClientObject _clientObject;
-
-        private List<Chat> _chats;
-        public List<Chat> Chats
-        {
-            get => _chats;
-            set => Set(ref _chats, value);
-        }
+        private readonly IClientObject _clientObject;
 
         private SearchPanelModel _selectedChat;
         public SearchPanelModel SelectedChat 
@@ -64,7 +51,6 @@ namespace lawChat.Client.ViewModel
         {
             if (!string.IsNullOrWhiteSpace(CurrentMessageTextBox) && SelectedChat != null)
             {
-                _clientObject.SendPrivateTextMessage(SelectedChat.RecipientId, CurrentMessageTextBox.Trim());
                 SearchPanelSource.FirstOrDefault(x => x.RecipientId == SelectedChat.RecipientId)!.Messages.Add(new ProcessedMessage()
                 {
                     Text = CurrentMessageTextBox.Trim(),
@@ -82,56 +68,19 @@ namespace lawChat.Client.ViewModel
             }
         }
 
-        public MainWindowViewModel(IClientObject clientObject, IClientData clientData) : this()
+        private void MessageHandler(object sender, Message message)
         {
-            _clientObject = clientObject;
+
         }
 
-        public void StartListener()
+        public MainWindowViewModel(IClientObject clientObject) : this()
         {
-            while (true)
-            {
-                string message = _clientObject.GetMessageFromServer();
+            _clientObject = clientObject;
 
-                if (message.Split(';')[0] != "command" && !string.IsNullOrEmpty(message))
-                {
-                    if (message.Split(';')[2] == "file")
-                    {
-                        int senderId = Convert.ToInt32(message.Split(';')[0]);
-                        string fileData = message.Split(';')[1];
 
-                        FileStream file = new FileStream(@"D:\Program Files (x86)\chatTest\DownloadFiles\1.jpg", FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None);
-
-                        file.Write(Encoding.UTF8.GetBytes(fileData), 0, Encoding.UTF8.GetBytes(fileData).Length);
-                        file.Close();
-                    }
-                    else if(message.Split(';')[2] == "text")
-                    {
-                        int senderId = Convert.ToInt32(message.Split(';')[0]);
-                        string text = message.Split(';')[1];
-
-                        Dispatcher.Invoke(() =>
-                        {
-                            SearchPanelSource.FirstOrDefault(x => x.RecipientId == senderId)!.Messages.Add(new ProcessedMessage()
-                            {
-                                Text = text,
-                                CreateDate = DateTime.Now,
-                                IsReceivedMessage = true
-                            });
-                        });
-                        SearchPanelSource.FirstOrDefault(x => x.RecipientId == senderId)!.LastMessage = text;
-                        SearchPanelSource.FirstOrDefault(x => x.RecipientId == senderId)!.LastMessageDateTime = DateTime.Now;
-                    }
-                }
-            }
+            _clientObject.MessageReceived += MessageHandler;
         }
 
         public MainWindowViewModel() { }
-        public void OnFileDrop(object sender, DragEventArgs e)
-        {
-            string[] file = (string[])e.Data.GetData(DataFormats.FileDrop);
-            FileInfo fileInfo = new FileInfo(file[0]);
-            _clientObject.SendPrivateFileMessage(SelectedChat.RecipientId, file[0], fileInfo.Name);
-        }
     }
 }
