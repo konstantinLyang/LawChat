@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\lawChat.Network\lawChat.Network.Abstractions.csproj" />
+    <ProjectReference Include="..\lawChat.Network\LawChat.Network.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>
