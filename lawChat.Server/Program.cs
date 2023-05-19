@@ -1,6 +1,8 @@
 ﻿using System.Text;
 using lawChat.Server.ServerData.Model;
 
+namespace LawChat.Server;
+
 class Program
 {
     public static async Task Main(string[] args)
