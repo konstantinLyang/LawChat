@@ -5,8 +5,8 @@ namespace lawChat.Client.Services
 {
     public interface IClientObject
     {
-        event EventHandler<Message> MessageReceived;
-        string OpenConnection(string login, string password);
-        void SendServerCommandMessage(string commandMessage);
+        event EventHandler<PackageMessage> MessageReceived;
+        PackageMessage OpenConnection(string login, string password);
+        void SendMessage(PackageMessage message);
     }
 }

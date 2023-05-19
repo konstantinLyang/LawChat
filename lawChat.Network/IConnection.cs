@@ -5,10 +5,12 @@ namespace lawChat.Network.Abstractions
 {
     public interface IConnection
     {
-        event EventHandler<Message> MessageReceived;
+        event EventHandler<PackageMessage> MessageReceived;
 
-        Task SendMessageAsync(Message message);
+        Task SendMessageAsync(PackageMessage message);
 
-        Task Connect(string ipAddress, int port);
+        void Connect(string ipAddress, int port);
+
+        public bool IsConnected { get; }
     }
 }

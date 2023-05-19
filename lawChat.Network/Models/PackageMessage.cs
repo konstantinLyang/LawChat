@@ -1,7 +1,7 @@
 ﻿namespace lawChat.Network.Abstractions.Models
 {
     [Serializable]
-    public class Message
+    public class PackageMessage
     {
         public Header Header { get; set; }
         

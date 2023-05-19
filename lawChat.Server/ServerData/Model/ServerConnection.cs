@@ -1,136 +1,176 @@
-﻿using System.Buffers.Binary;
-using System.Net;
-using System.Net.Sockets;
+﻿using System.Net.Sockets;
 using System.Text;
-using System.Threading.Channels;
-using lawChat.Network.Abstractions.Enums;
 using lawChat.Network.Abstractions.Models;
+using LawChat.Network.Implementations;
 using lawChat.Server.Data;
-using Microsoft.EntityFrameworkCore;
+using lawChat.Network.Abstractions.Enums;
+using lawChat.Server.Data.Model;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace lawChat.Server.ServerData.Model
 {
     public class ServerConnection
     {
-        private readonly TcpClient _client;
-        private readonly NetworkStream _stream;
-        private readonly EndPoint _remoteEndPoint;
-        private readonly Task _readingTask;
-        private readonly Task _writingTask;
-        private readonly Action<ServerConnection> _disposeCallback;
-        private readonly Channel<string> _channel;
+        public User _userData;
+
+        private Connection _connection;
+
         private LawChatDbContext _context;
-        bool disposed;
-        bool _isSigned;
 
-        public ServerConnection(TcpClient client, Action<ServerConnection> disposeCallback)
+        private List<ServerConnection> _connectedClients;
+
+        public ServerConnection(TcpClient client, List<ServerConnection> connectedClients)
         {
-            _client = client;
-            _stream = client.GetStream();
-            _remoteEndPoint = client.Client.RemoteEndPoint;
-            _disposeCallback = disposeCallback;
-            _channel = Channel.CreateUnbounded<string>();
-            _readingTask = RunReadingLoop();
-            _writingTask = RunWritingLoop();
+            _connectedClients = connectedClients;
+
+            _connection = new();
+
             _context = new LawChatDbContext();
+
+            _connection.MessageReceived += HandlerReceivedMessage;
+
+            _connection.Connect(client);
         }
 
-        private async Task RunReadingLoop()
+        private async void HandlerReceivedMessage(object sender, PackageMessage message)
         {
-            await Task.Yield(); // https://ru.stackoverflow.com/a/1422205/373567
-            try
+            switch (message.Header.MessageType)
             {
-                byte[] lengthMessageHeader = new byte[4];
-
-                while (true)
-                {
-                    int bytesReceived = await _stream.ReadAsync(lengthMessageHeader, 0, 4);
-
-                    if (bytesReceived != 4)
-                        break;
-
-                    int length = BinaryPrimitives.ReadInt32LittleEndian(lengthMessageHeader);
-
-                    byte[] buffer = new byte[length];
-
-                    int count = 0;
-
-                    while (count < length)
+                case MessageType.Command:
+                    switch (message.Header.CommandArguments[0])
                     {
-                        bytesReceived = await _stream.ReadAsync(buffer, count, buffer.Length - count);
-                        count += bytesReceived;
+                        case "authorization":
+                            try
+                            {
+                                string[] loginData = Encoding.UTF8.GetString(message.Data).Split(';');
+
+                                var client = _context.Clients.FirstOrDefault(x =>
+                                    x.Login == loginData[0] && x.Password == loginData[1]);
+
+                                if (client != null)
+                                {
+                                    _userData = client;
+
+                                    await _connection.SendMessageAsync(new PackageMessage()
+                                    {
+                                        Header = new Header()
+                                        {
+                                            MessageType = MessageType.Command,
+                                            StatusCode = StatusCode.OK,
+                                            CommandArguments = new [] { "authorization successfully" }
+                                        },
+                                        Data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(client))
+                                    });
+                                }
+                                else
+                                {
+                                    await _connection.SendMessageAsync(new PackageMessage()
+                                    {
+                                        Header = new Header()
+                                        {
+                                            MessageType = MessageType.Command,
+                                            StatusCode = StatusCode.Error,
+                                            CommandArguments = new [] { "authorization incorrect user data" }
+                                        }
+                                    });
+                                }
+                            }
+                            catch
+                            {
+                                await _connection.SendMessageAsync(new PackageMessage()
+                                {
+                                    Header = new Header()
+                                    {
+                                        MessageType = MessageType.Command,
+                                        StatusCode = StatusCode.ServerError
+                                    }
+                                });
+                            }
+                            break;
+
+                        case "friend list":
+                            try
+                            {
+                                await _connection.SendMessageAsync(new PackageMessage()
+                                {
+                                    Header = new Header()
+                                    {
+                                        MessageType = MessageType.Command,
+                                        StatusCode = StatusCode.OK,
+                                        CommandArguments = new [] { "friend list" }
+                                    },
+                                    Data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(_context.Clients))
+                                });
+                            }
+                            catch
+                            {
+                                throw new Exception("ошибка");
+                            }
+                            break;
+
+                        case "messages":
+
+                            int messageSender = _userData.Id;
+                            int messageRecipient = Convert.ToInt32(message.Header.CommandArguments[1]);
+
+                            var result = new List<Message>();
+
+                            foreach (var msg in _context.Messages)
+                            {
+                                if ((msg.SenderId == messageSender && msg.RecipientId == messageRecipient) ||
+                                    (msg.SenderId == messageRecipient && msg.RecipientId == messageSender))
+                                {
+                                    result.Add(msg);
+                                }
+                            }
+
+                            if (result.Count > 0)
+                            {
+                                await _connection.SendMessageAsync(new PackageMessage()
+                                {
+                                    Header = new Header()
+                                    {
+                                        MessageType = MessageType.Command,
+                                        StatusCode = StatusCode.OK,
+                                        CommandArguments = new[] { "messages", messageRecipient.ToString() }
+                                    },
+                                    Data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(result))
+                                });
+                            }
+                            break;
                     }
+                    break;
+                case MessageType.Text:
 
-                    SendMessageAsync(JsonConvert.SerializeObject(new Message()
+                    _context.Messages.Add(new Message()
                     {
-                        Header = new Header()
+                        CreateDate = DateTime.Now,
+                        Recipient = _context.Clients.FirstOrDefault(x => x.Id == Convert.ToInt32(message.Header.CommandArguments[0])),
+                        Sender = _context.Clients.FirstOrDefault(x => x.Id == _userData.Id),
+                        Text = Encoding.UTF8.GetString(message.Data)
+                    });
+
+                    _context.SaveChanges();
+
+                    _connectedClients
+                        .FirstOrDefault(x => x._userData.Id == Convert.ToInt32(message.Header.CommandArguments[0]))
+                        ._connection.SendMessageAsync(new PackageMessage()
                         {
-                            MessageType = MessageType.Text
-                        }
-                    }));
-                }
-                
-                Console.WriteLine($"Клиент {_remoteEndPoint} отключился.");
-
-                _stream.Close();
-            }
-            catch (IOException)
-            {
-                Console.WriteLine($"Подключение к {_remoteEndPoint} закрыто сервером.");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.GetType().Name + ": " + ex.Message);
-            }
-        }
-        public async Task MessageHandler(string message)
-        {
-
-        }
-
-        public async Task SendMessageAsync(string message)
-        {
-            await _channel.Writer.WriteAsync(message);
-        }
-
-        private async Task RunWritingLoop()
-        {
-            byte[] lenghtMessage = new byte[4];
-
-            await foreach (string message in _channel.Reader.ReadAllAsync())
-            {
-                byte[] buffer = Encoding.UTF8.GetBytes(message);
-
-                BinaryPrimitives.WriteInt32LittleEndian(lenghtMessage, buffer.Length);
-
-                await _stream.WriteAsync(lenghtMessage, 0, lenghtMessage.Length);
-                
-                await _stream.WriteAsync(buffer, 0, buffer.Length);
+                            Header = new Header()
+                            {
+                                MessageType = MessageType.Text,
+                                CommandArguments = new []{ _userData.Id.ToString() }
+                            },
+                            Data = message.Data
+                        });
+                    break;
             }
         }
 
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposed)
-                throw new ObjectDisposedException(GetType().FullName);
-            disposed = true;
-            if (_client.Connected)
-            {
-                _channel.Writer.Complete();
-                _stream.Close();
-                Task.WaitAll(_readingTask, _writingTask);
-            }
-            if (disposing)
-            {
-                _client.Dispose();
-            }
+            _connection.Dispose();
         }
     }
 }

@@ -8,6 +8,5 @@ namespace lawChat.Client.Services
         public List<Chat>? ChatList { get; set; }
         public User? UserData { get; set; }
         public List<User>? FriendList { get; set; }
-        public void CommandServerReceivedHandler(string getString);
     }
 }

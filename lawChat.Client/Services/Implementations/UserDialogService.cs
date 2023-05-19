@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Windows;
+using System.Windows.Threading;
 using lawChat.Client.Model;
 using lawChat.Client.View;
 using lawChat.Client.ViewModel;
-using lawChat.Server.Data;
+using lawChat.Network.Abstractions.Enums;
+using lawChat.Network.Abstractions.Models;
 using lawChat.Server.Data.Model;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
+using Message = lawChat.Network.Abstractions.Models.PackageMessage;
 
 namespace lawChat.Client.Services.Implementations
 {
@@ -44,117 +44,28 @@ namespace lawChat.Client.Services.Implementations
         {
             if (_mainWindow is { } mainWindow)
             {
-                mainWindow.Show(); return;
+                mainWindow.Show();
+                return;
             }
 
             mainWindow = _services.GetRequiredService<MainWindow>();
             _mainWindowViewModel = _services.GetRequiredService<MainWindowViewModel>();
             _mainWindow = mainWindow;
 
-            /*_mainWindowViewModel.Dispatcher.Invoke(() =>
+            _clientObject.SendMessage(new Message()
             {
-                foreach (var friend in _clientData.FriendList)
+                Header = new Header()
                 {
-                    var messages = GetMessages(_clientData.UserData.Id, friend.Id);
-
-                    if (friend.Id == _clientData.UserData.Id)
-                    {
-                        if (messages.Count != 0)
-                        {
-                            _mainWindowViewModel.SearchPanelSource.Add(new()
-                            {
-                                Title = "Избранное",
-                                RecipientId = friend.Id,
-                                Messages = messages,
-                                LastMessage = messages.Last().Text,
-                                LastMessageDateTime = messages.Last().CreateDate
-
-                            });
-                        }
-                        else
-                        {
-                            _mainWindowViewModel.SearchPanelSource.Add(new()
-                            {
-                                Title = "Избранное",
-                                RecipientId = friend.Id,
-                                Messages = messages,
-                                LastMessage = "...",
-                                LastMessageDateTime = null
-
-                            });
-                        }
-                    }
-                    else
-                    {
-                        if (messages.Count != 0)
-                        {
-                            _mainWindowViewModel.SearchPanelSource.Add(new()
-                            {
-                                Title = friend.NickName,
-                                RecipientId = friend.Id,
-                                Messages = messages,
-                                LastMessage = messages.Last().Text,
-                                LastMessageDateTime = messages.Last().CreateDate
-                            });
-                        }
-                        else
-                        {
-                            _mainWindowViewModel.SearchPanelSource.Add(new()
-                            {
-                                Title = friend.NickName,
-                                RecipientId = friend.Id,
-                                Messages = messages,
-                                LastMessage = "...",
-                                LastMessageDateTime = null
-                            });
-                        }
-                    }
+                    MessageType = MessageType.Command,
+                    StatusCode = StatusCode.GET,
+                    CommandArguments = new [] { "friend list" }
                 }
-                _mainWindowViewModel.Chats = _clientData.ChatList;
-            });*/
+            });
 
-            _mainWindowViewModel.UserNameTextBlock = _clientData.UserData?.NickName;
-
-            ObservableCollection<ProcessedMessage> GetMessages(List<Message> messages, int recipient, int sender)
-            {
-                ObservableCollection<ProcessedMessage> result = new();
-
-                if (messages != null)
-                    foreach (var message in messages)
-                    {
-                        try
-                        {
-                            if (message.RecipientId == recipient && message.SenderId == sender)
-                                result.Add(new ProcessedMessage()
-                                {
-                                    CreateDate = message.CreateDate,
-                                    Id = message.Id,
-                                    Text = message.Text,
-                                    IsReceivedMessage = IsReceivedMessage(message.SenderId)
-                                });
-                            if (message.RecipientId == sender && message.SenderId == recipient)
-                                result.Add(new ProcessedMessage()
-                                {
-                                    CreateDate = message.CreateDate,
-                                    Id = message.Id,
-                                    Text = message.Text,
-                                    IsReceivedMessage = IsReceivedMessage(message.SenderId)
-                                });
-                        }
-                        catch
-                        {
-                            throw new Exception();
-                        }
-                    }
-
-                return result;
-            }
-
-            bool IsReceivedMessage(int sender)
-            {
-                if(_clientData.UserData.Id == sender) return false;
-                return true;
-            }
+            _mainWindowViewModel.UserNameTextBlock =
+                _clientData.UserData.LastName + " " +
+                _clientData.UserData.FirstName + " " +
+                _clientData.UserData.FatherName;
 
             _loginWindow?.Close();
 

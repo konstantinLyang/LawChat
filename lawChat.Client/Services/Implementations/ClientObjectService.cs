@@ -1,20 +1,27 @@
 ﻿using System;
-using System.IO;
-using System.Net.Sockets;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using lawChat.Network.Abstractions;
+using lawChat.Network.Abstractions.Enums;
 using lawChat.Network.Abstractions.Models;
+using lawChat.Server.Data.Model;
+using Newtonsoft.Json;
+using PackageMessage = lawChat.Network.Abstractions.Models.PackageMessage;
 
 namespace lawChat.Client.Services.Implementations
 {
     public class ClientObjectService : IClientObject
     {
-        public event EventHandler<Message>? MessageReceived;
+        public event EventHandler<PackageMessage>? MessageReceived;
 
         private readonly IClientData _clientData;
         
         private readonly IConnection _connection;
+
+        private PackageMessage _answer;
+
+        private bool _isAuthorized;
+        
 
         public ClientObjectService(IClientData clientData, IConnection connection)
         {
@@ -36,40 +43,51 @@ namespace lawChat.Client.Services.Implementations
 
             NetworkStream.Close();
         }*/
-
-        public Task SendMessageAsync(Message message)
+        
+        public PackageMessage OpenConnection(string login, string password)
         {
-            throw new NotImplementedException();
-        }
+            if (!_connection.IsConnected) _connection.Connect("127.0.0.1", 8080);
 
-        public string OpenConnection(string login, string password)
-        {
-            _connection.Connect("127.0.0.1", 8080);
-
-            _connection.SendMessageAsync(new Message()
+            try
             {
-                Header = new Header()
+                SendMessage(new PackageMessage()
                 {
+                    Header = new Header()
+                    {
+                        MessageType = MessageType.Command,
+                        CommandArguments = new[] { "authorization" }
+                    },
+                    Data = Encoding.UTF8.GetBytes(login + ";" + password),
+                });
 
-                },
-                Data = Encoding.UTF8.GetBytes($"{login};{password}")
-            });
+                WaitForAnswer();
 
-            return "ХУЙ";
+                void WaitForAnswer()
+                {
+                    if (_answer != null) return;
+                    Thread.Sleep(100);
+                    WaitForAnswer();
+                }
+
+                if (_answer.Header.CommandArguments?[0] == "authorization successfully")
+                {
+                    _clientData.UserData = JsonConvert.DeserializeObject<User>(Encoding.UTF8.GetString(_answer.Data));
+                    _isAuthorized = true;
+                }
+
+                return _answer;
+            }
+            catch { return new PackageMessage() { Header = new Header() { StatusCode = StatusCode.ServerError } }; }
         }
-
-        public string GetMessageFromServer()
+        
+        public void SendMessage(PackageMessage message)
         {
-            throw new NotImplementedException();
+            _connection.SendMessageAsync(message);
         }
-
-        public void SendServerCommandMessage(string commandMessage)
+        private void HandlerMessageReceive(object sender, PackageMessage message)
         {
-            throw new NotImplementedException();
-        }
-        private void HandlerMessageReceive(object sender, Message message)
-        {
-            MessageReceived?.Invoke(this, message);
+            if(_isAuthorized) MessageReceived?.Invoke(this, message);
+            else _answer = message;
         }
     }
 }

@@ -13,8 +13,8 @@ namespace lawChat.Client.Model
 
         public string ContactPhoto { get; set; } = null;
 
-        private string _lastMessage;
-        public string LastMessage
+        private string? _lastMessage;
+        public string? LastMessage
         {
             get => _lastMessage;
             set => Set(ref _lastMessage, value);

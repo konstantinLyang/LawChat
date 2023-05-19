@@ -14,7 +14,7 @@ namespace lawChat.Client.Assets.Converters
 
             if (value != null)
             {
-                result = Regex.Replace(value.ToString(), @"[ \r\n\t]", "").Substring(0, Math.Min(Regex.Replace(value.ToString(), @"[ \r\n\t]", "").Length, 60));
+                result = Regex.Replace(value.ToString(), @"[\r\n\t]", "").Substring(0, Math.Min(Regex.Replace(value.ToString(), @"[ \r\n\t]", "").Length, 60));
             }
 
             return result;

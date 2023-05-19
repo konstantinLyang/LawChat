@@ -1,6 +1,5 @@
 ﻿using System.Net.Sockets;
 using System.Net;
-using lawChat.Server.Data;
 
 namespace lawChat.Server.ServerData.Model
 {
@@ -35,14 +34,7 @@ namespace lawChat.Server.ServerData.Model
 
                     lock (_clients)
                     {
-                        _clients.Add(new ServerConnection(client, c =>
-                        {
-                            lock (_clients)
-                            {
-                                _clients.Remove(c);
-                            }
-                            c.Dispose();
-                        }));
+                        _clients.Add(new ServerConnection(client, _clients));
                     }
                 }
             }

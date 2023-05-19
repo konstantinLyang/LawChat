@@ -11,27 +11,43 @@ namespace LawChat.Network.Implementations
 {
     public class Connection : IConnection
     {
-        public event EventHandler<Message> MessageReceived;
+        public event EventHandler<PackageMessage> MessageReceived;
 
-        private TcpClient _client;
+        public TcpClient _client;
         private NetworkStream _stream;
-        private EndPoint? _remoteEndPoint;
         private Task _readingTask;
         private Task _writingTask;
         private Channel<string> _channel;
         private bool _disposed;
-        private bool _isConnected;
 
-        public Connection()
+        private bool _isConnected;
+        public bool IsConnected
         {
-            
+            get => _isConnected;
         }
 
-        public async Task Connect(string ipAddress, int port)
+        public void Connect(string ipAddress, int port)
         {
-            if (_isConnected) throw new Exception("Connection already exist.");
+            if (IsConnected) throw new Exception("Connection already exist.");
 
             _client = new TcpClient(ipAddress, port);
+
+            _stream = _client.GetStream();
+
+            _isConnected = true;
+
+            _channel = Channel.CreateUnbounded<string>();
+
+            _readingTask = RunReadingLoop();
+
+            _writingTask = RunWritingLoop();
+        }
+
+        public void Connect(TcpClient tcpClient)
+        {
+            if (IsConnected) throw new Exception("Connection already exist.");
+
+            _client = tcpClient;
 
             _stream = _client.GetStream();
 
@@ -68,7 +84,7 @@ namespace LawChat.Network.Implementations
                         count += bytesReceived;
                     }
 
-                    MessageReceived?.Invoke(this, JsonConvert.DeserializeObject<Message>(Encoding.UTF8.GetString(buffer)));
+                    MessageReceived?.Invoke(this, JsonConvert.DeserializeObject<PackageMessage>(Encoding.UTF8.GetString(buffer)));
                 }
                 
                 _stream.Close();
@@ -83,7 +99,7 @@ namespace LawChat.Network.Implementations
             }
         }
 
-        public async Task SendMessageAsync(Message message)
+        public async Task SendMessageAsync(PackageMessage message)
         {
             if (!_isConnected) throw new Exception("No connection.");
 

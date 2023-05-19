@@ -2,7 +2,12 @@
 {
     public enum StatusCode
     {
+        GET,
+        SET,
+        PUT,
+        DELETE,
         OK,
-        ServerError
+        ServerError,
+        Error
     }
 }

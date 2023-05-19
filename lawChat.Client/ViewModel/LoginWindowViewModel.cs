@@ -6,6 +6,8 @@ using System.Windows.Threading;
 using lawChat.Client.Infrastructure;
 using lawChat.Client.Services;
 using lawChat.Client.ViewModel.Base;
+using lawChat.Network.Abstractions.Enums;
+using lawChat.Network.Abstractions.Models;
 
 namespace lawChat.Client.ViewModel
 {
@@ -83,45 +85,35 @@ namespace lawChat.Client.ViewModel
                     InfoTextBlockVisibility = Visibility.Hidden;
                     LoadingIconVisible = Visibility.Visible;
 
-                    string result = _clientObject.OpenConnection(LoginTextBox, PasswordTextBox);
+                    PackageMessage result = _clientObject.OpenConnection(LoginTextBox, PasswordTextBox);
 
                     _dispatcher.Invoke(() => { BorderBrush = new SolidColorBrush(Color.FromArgb(255, 171, 173, 173)); });
 
-                    if (result.Contains("successful ClientConnection"))
+                    if (result.Header.StatusCode != StatusCode.ServerError)
                     {
-                        _dispatcher.Invoke(() =>
+                        if (result.Header.CommandArguments?[0] ==  "authorization successfully")
                         {
-                            _userDialog.ShowMainWindow();
-                        });
-                    }
-                    else if(result == "incorrect user data")
-                    {
-                        _dispatcher.Invoke(() =>
+                            _dispatcher.Invoke(() =>
+                            {
+                                _userDialog.ShowMainWindow();
+                            });
+                        }
+                        else if (result.Header.CommandArguments?[0] == "authorization incorrect user data")
                         {
-                            LoadingIconVisible = Visibility.Hidden;
-                            InfoTextBlockVisibility = Visibility.Visible;
+                            _dispatcher.Invoke(() =>
+                            {
+                                LoadingIconVisible = Visibility.Hidden;
+                                InfoTextBlockVisibility = Visibility.Visible;
 
-                            InfoTextBlock = "Неверный пароль или логин";
+                                InfoTextBlock = "Неверный пароль или логин";
 
-                            BorderBrush = new SolidColorBrush(Color.FromArgb(255, 255, 88, 88));
-                            TextBlocForegroundBrush = new SolidColorBrush(Color.FromArgb(255, 255, 88, 88));
+                                BorderBrush = new SolidColorBrush(Color.FromArgb(255, 255, 88, 88));
+                                TextBlocForegroundBrush = new SolidColorBrush(Color.FromArgb(255, 255, 88, 88));
 
-                            LoginTextBox = "";
-                            PasswordTextBox = "";
-                        });
-                    }
-                    else if(result == "user not found")
-                    {
-                        _dispatcher.Invoke(() =>
-                        {
-                            LoadingIconVisible = Visibility.Hidden;
-                            ForegroundInfoTextBlock = new SolidColorBrush(Color.FromArgb(255, 255, 88, 88));
-                            InfoTextBlockVisibility = Visibility.Visible;
-
-                            InfoTextBlock = "Пользователь не найден";
-                            LoginTextBox = "";
-                            PasswordTextBox = "";
-                        });
+                                LoginTextBox = "";
+                                PasswordTextBox = "";
+                            });
+                        }
                     }
                     else
                     {
