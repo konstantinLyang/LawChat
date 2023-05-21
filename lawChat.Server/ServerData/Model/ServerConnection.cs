@@ -143,27 +143,40 @@ namespace lawChat.Server.ServerData.Model
                     break;
                 case MessageType.Text:
 
-                    _context.Messages.Add(new Message()
+                    try
                     {
-                        CreateDate = DateTime.Now,
-                        Recipient = _context.Clients.FirstOrDefault(x => x.Id == Convert.ToInt32(message.Header.CommandArguments[0])),
-                        Sender = _context.Clients.FirstOrDefault(x => x.Id == _userData.Id),
-                        Text = Encoding.UTF8.GetString(message.Data)
-                    });
-
-                    _context.SaveChanges();
-
-                    _connectedClients
-                        .FirstOrDefault(x => x._userData.Id == Convert.ToInt32(message.Header.CommandArguments[0]))
-                        ._connection.SendMessageAsync(new PackageMessage()
+                        _context.Messages.Add(new Message()
                         {
-                            Header = new Header()
-                            {
-                                MessageType = MessageType.Text,
-                                CommandArguments = new []{ _userData.Id.ToString() }
-                            },
-                            Data = message.Data
+                            CreateDate = DateTime.Now,
+                            Recipient = _context.Clients.FirstOrDefault(x =>
+                                x.Id == Convert.ToInt32(message.Header.CommandArguments[0])),
+                            Sender = _context.Clients.FirstOrDefault(x => x.Id == _userData.Id),
+                            Text = Encoding.UTF8.GetString(message.Data)
                         });
+
+                        _context.SaveChanges();
+
+                        var recipient = _connectedClients
+                            .FirstOrDefault(x => x._userData.Id == Convert.ToInt32(message.Header.CommandArguments[0]));
+
+                        if (recipient != null)
+                        {
+                            recipient._connection.SendMessageAsync(new PackageMessage()
+                            {
+                                Header = new Header()
+                                {
+                                    MessageType = MessageType.Text,
+                                    CommandArguments = new[] { _userData.Id.ToString() }
+                                },
+                                Data = message.Data
+                            });
+                        }
+                    }
+                    catch
+                    {
+                        // ignored
+                    }
+
                     break;
             }
         }
