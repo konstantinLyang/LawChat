@@ -19,7 +19,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\lawChat.Server\lawChat.Server.csproj" />
+    <ProjectReference Include="..\LawChat.Network.Implementations\LawChat.Network.Implementations.csproj" />
+    <ProjectReference Include="..\lawChat.Server\LawChat.Server.csproj" />
   </ItemGroup>
 
   <ItemGroup>

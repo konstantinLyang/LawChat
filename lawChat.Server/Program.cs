@@ -1,9 +1,24 @@
 ﻿using System.Text;
-using lawChat.Server;
+using lawChat.Server.ServerData.Model;
 
-Console.OutputEncoding = Encoding.UTF8;
-Console.InputEncoding = Encoding.UTF8;
+namespace LawChat.Server;
 
-ServerModel server = new();
+class Program
+{
+    public static async Task Main(string[] args)
+    {
+        Console.OutputEncoding = Encoding.UTF8;
+        Console.InputEncoding = Encoding.UTF8;
 
-server.StartServer();
+        Console.WriteLine("Запуск сервера....");
+
+        using (TcpServerModel server = new TcpServerModel(8080))
+        {
+            Task serverTask = server.ListenAsync();
+
+            await serverTask;
+        }
+
+        Console.WriteLine("Остановка сервера...");
+    }
+}

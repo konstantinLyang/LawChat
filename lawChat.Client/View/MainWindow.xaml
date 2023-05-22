@@ -147,7 +147,7 @@
                                     <Setter Property="BorderThickness" Value="0"/>
                                     <Style.Triggers>
                                         <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Background" Value="AliceBlue"/>
+                                            <Setter Property="Background" Value="White"/>
                                         </Trigger>
                                     </Style.Triggers>
                                 </Style>
@@ -232,7 +232,7 @@
                                 </Grid.RowDefinitions>
 
                                 <!--#region MessageTextBox-->
-                                <TextBox MaxHeight="250" AcceptsReturn="True" Grid.Row="0" Style="{DynamicResource MessageTextBox}" Text="{Binding CurrentMessageTextBox, UpdateSourceTrigger=PropertyChanged}"
+                                <TextBox MaxHeight="250" MaxLength="4078" AcceptsReturn="True" Grid.Row="0" Style="{DynamicResource MessageTextBox}" Text="{Binding CurrentMessageTextBox, UpdateSourceTrigger=PropertyChanged}"
                                          Grid.RowSpan="2" Grid.Column="0" x:Name="TextMessageBox" SelectionBrush="#FF93CFFF"  SelectionTextBrush="White" CaretBrush="White">
                                     <TextBox.InputBindings>
                                         <KeyBinding Key="Enter" Command="{Binding SendMessageCommand}"/>

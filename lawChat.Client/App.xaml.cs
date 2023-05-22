@@ -5,6 +5,8 @@ using lawChat.Client.Services.Implementations;
 using lawChat.Client.View;
 using lawChat.Client.ViewModel;
 using Microsoft.Extensions.DependencyInjection;
+using lawChat.Network.Abstractions;
+using LawChat.Network.Implementations;
 
 namespace lawChat.Client
 {
@@ -21,6 +23,7 @@ namespace lawChat.Client
                     services.AddSingleton<IUserDialog, UserDialogService>();
                     services.AddSingleton<IClientObject, ClientObjectService>();
                     services.AddSingleton<IClientData, ClientDataService>();
+                    services.AddSingleton<IConnection, Connection>();
 
                     services.AddTransient(s =>
                     {

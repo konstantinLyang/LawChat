@@ -1,64 +1,93 @@
-﻿using System.Net;
-using System.Net.Sockets;
+﻿using System;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
+using lawChat.Network.Abstractions;
+using lawChat.Network.Abstractions.Enums;
+using lawChat.Network.Abstractions.Models;
+using lawChat.Server.Data.Model;
+using Newtonsoft.Json;
+using PackageMessage = lawChat.Network.Abstractions.Models.PackageMessage;
 
 namespace lawChat.Client.Services.Implementations
 {
     public class ClientObjectService : IClientObject
     {
-        private readonly IClientData _clientData;
-        private Socket _clientSocket;
+        public event EventHandler<PackageMessage>? MessageReceived;
 
-        public ClientObjectService(IClientData clientData)
+        private readonly IClientData _clientData;
+        
+        private readonly IConnection _connection;
+
+        private PackageMessage _answer;
+
+        private bool _isAuthorized;
+        
+
+        public ClientObjectService(IClientData clientData, IConnection connection)
         {
+            _connection = connection;
             _clientData = clientData;
+
+            _connection.MessageReceived += HandlerMessageReceive;
         }
 
-        public string OpenConnection(string login, string password)
+        /*public void SendPrivateFileMessage(int recipient, string filePath, string fileName)
         {
+            Stream FileStream = File.OpenRead(filePath);
+
+            byte[] FileBuffer = new byte[FileStream.Length];
+
+            FileStream.Read(FileBuffer, 0, (int)FileStream.Length);
+
+            NetworkStream.Write(FileBuffer, 0, FileBuffer.GetLength(0));
+
+            NetworkStream.Close();
+        }*/
+        
+        public PackageMessage OpenConnection(string login, string password)
+        {
+            if (!_connection.IsConnected) _connection.Connect("127.0.0.1", 8080);
+
             try
             {
-                _clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                SendMessage(new PackageMessage()
+                {
+                    Header = new Header()
+                    {
+                        MessageType = MessageType.Command,
+                        CommandArguments = new[] { "authorization" }
+                    },
+                    Data = Encoding.UTF8.GetBytes(login + ";" + password),
+                });
 
-                IPEndPoint serverEndPoint = new(IPAddress.Parse("10.10.11.47"), 8080);
+                WaitForAnswer();
 
-                _clientSocket.Connect(serverEndPoint);
+                void WaitForAnswer()
+                {
+                    if (_answer != null) return;
+                    Thread.Sleep(100);
+                    WaitForAnswer();
+                }
 
-                return Authorization(login, password);
+                if (_answer.Header.CommandArguments?[0] == "authorization successfully")
+                {
+                    _clientData.UserData = JsonConvert.DeserializeObject<User>(Encoding.UTF8.GetString(_answer.Data));
+                    _isAuthorized = true;
+                }
+
+                return _answer;
             }
-            catch
-            {
-                return "server error";
-            }
+            catch { return new PackageMessage() { Header = new Header() { StatusCode = StatusCode.ServerError } }; }
         }
-        private string Authorization(string login, string password)
+        
+        public void SendMessage(PackageMessage message)
         {
-            _clientSocket.Send(Encoding.UTF8.GetBytes($"{login};{password};"));
-            
-            return GetMessageFromServer();
+            _connection.SendMessageAsync(message);
         }
-        public void SendPrivateTextMessage(int recipient, string message)
+        private void HandlerMessageReceive(object sender, PackageMessage message)
         {
-            _clientSocket.Send(Encoding.UTF8.GetBytes($"message;PRIVATE;text;{recipient};{message};"));
-        }
-        public void SendPrivateFileMessage(int recipient, string filePath)
-        {
-            _clientSocket.SendFile(filePath, Encoding.UTF8.GetBytes($"message;PRIVATE;file;{recipient};"), Encoding.UTF8.GetBytes($"message;PRIVATE;file;{recipient};"), TransmitFileOptions.UseDefaultWorkerThread);
-        }
-        public void SendServerCommandMessage(string commandMessage)
-        {
-            _clientSocket.Send(Encoding.UTF8.GetBytes($"command;{commandMessage}"));
-        }
-        public string GetMessageFromServer()
-        {
-            var serverBuffer = new byte[4078];
-
-            var serverSize = _clientSocket.Receive(serverBuffer);
-
-            string result = Encoding.UTF8.GetString(serverBuffer, 0, serverSize);
-
-            return result;
+            if(_isAuthorized) MessageReceived?.Invoke(this, message);
+            else _answer = message;
         }
     }
 }

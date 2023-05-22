@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using lawChat.Server.Data.Model;
 
 namespace lawChat.Client.Model
 {
@@ -14,8 +13,8 @@ namespace lawChat.Client.Model
 
         public string ContactPhoto { get; set; } = null;
 
-        private string _lastMessage;
-        public string LastMessage
+        private string? _lastMessage;
+        public string? LastMessage
         {
             get => _lastMessage;
             set => Set(ref _lastMessage, value);
