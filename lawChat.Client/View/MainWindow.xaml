@@ -37,6 +37,7 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
 
+
                     <TextBlock Grid.Column="0" Margin="10, 0, 0, 0" Text="{Binding UserNameTextBlock}" VerticalAlignment="Center" Foreground="Chartreuse"/>
 
                     <StackPanel HorizontalAlignment="Right" Grid.Column="1"
@@ -114,44 +115,70 @@
                         <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch"
                                   Background="Transparent" SelectedItem="{Binding SelectedChat}"
                                   BorderThickness="0" ItemsSource="{Binding SearchPanelSource, UpdateSourceTrigger=PropertyChanged}">
+                            <b:Interaction.Triggers>
+                                <b:EventTrigger EventName="SelectionChanged">
+                                    <b:InvokeCommandAction Command="{Binding ChatChangedCommand}"/>
+                                </b:EventTrigger>
+                            </b:Interaction.Triggers>
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <Border MaxHeight="60" Height="100" BorderThickness="1" >
                                         <Border Margin="5">
                                             <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition MinWidth="20" MaxWidth="40"/>
+                                                </Grid.ColumnDefinitions>
                                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                                                    <Canvas MinHeight="50" MaxHeight="50" MinWidth="50" MaxWidth="50">
-                                                        <Ellipse Width="50" Height="50">
+                                                    <Grid>
+                                                        <Ellipse Width="48" Height="48">
                                                             <Ellipse.Fill>
                                                                 <ImageBrush Stretch="UniformToFill"
                                                                             ImageSource="{Binding ContactPhoto, FallbackValue='C://Program Files (x86)/LawChat/userdata/Images/no_photo.jpg', TargetNullValue='C://Program Files (x86)/LawChat/userdata/Images/no_photo.jpg'}"/>
                                                             </Ellipse.Fill>
                                                         </Ellipse>
-                                                    </Canvas>
-                                                    <StackPanel Margin="10, 0,0,0" VerticalAlignment="Center">
-                                                        <TextBlock Grid.Row="0" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" Foreground="White" FontSize="13" FontWeight="DemiBold"/>
-                                                        <TextBlock Grid.Row="1" TextWrapping="NoWrap" Text="{Binding LastMessage, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource LastMessageTextConverter}}" Foreground="#FFB8C0C3" Margin="0,5,0,0" FontWeight="Light" FontSize="13"/>
+                                                    </Grid>
+                                                    <Grid>
+                                                        <Ellipse Margin="-6,35,0,0" StrokeThickness="6"
+                                                                 Width="14" Height="14" Fill="Chartreuse" Stroke="Transparent">
+                                                        </Ellipse>
+                                                        <Grid.Style>
+                                                            <Style TargetType="{x:Type Grid}">
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsOnline, UpdateSourceTrigger=PropertyChanged}" Value="False">
+                                                                        <Setter Property="Visibility" Value="Hidden"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Grid.Style>
+                                                    </Grid>
+                                                    <StackPanel Margin="5, 0,0,0" VerticalAlignment="Center">
+                                                        <TextBlock Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" Foreground="White" FontSize="13" FontWeight="DemiBold"/>
+                                                        <TextBlock TextWrapping="NoWrap" Text="{Binding LastMessage, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource LastMessageTextConverter}}" Foreground="#FFB8C0C3" Margin="0,5,0,0" FontWeight="Light" FontSize="13"/>
                                                     </StackPanel>
                                                 </StackPanel>
-                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                                <StackPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Right">
                                                     <TextBlock Margin="0, 5, 0, 0" Text="{Binding LastMessageDateTime, Converter={StaticResource LastMessageDateTimeConverter}, UpdateSourceTrigger=PropertyChanged}" Foreground="#FFB8C0C3" FontSize="13" FontWeight="Light"/>
+                                                    <Grid>
+                                                        <Ellipse StrokeThickness="6" HorizontalAlignment="Right" Margin="0,7,0,0"
+                                                                 Width="17" Height="17" Fill="#8e89f5">
+                                                        </Ellipse>
+                                                        <Grid.Style>
+                                                            <Style TargetType="{x:Type Grid}">
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsRead, UpdateSourceTrigger=PropertyChanged}" Value="True">
+                                                                        <Setter Property="Visibility" Value="Hidden"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Grid.Style>
+                                                    </Grid>
                                                 </StackPanel>
                                             </Grid>
                                         </Border>
                                     </Border>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
-                            <ListBox.ItemContainerStyle>
-                                <Style TargetType="{x:Type ListBoxItem}">
-                                    <Setter Property="SnapsToDevicePixels" Value="True"/>
-                                    <Setter Property="BorderThickness" Value="0"/>
-                                    <Style.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Background" Value="White"/>
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </ListBox.ItemContainerStyle>
                         </ListBox>
                     </Border>
                 </Grid>

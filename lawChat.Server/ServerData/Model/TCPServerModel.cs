@@ -34,7 +34,13 @@ namespace lawChat.Server.ServerData.Model
 
                     lock (_clients)
                     {
-                        _clients.Add(new ServerConnection(client, _clients));
+                        _clients.Add(new ServerConnection(client, _clients, c =>
+                        {
+                            lock (_clients)
+                            {
+                                _clients.Remove(c);
+                            }
+                        }));
                     }
                 }
             }

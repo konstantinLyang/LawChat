@@ -9,7 +9,7 @@ namespace lawChat.Client.Assets.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return ((DateTime)value).ToString("dd.MM.yyyy HH.mm");
+            return ((DateTime)value).ToString("dd.MM.yyyy HH:mm");
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

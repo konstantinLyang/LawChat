@@ -11,7 +11,6 @@ using lawChat.Network.Abstractions.Enums;
 using lawChat.Network.Abstractions.Models;
 using lawChat.Server.Data.Model;
 using Microsoft.Extensions.DependencyInjection;
-using Message = lawChat.Network.Abstractions.Models.PackageMessage;
 
 namespace lawChat.Client.Services.Implementations
 {
@@ -52,7 +51,7 @@ namespace lawChat.Client.Services.Implementations
             _mainWindowViewModel = _services.GetRequiredService<MainWindowViewModel>();
             _mainWindow = mainWindow;
 
-            _clientObject.SendMessage(new Message()
+            _clientObject.SendMessage(new PackageMessage()
             {
                 Header = new Header()
                 {

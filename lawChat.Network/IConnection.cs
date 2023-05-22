@@ -11,6 +11,8 @@ namespace lawChat.Network.Abstractions
 
         void Connect(string ipAddress, int port);
 
+        void CloseConnection();
+
         public bool IsConnected { get; }
     }
 }

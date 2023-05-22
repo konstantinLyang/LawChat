@@ -2,6 +2,8 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using lawChat.Client.Services;
+using lawChat.Network.Abstractions.Models;
 
 namespace lawChat.Client.View
 {

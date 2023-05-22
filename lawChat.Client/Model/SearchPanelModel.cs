@@ -9,6 +9,20 @@ namespace lawChat.Client.Model
     {
         public string? Title { get; set; }
 
+        private bool? _isOnline = false; 
+        public bool? IsOnline
+        {
+            get => _isOnline;
+            set => Set(ref _isOnline, value);
+        }
+
+        private bool? _isRead = true; 
+        public bool? IsRead
+        {
+            get => _isRead;
+            set => Set(ref _isRead, value);
+        }
+
         public int RecipientId { get; set; }
 
         public string ContactPhoto { get; set; } = null;
@@ -27,7 +41,7 @@ namespace lawChat.Client.Model
             set => Set(ref _lastMessageDateTime, value);
         }
 
-        public ObservableCollection<ProcessedMessage> Messages { get; set; }
+        public ObservableCollection<ProcessedMessage> Messages { get; set; } = new();
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null!) =>

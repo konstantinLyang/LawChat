@@ -6,7 +6,6 @@ using lawChat.Server.Data;
 using lawChat.Network.Abstractions.Enums;
 using lawChat.Server.Data.Model;
 using Newtonsoft.Json;
-using System.Linq;
 
 namespace lawChat.Server.ServerData.Model
 {
@@ -14,17 +13,21 @@ namespace lawChat.Server.ServerData.Model
     {
         public User _userData;
 
-        private Connection _connection;
+        public Connection _connection;
 
         private LawChatDbContext _context;
 
         private List<ServerConnection> _connectedClients;
 
-        public ServerConnection(TcpClient client, List<ServerConnection> connectedClients)
+        private Action<ServerConnection> _dispose;
+
+        public ServerConnection(TcpClient client, List<ServerConnection> connectedClients, Action<ServerConnection> disposeCallBack)
         {
             _connectedClients = connectedClients;
 
-            _connection = new();
+            _dispose = disposeCallBack;
+
+            _connection = new(() => Dispose());
 
             _context = new LawChatDbContext();
 
@@ -51,6 +54,25 @@ namespace lawChat.Server.ServerData.Model
                                 if (client != null)
                                 {
                                     _userData = client;
+
+                                    try
+                                    {
+                                        foreach (var connectedClient in _connectedClients)
+                                        {
+                                            if (connectedClient._userData.Id != client.Id)
+                                            {
+                                                connectedClient._connection?.SendMessageAsync(new PackageMessage()
+                                                {
+                                                    Header = new Header()
+                                                    {
+                                                        MessageType = MessageType.Command,
+                                                        CommandArguments = new[] { "new client connection", _userData.Id.ToString() }
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    }
+                                    catch (Exception ex){}
 
                                     await _connection.SendMessageAsync(new PackageMessage()
                                     {
@@ -92,7 +114,7 @@ namespace lawChat.Server.ServerData.Model
                         case "friend list":
                             try
                             {
-                                await _connection.SendMessageAsync(new PackageMessage()
+                                _connection.SendMessageAsync(new PackageMessage()
                                 {
                                     Header = new Header()
                                     {
@@ -102,6 +124,33 @@ namespace lawChat.Server.ServerData.Model
                                     },
                                     Data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(_context.Clients))
                                 });
+                            }
+                            catch
+                            {
+                                throw new Exception("ошибка");
+                            }
+                            break;
+
+                        case "get connection list":
+                            try
+                            {
+                                if (_userData != null)
+                                {
+                                    foreach (var connectedClient in _connectedClients)
+                                    {
+                                        if (connectedClient._userData.Id != _userData.Id)
+                                        {
+                                            _connection?.SendMessageAsync(new PackageMessage()
+                                            {
+                                                Header = new Header()
+                                                {
+                                                    MessageType = MessageType.Command,
+                                                    CommandArguments = new[] { "new client connection", connectedClient._userData.Id.ToString() }
+                                                }
+                                            });
+                                        }
+                                    }
+                                }
                             }
                             catch
                             {
@@ -141,6 +190,7 @@ namespace lawChat.Server.ServerData.Model
                             break;
                     }
                     break;
+
                 case MessageType.Text:
 
                     try
@@ -176,14 +226,36 @@ namespace lawChat.Server.ServerData.Model
                     {
                         // ignored
                     }
-
                     break;
             }
         }
 
         public void Dispose()
         {
+            try
+            {
+                if (_userData != null)
+                {
+                    foreach (var connectedClient in _connectedClients)
+                    {
+                        if (connectedClient._userData.Id != _userData.Id)
+                        {
+                            connectedClient._connection?.SendMessageAsync(new PackageMessage()
+                            {
+                                Header = new Header()
+                                {
+                                    MessageType = MessageType.Command,
+                                    CommandArguments = new[] { "client close connection", _userData.Id.ToString() }
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+            catch (Exception ex) { }
+
             _connection.Dispose();
+            _dispose(this);
         }
     }
 }
