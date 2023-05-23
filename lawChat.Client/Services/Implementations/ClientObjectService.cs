@@ -46,7 +46,7 @@ namespace lawChat.Client.Services.Implementations
         
         public PackageMessage OpenConnection(string login, string password)
         {
-            if (!_connection.IsConnected) _connection.Connect("10.10.11.47", 8080);
+            if (!_connection.IsConnected) _connection.Connect("127.0.0.1", 8080);
 
             try
             {
