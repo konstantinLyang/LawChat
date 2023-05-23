@@ -5,9 +5,6 @@ using System.Windows.Input;
 
 namespace lawChat.Client.View
 {
-    /// <summary>
-    /// Логика взаимодействия для MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         public MainWindow()
@@ -46,7 +43,7 @@ namespace lawChat.Client.View
                 }
             }
         }
-        private void Window_StateChanged(object sender, System.EventArgs e)
+        private void Window_StateChanged(object sender, EventArgs e)
         {
             if (WindowState == WindowState.Maximized)
             {
@@ -80,7 +77,6 @@ namespace lawChat.Client.View
                 DragMove();
             }
         }
-
         private void ScrollViewer_OnScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             if (e.OriginalSource is ScrollViewer scrollViewer &&

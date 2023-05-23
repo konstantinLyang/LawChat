@@ -7,6 +7,7 @@ namespace lawChat.Client.Services
     {
         event EventHandler<PackageMessage> MessageReceived;
         PackageMessage OpenConnection(string login, string password);
+        void CloseConnection();
         void SendMessage(PackageMessage message);
     }
 }

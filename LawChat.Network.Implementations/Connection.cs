@@ -14,13 +14,34 @@ namespace LawChat.Network.Implementations
         public event EventHandler<PackageMessage> MessageReceived;
 
         public TcpClient _client;
+        
         private NetworkStream _stream;
+        
         private Task _readingTask;
+        
         private Task _writingTask;
+        
         private Channel<string> _channel;
+
+        private readonly Action _disposeCallback;
+
         private bool _disposed;
 
         private bool _isConnected;
+        
+        public Connection(Action disposeCallback)
+        {
+            _disposeCallback = disposeCallback;
+        }
+        public Connection()
+        {
+        }
+
+        public void CloseConnection()
+        {
+            Dispose();
+        }
+
         public bool IsConnected
         {
             get => _isConnected;
@@ -91,12 +112,14 @@ namespace LawChat.Network.Implementations
             }
             catch (IOException ex)
             {
-                throw new IOException();
+                Console.WriteLine($"Подключение к {_client.Client.AddressFamily} закрыто сервером.");
             }
             catch (Exception ex)
             {
-                throw new Exception();
+                Console.WriteLine(ex.GetType().Name + ": " + ex.Message);
             }
+            if (!_disposed)
+                _disposeCallback();
         }
 
         public async Task SendMessageAsync(PackageMessage message)

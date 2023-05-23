@@ -4,22 +4,21 @@
              xmlns:local="clr-namespace:lawChat.Client"
              xmlns:converters="clr-namespace:lawChat.Client.Assets.Converters">
     <Application.Resources>
-
+        
         <ResourceDictionary>
 
             <ResourceDictionary.MergedDictionaries>
 
                 <ResourceDictionary Source="/Assets/Style/TitleBarIconButton.xaml"/>
                 <ResourceDictionary Source="/Assets/Style/TitleBarIcon.xaml"/>
-
                 <ResourceDictionary Source="/Assets/Style/WindowIconButton.xaml"/>
                 <ResourceDictionary Source="/Assets/Style/WindowIcon.xaml"/>
-
                 <ResourceDictionary Source="/Assets/Style/MessageBox.xaml"/>
                 <ResourceDictionary Source="/Assets/Style/BorderTextBox.xaml"/>
                 <ResourceDictionary Source="/Assets/Style/LoginWindow/LoginWindowtextBox.xaml"/>
                 <ResourceDictionary Source="/Assets/Style/LoginWindow/LoginWindowButton.xaml"/>
                 <ResourceDictionary Source="/Assets/Style/MainWindow/MainWindowListViewStyle.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/ToastNotifications.Messages;component/Themes/Default.xaml" />
 
             </ResourceDictionary.MergedDictionaries>
 
@@ -132,5 +131,7 @@
             <!--#endregion-->
 
         </ResourceDictionary>
+
     </Application.Resources>
+
 </Application>
