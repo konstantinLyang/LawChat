@@ -2,14 +2,9 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using lawChat.Client.Services;
-using lawChat.Network.Abstractions.Models;
 
 namespace lawChat.Client.View
 {
-    /// <summary>
-    /// Логика взаимодействия для MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         public MainWindow()
@@ -48,7 +43,7 @@ namespace lawChat.Client.View
                 }
             }
         }
-        private void Window_StateChanged(object sender, System.EventArgs e)
+        private void Window_StateChanged(object sender, EventArgs e)
         {
             if (WindowState == WindowState.Maximized)
             {
@@ -82,7 +77,6 @@ namespace lawChat.Client.View
                 DragMove();
             }
         }
-
         private void ScrollViewer_OnScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             if (e.OriginalSource is ScrollViewer scrollViewer &&

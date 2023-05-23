@@ -18,6 +18,7 @@
                 <ResourceDictionary Source="/Assets/Style/LoginWindow/LoginWindowtextBox.xaml"/>
                 <ResourceDictionary Source="/Assets/Style/LoginWindow/LoginWindowButton.xaml"/>
                 <ResourceDictionary Source="/Assets/Style/MainWindow/MainWindowListViewStyle.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/ToastNotifications.Messages;component/Themes/Default.xaml" />
 
             </ResourceDictionary.MergedDictionaries>
 

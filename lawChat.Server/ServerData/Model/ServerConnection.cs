@@ -125,10 +125,7 @@ namespace lawChat.Server.ServerData.Model
                                     Data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(_context.Clients))
                                 });
                             }
-                            catch
-                            {
-                                throw new Exception("ошибка");
-                            }
+                            catch { throw new Exception("ошибка"); }
                             break;
 
                         case "get connection list":
@@ -192,7 +189,6 @@ namespace lawChat.Server.ServerData.Model
                     break;
 
                 case MessageType.Text:
-
                     try
                     {
                         _context.Messages.Add(new Message()
@@ -227,6 +223,24 @@ namespace lawChat.Server.ServerData.Model
                         // ignored
                     }
                     break;
+
+                case MessageType.File:
+
+                    var asd = _connectedClients.FirstOrDefault(x =>
+                            x._userData.Id == Convert.ToInt32(message.Header.CommandArguments[0]));
+
+                    asd._connection
+                        .SendMessageAsync(new PackageMessage()
+                        {
+                            Header = new Header()
+                            {
+                                MessageType = MessageType.File,
+                                CommandArguments = new[] { _userData.Id.ToString(), message.Header.CommandArguments[1] }
+                            },
+                            Data = message.Data
+                        });
+
+                   break;
             }
         }
 
