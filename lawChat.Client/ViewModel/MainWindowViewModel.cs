@@ -252,7 +252,7 @@ namespace lawChat.Client.ViewModel
                                 SearchPanelSource.FirstOrDefault(x => x.RecipientId == Convert.ToInt32(message.Header.CommandArguments[0])))
                             {
                                 SearchPanelSource.FirstOrDefault(x => x.RecipientId == Convert.ToInt32(message.Header.CommandArguments[0])).IsRead = false;
-                                notification.Play();
+                                try { notification.Play(); } catch { }
                                 notifier.ShowClientMessage(Encoding.UTF8.GetString(message.Data), SearchPanelSource.FirstOrDefault(x => x.RecipientId == Convert.ToInt32(message.Header.CommandArguments[0])).Title, new MessageOptions());
                             }
                         });
@@ -285,7 +285,7 @@ namespace lawChat.Client.ViewModel
                             if (SelectedChat != receipient)
                             {
                                 receipient.IsRead = false;
-                                notification.Play();
+                                try { notification.Play(); } catch { }
                                 notifier.ShowClientMessage($"Файл: {message.Header.CommandArguments[1]}", receipient!.Title, new MessageOptions());
                             }
                         });
@@ -306,7 +306,7 @@ namespace lawChat.Client.ViewModel
             notification.SoundLocation =
                 @"Z:\!!!!!ПОЛЬЗОВАТЕЛИ\!КОНСТАНТИН_ЛЯНГ\PROGRAMMS\ПС для рабочего стола\LawChat\client\data\sound\notificationSound.wav";
 
-            notification.Load();
+            try{ notification.Load(); } catch {}
 
             notifier = new Notifier(cfg =>
             {
