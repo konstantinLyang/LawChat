@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using LawChat.Client.View;
+using LawChat.Client.View.UserControls;
 using ToastNotifications.Core;
 
 namespace LawChat.Client.Assets.CustomNotification

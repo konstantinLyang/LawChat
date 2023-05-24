@@ -1,4 +1,5 @@
 ﻿using System;
+using lawChat.Client.ViewModel.Base;
 
 namespace lawChat.Client.Model
 {

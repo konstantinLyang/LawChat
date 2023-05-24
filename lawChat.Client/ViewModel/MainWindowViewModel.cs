@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Media;
+using System.Resources;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using ToastNotifications;
@@ -12,10 +15,12 @@ using ToastNotifications.Lifetime;
 using ToastNotifications.Position;
 using ToastNotifications.Messages;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using LawChat.Client.Assets.CustomNotification;
 using lawChat.Client.Infrastructure;
 using lawChat.Client.Model;
+using LawChat.Client.Model;
 using lawChat.Client.Services;
 using lawChat.Client.ViewModel;
 using lawChat.Client.ViewModel.Base;
@@ -33,6 +38,8 @@ namespace lawChat.Client.ViewModel
 {
     internal class MainWindowViewModel : ViewModelBase
     {
+        readonly string downloadsPath = KnownFolders.Downloads.Path;
+
         private Notifier notifier;
 
         SoundPlayer notification = new SoundPlayer();
@@ -47,6 +54,13 @@ namespace lawChat.Client.ViewModel
             set => Set(ref _selectedChat, value);
         }
 
+        private Visibility _stickerBlockVisibility = Visibility.Hidden;
+        public Visibility StickerBlockVisibility
+        {
+            get => _stickerBlockVisibility;
+            set => Set(ref _stickerBlockVisibility, value);
+        }
+
         public Dispatcher Dispatcher = Dispatcher.CurrentDispatcher;
 
         private ObservableCollection<SearchPanelModel> _searchPanelSource = new();
@@ -56,7 +70,14 @@ namespace lawChat.Client.ViewModel
             set => Set(ref _searchPanelSource, value);
         }
 
-        private string? _currentMessageTextBox;
+        private ObservableCollection<StickerModel> _emojiCollection = new();
+        public ObservableCollection<StickerModel> EmojiCollection
+        {
+            get => _emojiCollection;
+            set => Set(ref _emojiCollection, value);
+        }
+
+        private string? _currentMessageTextBox = "";
         public string? CurrentMessageTextBox
         {
             get => _currentMessageTextBox;
@@ -77,6 +98,14 @@ namespace lawChat.Client.ViewModel
             if (SelectedChat.IsRead == false) SelectedChat.IsRead = true;
         }
 
+        private LambdaCommand _sendStickerCommand;
+        public ICommand SendStickerCommand => _sendStickerCommand ??= new(OnSendStickerCommand);
+        private void OnSendStickerCommand()
+        {
+            if (StickerBlockVisibility == Visibility.Hidden) StickerBlockVisibility = Visibility.Visible;
+            else StickerBlockVisibility = Visibility.Hidden;
+        }
+
         private LambdaCommand _sendFileCommand;
         public ICommand SendFileCommand => _sendFileCommand ??= new(OnSendFileCommand);
         private void OnSendFileCommand()
@@ -85,27 +114,66 @@ namespace lawChat.Client.ViewModel
             {
                 var fd = new OpenFileDialog();
 
-                string fileName = "";
-
                 if (fd.ShowDialog() == true)
-                {
-                    fileName = fd.FileName;
+                { 
+                    string fileName = fd.FileName;
                     
                     FileInfo fileInfo = new FileInfo(fileName);
 
-                    byte[] sendBuffer = File.ReadAllBytes(fileName);
-                    
+                    string sendFile = copeSendFile();
+
+                    FileInfo sendFileInfo = new FileInfo(sendFile);
+
+                    string copeSendFile()
+                    {
+                        try
+                        {
+                            File.Copy(fileName, $@"{downloadsPath}\Downloads\{fileInfo.Name}");
+                            return $@"{downloadsPath}\Downloads\{fileInfo.Name}";
+                        }
+                        catch (IOException ex)
+                        {
+                            try
+                            {
+                                string temp = DateTime.Now.Millisecond.ToString();
+                                File.Copy(fileName, $@"{downloadsPath}\Downloads\{temp}{fileInfo.Name}");
+                                return $@"{downloadsPath}\Downloads\{temp}{fileInfo.Name}";
+                            }
+                            catch
+                            {
+                                return copeSendFile();
+                            }
+                        }
+                    }
+
+                    byte[] sendBuffer = File.ReadAllBytes(sendFile);
+
+                    Dispatcher.Invoke(() =>
+                    {
+                        SearchPanelSource.FirstOrDefault(x => x.RecipientId == SelectedChat.RecipientId)!.Messages.Add(new ProcessedMessage()
+                        {
+                            Text = sendFileInfo.Name,
+                            CreateDate = DateTime.Now,
+                            IsReceivedMessage = false,
+                            IsFile = true,
+                            FilePath = sendFile
+                        });
+
+                        SearchPanelSource.FirstOrDefault(x => x.RecipientId == SelectedChat.RecipientId)!.LastMessage = sendFileInfo.Name;
+                        SearchPanelSource.FirstOrDefault(x => x.RecipientId == SelectedChat.RecipientId)!.LastMessageDateTime = DateTime.Now;
+                    });
+
+                    CurrentMessageTextBox = "";
 
                     _clientObject.SendMessage(new PackageMessage()
                     {
                         Header = new Header()
                         {
                             MessageType = MessageType.File,
-                            CommandArguments = new[] { _selectedChat.RecipientId.ToString(), fileInfo.Name }
+                            CommandArguments = new[] { _selectedChat.RecipientId.ToString(), sendFileInfo.Name }
                         },
                         Data = sendBuffer
                     });
-                    
                 }
             }
         }
@@ -259,7 +327,6 @@ namespace lawChat.Client.ViewModel
                         break;
 
                     case MessageType.File:
-                        string downloadsPath = KnownFolders.Downloads.Path;
                         if (!Directory.Exists(@$"{downloadsPath}\Downloads"))
                             Directory.CreateDirectory(@$"{downloadsPath}\Downloads");
 
@@ -279,7 +346,7 @@ namespace lawChat.Client.ViewModel
                                     FilePath = @$"{downloadsPath}\Downloads\{message.Header.CommandArguments[1]}"
                             });
 
-                            receipient.LastMessage = @$"{downloadsPath}\Downloads\{message.Header.CommandArguments[1]}";
+                            receipient.LastMessage = message.Header.CommandArguments[1];
                             receipient.LastMessageDateTime = DateTime.Now;
 
                             if (SelectedChat != receipient)
@@ -323,6 +390,9 @@ namespace lawChat.Client.ViewModel
 
                 cfg.DisplayOptions.Width = 300;
             });
+
+            var files = Application.GetResourceStream(new Uri("Assets/Image/Stickers/Emoji/beaming-face-with-smiling-eyes_1f601.png", UriKind.Relative));
+
         }
 
         public MainWindowViewModel() { }

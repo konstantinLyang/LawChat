@@ -229,16 +229,19 @@ namespace lawChat.Server.ServerData.Model
                     var asd = _connectedClients.FirstOrDefault(x =>
                             x._userData.Id == Convert.ToInt32(message.Header.CommandArguments[0]));
 
-                    asd._connection
-                        .SendMessageAsync(new PackageMessage()
-                        {
-                            Header = new Header()
+                    if (asd != null)
+                    {
+                        asd._connection
+                            .SendMessageAsync(new PackageMessage()
                             {
-                                MessageType = MessageType.File,
-                                CommandArguments = new[] { _userData.Id.ToString(), message.Header.CommandArguments[1] }
-                            },
-                            Data = message.Data
-                        });
+                                Header = new Header()
+                                {
+                                    MessageType = MessageType.File,
+                                    CommandArguments = new[] { _userData.Id.ToString(), message.Header.CommandArguments[1] }
+                                },
+                                Data = message.Data
+                            });
+                    }
 
                    break;
             }
