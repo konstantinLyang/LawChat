@@ -16,12 +16,9 @@
         WindowStartupLocation="CenterScreen"
         WindowStyle="None" WindowState="Normal" StateChanged="Window_StateChanged">
 
-<Window.InputBindings>
-    <KeyBinding Key="Enter" Command="{Binding SendMessageCommand}"/>
-</Window.InputBindings>
-    <Window.TaskbarItemInfo>
-        <TaskbarItemInfo x:Name="taskBarItem"/>
-    </Window.TaskbarItemInfo>
+    <Window.InputBindings>
+        <KeyBinding Key="Enter" Command="{Binding SendMessageCommand}"/>
+    </Window.InputBindings>
 
     <Border Background="#FF5D5D5D">
         <Grid>
@@ -218,24 +215,30 @@
                                     <DataTemplate>
                                         <Border Margin="5,5,0,5">
                                             <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition MaxWidth="60" Width="*"/>
+                                                    <ColumnDefinition/>
+                                                </Grid.ColumnDefinitions>
                                                 <Grid.RowDefinitions>
                                                     <RowDefinition/>
                                                     <RowDefinition/>
+                                                    <RowDefinition/>
                                                 </Grid.RowDefinitions>
-                                                <TextBox IsReadOnly="True" MaxWidth="500" Background="Transparent" BorderThickness="0"  Margin="15,8,15,0"
-                                                         Grid.Column="0" Foreground="White" TextWrapping="Wrap" FontWeight="Normal" FontSize="14" Text="{Binding Text}">
-                                                    <TextBox.Style>
-                                                        <Style TargetType="{x:Type TextBox}">
-                                                            <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding IsFile}" Value="True">
-                                                                    <Setter Property="Background" Value="Blue"/>
-                                                                    <Setter Property="FontSize" Value="15"/>
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </TextBox.Style>
+                                                <Border Grid.RowSpan="3" Grid.Column="0" Width="45" Height="45"
+                                                        CornerRadius="13" VerticalAlignment="Center" Margin="10,10,0,10" Visibility="Visible" Background="SkyBlue">
+                                                    <Path VerticalAlignment="Center" HorizontalAlignment="Center" SnapsToDevicePixels="True" Fill="White" Data="M2.196 0.554596C1.09143 0.554596 0.195995 1.45003 0.195995 2.5546V16.5546C0.195995 17.6592 1.09143 18.5546 2.196 18.5546H14.196C15.3006 18.5546 16.196 17.6592 16.196 16.5546V2.5546C16.196 1.45003 15.3006 0.554596 14.196 0.554596H2.196ZM3.2 4C3.08954 4 3 4.08954 3 4.2V4.8C3 4.91046 3.08954 5 3.2 5H12.8C12.9105 5 13 4.91046 13 4.8V4.2C13 4.08954 12.9105 4 12.8 4H3.2ZM3.2 8C3.08954 8 3 8.08954 3 8.2V8.8C3 8.91046 3.08954 9 3.2 9H9.8C9.91046 9 10 8.91046 10 8.8V8.2C10 8.08954 9.91046 8 9.8 8H3.2ZM3 12.2C3 12.0895 3.08954 12 3.2 12H6.8C6.91046 12 7 12.0895 7 12.2V12.8C7 12.9105 6.91046 13 6.8 13H3.2C3.08954 13 3 12.9105 3 12.8V12.2Z"/>
+                                                </Border>
+                                                <TextBox Grid.Row="0" IsReadOnly="True" MaxWidth="500" Background="Transparent" BorderThickness="0"  Margin="15,8,15,0"
+                                                         Grid.Column="1" Foreground="White" TextWrapping="Wrap" FontWeight="Normal" FontSize="14" Text="{Binding Text}">
                                                 </TextBox>
-                                                <TextBlock Grid.Row="1" FontSize="12" VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                                                <TextBlock Grid.Row="0" Grid.Column="1">
+                                                    <Hyperlink NavigateUri="{Binding FilePath}" TextDecorations="" RequestNavigate="Hyperlink_OnRequestNavigate">
+                                                        <TextBlock Margin="17,8,15,0" FontSize="14" TextWrapping="Wrap"
+                                                                   Foreground="SkyBlue"
+                                                                   Background="Transparent" FontWeight="Normal" Text="{Binding Text}"/>
+                                                    </Hyperlink>
+                                                </TextBlock>
+                                                <TextBlock Grid.Column="1" Grid.Row="1" FontSize="12" VerticalAlignment="Bottom" HorizontalAlignment="Right"
                                                            Margin="50,0,14,3" Foreground="#FFB8C0C3"
                                                            Text="{Binding CreateDate, Converter={StaticResource DateTimeToDateConverter}}"/>
                                             </Grid>
@@ -263,21 +266,23 @@
                     </Border>
 
                     <Border Margin="5" Grid.Row="0" Visibility="{Binding StickerBlockVisibility}"
-                            Height="150" Width="310" VerticalAlignment="Bottom" HorizontalAlignment="Right" CornerRadius="6,6,0,6" Background="#FF191C21">
-                        <ItemsControl ItemsSource="{Binding EmojiCollection}" VerticalContentAlignment="Center">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate >
-                                    <Button Background="Transparent" MaxHeight="20" MaxWidth="20" Margin="5" BorderThickness="0">
-                                        <Image SnapsToDevicePixels="True" Source="{Binding ImageFilePath}"></Image>
-                                    </Button>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <WrapPanel VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal"/>
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                        </ItemsControl>
+                            Height="150" Width="300" VerticalAlignment="Bottom" HorizontalAlignment="Right" CornerRadius="6,6,0,6" Background="#FF191C21">
+                        <ScrollViewer>
+                            <ItemsControl ItemsSource="{Binding EmojiCollection}" VerticalContentAlignment="Center">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate >
+                                        <Button Style="{StaticResource LoginWindowButtonStyle}" Background="Transparent" MaxHeight="25" MaxWidth="25" Margin="5" BorderThickness="0">
+                                            <Image SnapsToDevicePixels="True" Source="{Binding ImageFilePath}"></Image>
+                                        </Button>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                            </ItemsControl>
+                        </ScrollViewer>
                     </Border>
 
                     <!--#region TextBox to send message-->

@@ -21,6 +21,7 @@ using LawChat.Client.Assets.CustomNotification;
 using lawChat.Client.Infrastructure;
 using lawChat.Client.Model;
 using LawChat.Client.Model;
+using LawChat.Client.Model.Enums;
 using lawChat.Client.Services;
 using lawChat.Client.ViewModel;
 using lawChat.Client.ViewModel.Base;
@@ -191,7 +192,7 @@ namespace lawChat.Client.ViewModel
                         MessageType = MessageType.Text,
                         CommandArguments = new []{_selectedChat.RecipientId.ToString()}
                     },
-                    Data = Encoding.UTF8.GetBytes(CurrentMessageTextBox)
+                    Data = Encoding.UTF8.GetBytes(CurrentMessageTextBox.Trim())
                 });
 
                 Dispatcher.Invoke(() =>
@@ -391,7 +392,20 @@ namespace lawChat.Client.ViewModel
                 cfg.DisplayOptions.Width = 300;
             });
 
-            var files = Application.GetResourceStream(new Uri("Assets/Image/Stickers/Emoji/beaming-face-with-smiling-eyes_1f601.png", UriKind.Relative));
+            var files = new DirectoryInfo(@"Z:\!!!!!ПОЛЬЗОВАТЕЛИ\!КОНСТАНТИН_ЛЯНГ\PROGRAMMS\ПС для рабочего стола\LawChat\client\data\Image\Stickers\Emoji").GetFiles();
+
+            foreach (var emoji in files)
+            {
+                if (emoji.Extension == ".png")
+                {
+                    EmojiCollection.Add(new()
+                    {
+                        ImageFilePath = emoji.FullName,
+                        Name = emoji.Name,
+                        Type = EmojiType.Emoji
+                    });
+                }
+            }
 
         }
 

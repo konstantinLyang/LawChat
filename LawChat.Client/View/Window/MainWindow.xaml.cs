@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Navigation;
 
 namespace lawChat.Client.View
 {
@@ -84,6 +86,12 @@ namespace lawChat.Client.View
             {
                 scrollViewer.ScrollToBottom();
             }
+        }
+
+        private void Hyperlink_OnRequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
+            Process.Start("explorer.exe", e.Uri.OriginalString);
+            e.Handled = true;
         }
     }
 }
