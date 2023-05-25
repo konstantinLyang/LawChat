@@ -27,6 +27,8 @@ namespace lawChat.Server.Data.Model
         
         public string Email { get; set; }
 
+        public string PhotoFilePath { get; set; }
+
         public List<User> Friends{ get; set; } = new (); 
     }
 }

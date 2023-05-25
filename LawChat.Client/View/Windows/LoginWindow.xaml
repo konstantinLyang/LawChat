@@ -18,8 +18,7 @@
         </Grid.RowDefinitions>
 
         <!--#region Title bar-->
-        <Border Grid.ColumnSpan="2"
-                Background="#FF21242A">
+        <Border Background="#FF21242A">
 
             <Grid MouseDown="Grid_MouseDown">
                 <TextBlock Margin="10,0,0,0"
@@ -61,7 +60,7 @@
                 <TextBlock TextWrapping="Wrap" Width="270" HorizontalAlignment="Left" Text="Пожалуйста, пройдите верификацию. Если вы тут впервые, пройдите регистрацию."
                            FontSize="13" FontFamily="roboto" Foreground="#FF686F79" FontWeight="Normal" Margin="0,5,0,10"/>
 
-                    <Grid Margin="0,10,0,10">
+                <Grid Margin="0,10,0,10">
                     <TextBox Name="LoginTextBox" Style="{StaticResource LoginWindowTextBoxStyle}"
                              BorderBrush="{Binding BorderBrush}"
                              Text="{Binding LoginTextBox, UpdateSourceTrigger=PropertyChanged}"/>
@@ -107,7 +106,11 @@
                 </Grid>
 
                 <Button Style="{StaticResource LoginWindowButtonStyle}" Content="Войти"
-                        Command="{Binding AuthorizationCommand}"/>
+                        Command="{Binding AuthorizationCommand}" Margin="0,30,0,15"/>
+
+                <Grid Height="20">
+                    <Button Content="Регистрация" Style="{StaticResource RegistrationButton}" Width="100"/>
+                </Grid>
 
                 <TextBlock Text="{Binding InfoTextBlock}" Foreground="{Binding ForegroundInfoTextBlock}" TextWrapping="Wrap" Visibility="{Binding InfoTextBlockVisibility}" VerticalAlignment="Top" Margin="0,0,0,0"/>
                 <fa:ImageAwesome Icon="Spinner" Visibility="{Binding LoadingIconVisible}" Spin="True" SpinDuration="2" Height="20" Width="20" Foreground="#FFFBFBFB" VerticalAlignment="Bottom" Margin="0,0,0,0"/>
