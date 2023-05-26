@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Media;
@@ -26,6 +27,7 @@ using Microsoft.Win32;
 using Newtonsoft.Json;
 using Syroot.Windows.IO;
 using ToastNotifications.Core;
+using File = LawChat.Server.Data.Model.File;
 using PackageMessage = lawChat.Network.Abstractions.Models.PackageMessage;
 
 namespace lawChat.Client.ViewModel
@@ -41,7 +43,23 @@ namespace lawChat.Client.ViewModel
         private readonly IClientObject _clientObject;
         private readonly IClientData _clientData;
 
-        private SearchPanelModel _selectedChat;
+        private SearchPanelModel _selectedChat = new SearchPanelModel()
+        {
+            Messages = new()
+            {
+                new()
+                {
+                    IsFile = true,
+                    Text = "file.png"
+                },
+                new()
+                {
+                    IsFile = true,
+                    FilePath = "asdasda",
+                    Text = "file.png"
+                },
+            }
+        };
         public SearchPanelModel SelectedChat
         {
             get => _selectedChat;
@@ -90,6 +108,69 @@ namespace lawChat.Client.ViewModel
         private void OnChatChangedCommand()
         {
             if (SelectedChat.IsRead == false) SelectedChat.IsRead = true;
+        }
+        private LambdaCommand _openFileCommand;
+        public ICommand OpenFileCommand => _openFileCommand ??= new(OnOpenFileCommand);
+        private void OnOpenFileCommand(object p)
+        {
+            if (!Directory.Exists(@$"{downloadsPath}\Downloads"))
+                Directory.CreateDirectory(@$"{downloadsPath}\Downloads");
+
+            var message = SelectedChat.Messages.FirstOrDefault(x => x.Id == (int)p);
+
+            if (string.IsNullOrEmpty(message.FilePath) || !System.IO.File.Exists(message.FilePath))
+            {
+                string CreateFile()
+                {
+                    try
+                    {
+                        System.IO.File.Copy(message.ServerFilePath, @$"{downloadsPath}\Downloads\{message.Text}");
+
+                        return @$"{downloadsPath}\Downloads\{message.Text}";
+                    }
+
+                    catch
+                    {
+                        try
+                        {
+                            System.IO.File.Copy(message.ServerFilePath,
+                                @$"{downloadsPath}\Downloads\{DateTime.Now:ssss}{message.Text}");
+
+                            return @$"{downloadsPath}\Downloads\{DateTime.Now:ssss}{message.Text}";
+                        }
+
+                        catch
+                        {
+                            return CreateFile();
+                        }
+                    }
+                }
+
+                message.FilePath = CreateFile();
+
+                FileInfo fileInfo = new FileInfo(message.FilePath);
+
+                Process.Start("explorer.exe", fileInfo.DirectoryName);
+
+                _clientObject.SendMessage(new()
+                {
+                    Header = new()
+                    {
+                        MessageType = MessageType.Command,
+                        StatusCode = StatusCode.UPDATE,
+                        CommandArguments = new string[]
+                        {
+                            "message recipient filepath", SelectedChat.RecipientId.ToString(), fileInfo.FullName,
+                            message.FileId.ToString()
+                        }
+                    }
+                });
+            }
+            else
+            {
+                var openFile = new FileInfo(message.FilePath);
+                Process.Start("explorer.exe", openFile.DirectoryName);
+            }
         }
 
         private LambdaCommand _sendStickerCommand;
@@ -265,13 +346,16 @@ namespace lawChat.Client.ViewModel
 
                                             friend.Messages.Add(new ProcessedMessage()
                                             {
+                                                Id = msg.Id,
+                                                FileId = msg.File.Id,
                                                 CreateDate = msg.CreateDate,
                                                 IsReceivedMessage = msg.SenderId != _clientData.UserData?.Id,
                                                 Text = msg.File.Name,
                                                 IsFile = true,
                                                 FilePath = filePath,
                                                 IsRead = msg.IsRead,
-                                                ServerFilePath = msg.File.ServerLocalFilePath
+                                                ServerFilePath = msg.File.ServerLocalFilePath,
+                                                OpenFileCommand = new LambdaCommand(OnOpenFileCommand)
                                             });
                                         }
                                     }
