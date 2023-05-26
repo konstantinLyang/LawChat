@@ -2,7 +2,6 @@
 using lawChat.Network.Abstractions.Models;
 using System.Buffers.Binary;
 using System.Net.Sockets;
-using System.Net;
 using System.Text;
 using System.Threading.Channels;
 using Newtonsoft.Json;

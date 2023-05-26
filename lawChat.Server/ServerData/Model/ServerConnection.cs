@@ -2,20 +2,22 @@
 using System.Text;
 using lawChat.Network.Abstractions.Models;
 using LawChat.Network.Implementations;
-using lawChat.Server.Data;
+using LawChat.Server.Data;
 using lawChat.Network.Abstractions.Enums;
-using lawChat.Server.Data.Model;
+using LawChat.Server.Data.Model;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using File = LawChat.Server.Data.Model.File;
 
 namespace lawChat.Server.ServerData.Model
 {
     public class ServerConnection
     {
-        public User _userData;
+        public User UserData;
 
-        public Connection _connection;
+        public Connection Connection;
 
-        private LawChatDbContext _context;
+        private readonly LawChatDbContext _context;
 
         private List<ServerConnection> _connectedClients;
 
@@ -27,13 +29,13 @@ namespace lawChat.Server.ServerData.Model
 
             _dispose = disposeCallBack;
 
-            _connection = new(() => Dispose());
+            Connection = new(() => Dispose());
 
             _context = new LawChatDbContext();
 
-            _connection.MessageReceived += HandlerReceivedMessage;
+            Connection.MessageReceived += HandlerReceivedMessage;
 
-            _connection.Connect(client);
+            Connection.Connect(client);
         }
 
         private async void HandlerReceivedMessage(object sender, PackageMessage message)
@@ -53,20 +55,20 @@ namespace lawChat.Server.ServerData.Model
 
                                 if (client != null)
                                 {
-                                    _userData = client;
+                                    UserData = client;
 
                                     try
                                     {
                                         foreach (var connectedClient in _connectedClients)
                                         {
-                                            if (connectedClient._userData.Id != client.Id)
+                                            if (connectedClient.UserData.Id != client.Id)
                                             {
-                                                connectedClient._connection?.SendMessageAsync(new PackageMessage()
+                                                connectedClient.Connection?.SendMessageAsync(new PackageMessage()
                                                 {
                                                     Header = new Header()
                                                     {
                                                         MessageType = MessageType.Command,
-                                                        CommandArguments = new[] { "new client connection", _userData.Id.ToString() }
+                                                        CommandArguments = new[] { "new client connection", UserData.Id.ToString() }
                                                     }
                                                 });
                                             }
@@ -74,7 +76,7 @@ namespace lawChat.Server.ServerData.Model
                                     }
                                     catch (Exception ex){}
 
-                                    await _connection.SendMessageAsync(new PackageMessage()
+                                    await Connection.SendMessageAsync(new PackageMessage()
                                     {
                                         Header = new Header()
                                         {
@@ -87,7 +89,7 @@ namespace lawChat.Server.ServerData.Model
                                 }
                                 else
                                 {
-                                    await _connection.SendMessageAsync(new PackageMessage()
+                                    await Connection.SendMessageAsync(new PackageMessage()
                                     {
                                         Header = new Header()
                                         {
@@ -100,7 +102,7 @@ namespace lawChat.Server.ServerData.Model
                             }
                             catch
                             {
-                                await _connection.SendMessageAsync(new PackageMessage()
+                                await Connection.SendMessageAsync(new PackageMessage()
                                 {
                                     Header = new Header()
                                     {
@@ -114,7 +116,7 @@ namespace lawChat.Server.ServerData.Model
                         case "friend list":
                             try
                             {
-                                _connection.SendMessageAsync(new PackageMessage()
+                                Connection.SendMessageAsync(new PackageMessage()
                                 {
                                     Header = new Header()
                                     {
@@ -131,18 +133,18 @@ namespace lawChat.Server.ServerData.Model
                         case "get connection list":
                             try
                             {
-                                if (_userData != null)
+                                if (UserData != null)
                                 {
                                     foreach (var connectedClient in _connectedClients)
                                     {
-                                        if (connectedClient._userData.Id != _userData.Id)
+                                        if (connectedClient.UserData.Id != UserData.Id)
                                         {
-                                            _connection?.SendMessageAsync(new PackageMessage()
+                                            Connection?.SendMessageAsync(new PackageMessage()
                                             {
                                                 Header = new Header()
                                                 {
                                                     MessageType = MessageType.Command,
-                                                    CommandArguments = new[] { "new client connection", connectedClient._userData.Id.ToString() }
+                                                    CommandArguments = new[] { "new client connection", connectedClient.UserData.Id.ToString() }
                                                 }
                                             });
                                         }
@@ -158,32 +160,37 @@ namespace lawChat.Server.ServerData.Model
                         case "messages":
                             try
                             {
-                                int messageSender = _userData.Id;
-                                int messageRecipient = Convert.ToInt32(message.Header.CommandArguments[1]);
-
-                                var result = new List<Message>();
-
-                                foreach (var msg in _context.Messages)
+                                if (_context.Messages.Any())
                                 {
-                                    if ((msg.SenderId == messageSender && msg.RecipientId == messageRecipient) ||
-                                        (msg.SenderId == messageRecipient && msg.RecipientId == messageSender))
-                                    {
-                                        result.Add(msg);
-                                    }
-                                }
+                                    int messageSender = UserData.Id;
+                                    int messageRecipient = Convert.ToInt32(message.Header.CommandArguments[1]);
 
-                                if (result.Count > 0)
-                                {
-                                    await _connection.SendMessageAsync(new PackageMessage()
+                                    var result = new List<Message>();
+
+                                    var messages = _context.Messages.Include(u => u.File);
+                                    
+                                    foreach (var msg in messages)
                                     {
-                                        Header = new Header()
+                                        if ((msg.SenderId == messageSender && msg.RecipientId == messageRecipient) ||
+                                            (msg.SenderId == messageRecipient && msg.RecipientId == messageSender))
                                         {
-                                            MessageType = MessageType.Command,
-                                            StatusCode = StatusCode.OK,
-                                            CommandArguments = new[] { "messages", messageRecipient.ToString() }
-                                        },
-                                        Data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(result))
-                                    });
+                                            result.Add(msg);
+                                        }
+                                    }
+
+                                    if (result.Count > 0)
+                                    {
+                                        await Connection.SendMessageAsync(new PackageMessage()
+                                        {
+                                            Header = new Header()
+                                            {
+                                                MessageType = MessageType.Command,
+                                                StatusCode = StatusCode.OK,
+                                                CommandArguments = new[] { "messages", messageRecipient.ToString() }
+                                            },
+                                            Data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(result))
+                                        });
+                                    }
                                 }
                             }
                             catch{ throw new Exception("ошибка"); }
@@ -198,7 +205,9 @@ namespace lawChat.Server.ServerData.Model
 
                             _context.SaveChanges();
 
-                            await _connection.SendMessageAsync(new()
+                            UserData = newClient;
+
+                            await Connection.SendMessageAsync(new()
                             {
                                 Header = new()
                                 {
@@ -216,6 +225,23 @@ namespace lawChat.Server.ServerData.Model
                             catch { throw new Exception("ошибка"); }
                             break;
                     }
+                    switch (message.Header.StatusCode)
+                    {
+                        case StatusCode.UPDATE:
+                            switch (message.Header.CommandArguments[0])
+                            {
+                                case "message recipient filepath":
+
+                                    _context.Files
+                                        .FirstOrDefault(x => x.Id == Convert.ToInt32(message.Header.CommandArguments[3]))
+                                        .RecipientLocalFilePath = message.Header.CommandArguments[2];
+
+                                    _context.SaveChanges();
+
+                                    break;
+                            }
+                            break;
+                    }
                     break;
 
                 case MessageType.Text:
@@ -226,23 +252,23 @@ namespace lawChat.Server.ServerData.Model
                             CreateDate = DateTime.Now,
                             Recipient = _context.Clients.FirstOrDefault(x =>
                                 x.Id == Convert.ToInt32(message.Header.CommandArguments[0])),
-                            Sender = _context.Clients.FirstOrDefault(x => x.Id == _userData.Id),
+                            Sender = _context.Clients.FirstOrDefault(x => x.Id == UserData.Id),
                             Text = Encoding.UTF8.GetString(message.Data)
                         });
 
                         _context.SaveChanges();
 
                         var recipient = _connectedClients
-                            .FirstOrDefault(x => x._userData.Id == Convert.ToInt32(message.Header.CommandArguments[0]));
+                            .FirstOrDefault(x => x.UserData.Id == Convert.ToInt32(message.Header.CommandArguments[0]));
 
                         if (recipient != null)
                         {
-                            recipient._connection.SendMessageAsync(new PackageMessage()
+                            recipient.Connection.SendMessageAsync(new PackageMessage()
                             {
                                 Header = new Header()
                                 {
                                     MessageType = MessageType.Text,
-                                    CommandArguments = new[] { _userData.Id.ToString() }
+                                    CommandArguments = new[] { UserData.Id.ToString() }
                                 },
                                 Data = message.Data
                             });
@@ -256,70 +282,75 @@ namespace lawChat.Server.ServerData.Model
 
                 case MessageType.File:
 
-                    var to_client = _connectedClients.FirstOrDefault(x =>
-                        x._userData.Id == Convert.ToInt32(message.Header.CommandArguments[0]));
+                    var toClient = _connectedClients.FirstOrDefault(x =>
+                        x.UserData.Id == Convert.ToInt32(message.Header.CommandArguments[0]));
+
+                    if (!Directory.Exists(@"Client\data\Image\TempFiles\"))
+                        Directory.CreateDirectory(@"Client\data\Image\TempFiles\");
 
                     string ServerCopyFile()
                     {
                         try
                         {
-                            File.WriteAllBytes(
-                                @$"Z:\!!!!!ПОЛЬЗОВАТЕЛИ\!КОНСТАНТИН_ЛЯНГ\PROGRAMMS\ПС для рабочего стола\LawChat\client\data\Image\TempFiles\{message.Header.CommandArguments[1]}",
+                            System.IO.File.WriteAllBytes(
+                                @$"Client\data\Image\TempFiles\{message.Header.CommandArguments[1]}",
                                 message.Data);
                             return
-                                @$"Z:\!!!!!ПОЛЬЗОВАТЕЛИ\!КОНСТАНТИН_ЛЯНГ\PROGRAMMS\ПС для рабочего стола\LawChat\client\data\Image\TempFiles\{message.Header.CommandArguments[1]}";
+                                @$"Client\data\Image\TempFiles\{message.Header.CommandArguments[1]}";
                         }
-                        catch
+                        catch(IOException)
                         {
                             try
                             {
-                                File.WriteAllBytes(
-                                    @$"Z:\!!!!!ПОЛЬЗОВАТЕЛИ\!КОНСТАНТИН_ЛЯНГ\PROGRAMMS\ПС для рабочего стола\LawChat\client\data\Image\TempFiles\{DateTime.Now:ssss}{message.Header.CommandArguments[1]}",
+                                System.IO.File.WriteAllBytes(
+                                    @$"Client\data\Image\TempFiles\{DateTime.Now:ssss}{message.Header.CommandArguments[1]}",
                                     message.Data);
                                 return
-                                    @$"Z:\!!!!!ПОЛЬЗОВАТЕЛИ\!КОНСТАНТИН_ЛЯНГ\PROGRAMMS\ПС для рабочего стола\LawChat\client\data\Image\TempFiles\{DateTime.Now:ssss}{message.Header.CommandArguments[1]}";
+                                    @$"Client\data\Image\TempFiles\{DateTime.Now:ssss}{message.Header.CommandArguments[1]}";
                             }
-                            catch
+                            catch (IOException)
                             {
                                 return ServerCopyFile();
                             }
                         }
                     }
 
-                    _context.Messages.Add(new()
+                    var newMessage = new Message()
                     {
                         CreateDate = DateTime.Now,
                         Recipient = _context.Clients.FirstOrDefault(x =>
                             x.Id == Convert.ToInt32(message.Header.CommandArguments[0])),
-                        Sender = _context.Clients.FirstOrDefault(x => x.Id == _userData.Id),
-                        Text = Encoding.UTF8.GetString(message.Data),
+                        Sender = _context.Clients.FirstOrDefault(x => x.Id == UserData.Id),
                         File = new()
                         {
                             Name = message.Header.CommandArguments[1],
                             ServerLocalFilePath = ServerCopyFile(),
                             SenderLocalFilePath = message.Header.CommandArguments[2],
-                            Sender = _context.Clients.FirstOrDefault(x => x.Id == _userData.Id),
-                            Recipient = _context.Clients.FirstOrDefault(x => x.Id == Convert.ToInt32(message.Header.CommandArguments[0])),
+                            Sender = _context.Clients.FirstOrDefault(x => x.Id == UserData.Id),
+                            Recipient = _context.Clients.FirstOrDefault(x =>
+                                x.Id == Convert.ToInt32(message.Header.CommandArguments[0])),
                         }
-                    });
+                    };
+
+                    _context.Messages.Add(newMessage);
 
                     _context.SaveChanges();
 
-                    if (to_client != null)
+                    if (toClient != null)
                     {
-                        to_client._connection
+                        toClient.Connection
                             .SendMessageAsync(new PackageMessage()
                             {
                                 Header = new Header()
                                 {
                                     MessageType = MessageType.File,
-                                    CommandArguments = new[] { _userData.Id.ToString(), message.Header.CommandArguments[1] }
+                                    CommandArguments = new[] { UserData.Id.ToString(), message.Header.CommandArguments[1], newMessage.File.Id.ToString() }
                                 },
                                 Data = message.Data
                             });
                     }
-
-                   break;
+                    
+                    break;
             }
         }
 
@@ -327,18 +358,18 @@ namespace lawChat.Server.ServerData.Model
         {
             try
             {
-                if (_userData != null)
+                if (UserData != null)
                 {
                     foreach (var connectedClient in _connectedClients)
                     {
-                        if (connectedClient._userData.Id != _userData.Id)
+                        if (connectedClient.UserData.Id != UserData.Id)
                         {
-                            connectedClient._connection?.SendMessageAsync(new PackageMessage()
+                            connectedClient.Connection?.SendMessageAsync(new PackageMessage()
                             {
                                 Header = new Header()
                                 {
                                     MessageType = MessageType.Command,
-                                    CommandArguments = new[] { "client close connection", _userData.Id.ToString() }
+                                    CommandArguments = new[] { "client close connection", UserData.Id.ToString() }
                                 }
                             });
                         }
@@ -347,7 +378,7 @@ namespace lawChat.Server.ServerData.Model
             }
             catch (Exception ex) { }
 
-            _connection.Dispose();
+            Connection.Dispose();
             _dispose(this);
         }
     }

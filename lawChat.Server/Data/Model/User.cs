@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace lawChat.Server.Data.Model
+namespace LawChat.Server.Data.Model
 {
     public class User
     {

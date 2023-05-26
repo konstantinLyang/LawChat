@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows;
-using System.Windows.Threading;
-using lawChat.Client.Model;
 using lawChat.Client.View;
 using LawChat.Client.View.Windows;
 using lawChat.Client.ViewModel;
 using LawChat.Client.ViewModel;
 using lawChat.Network.Abstractions.Enums;
 using lawChat.Network.Abstractions.Models;
-using lawChat.Server.Data.Model;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace lawChat.Client.Services.Implementations
@@ -19,22 +13,31 @@ namespace lawChat.Client.Services.Implementations
     internal class UserDialogService : IUserDialog
     {
         private readonly IServiceProvider _services;
+
         private readonly IClientData _clientData;
+
         private readonly IClientObject _clientObject;
 
         public UserDialogService(IServiceProvider services, IClientData clientData, IClientObject clientObject)
         {
             _services = services;
+
             _clientData = clientData;
+
             _clientObject = clientObject;
+
             _clientData = clientData;
         }
 
         private Window? _loginWindow;
+
         private Window? _mainWindow;
+
         private Window? _registrationWindow;
-        
+
+
         private MainWindowViewModel? _mainWindowViewModel;
+
         private RegistrationWindowViewModel? _registrationWindowViewModel;
 
         public void ShowLoginWindow()

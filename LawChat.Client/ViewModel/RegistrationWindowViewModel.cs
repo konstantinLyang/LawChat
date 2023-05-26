@@ -1,17 +1,14 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using lawChat.Client.Infrastructure;
 using lawChat.Client.Services;
 using lawChat.Client.ViewModel.Base;
 using lawChat.Network.Abstractions.Enums;
 using lawChat.Network.Abstractions.Models;
-using lawChat.Server.Data.Model;
+using LawChat.Server.Data.Model;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 
@@ -19,10 +16,10 @@ namespace LawChat.Client.ViewModel
 {
     public class RegistrationWindowViewModel : ViewModelBase
     {
-        Dispatcher Dispatcher = Dispatcher.CurrentDispatcher;
+        private readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
 
-        private IClientObject _clientObject;
-        private IUserDialog _userDialog;
+        private readonly IClientObject _clientObject;
+        private readonly IUserDialog _userDialog;
 
         #region Text blocks
 
@@ -113,7 +110,7 @@ namespace LawChat.Client.ViewModel
 
                 if (answer.Header.StatusCode == StatusCode.OK)
                 {
-                    Dispatcher.Invoke(() => { _userDialog.ShowMainWindow(); });
+                    _dispatcher.Invoke(() => { _userDialog.ShowMainWindow(); });
                 }
             });
         }
@@ -133,14 +130,14 @@ namespace LawChat.Client.ViewModel
 
                 FileInfo image = new FileInfo(ofd.FileName);
 
-                if (!File.Exists($@"Z:\!!!!!ПОЛЬЗОВАТЕЛИ\!КОНСТАНТИН_ЛЯНГ\PROGRAMMS\ПС для рабочего стола\LawChat\client\data\Image\UserPhotos\{NickName}.{image.Extension}"))
+                if (!System.IO.File.Exists($@"Z:\!!!!!ПОЛЬЗОВАТЕЛИ\!КОНСТАНТИН_ЛЯНГ\PROGRAMMS\ПС для рабочего стола\LawChat\client\data\Image\UserPhotos\{NickName}.{image.Extension}"))
                 {
-                    File.Copy(ofd.FileName, $@"Z:\!!!!!ПОЛЬЗОВАТЕЛИ\!КОНСТАНТИН_ЛЯНГ\PROGRAMMS\ПС для рабочего стола\LawChat\client\data\Image\UserPhotos\{NickName}.{image.Extension}", true);
+                    System.IO.File.Copy(ofd.FileName, $@"Z:\!!!!!ПОЛЬЗОВАТЕЛИ\!КОНСТАНТИН_ЛЯНГ\PROGRAMMS\ПС для рабочего стола\LawChat\client\data\Image\UserPhotos\{NickName}.{image.Extension}", true);
                 }
                 else
                 {
-                    File.Delete($@"Z:\!!!!!ПОЛЬЗОВАТЕЛИ\!КОНСТАНТИН_ЛЯНГ\PROGRAMMS\ПС для рабочего стола\LawChat\client\data\Image\UserPhotos\{NickName}.{image.Extension}");
-                    File.Copy(ofd.FileName, $@"Z:\!!!!!ПОЛЬЗОВАТЕЛИ\!КОНСТАНТИН_ЛЯНГ\PROGRAMMS\ПС для рабочего стола\LawChat\client\data\Image\UserPhotos\{NickName}.{image.Extension}", true);
+                    System.IO.File.Delete($@"Z:\!!!!!ПОЛЬЗОВАТЕЛИ\!КОНСТАНТИН_ЛЯНГ\PROGRAMMS\ПС для рабочего стола\LawChat\client\data\Image\UserPhotos\{NickName}.{image.Extension}");
+                    System.IO.File.Copy(ofd.FileName, $@"Z:\!!!!!ПОЛЬЗОВАТЕЛИ\!КОНСТАНТИН_ЛЯНГ\PROGRAMMS\ПС для рабочего стола\LawChat\client\data\Image\UserPhotos\{NickName}.{image.Extension}", true);
                 }
 
                 UserPhotoFilePath =

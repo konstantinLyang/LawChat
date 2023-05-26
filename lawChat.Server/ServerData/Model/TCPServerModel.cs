@@ -7,15 +7,15 @@ namespace lawChat.Server.ServerData.Model
     {
         private readonly TcpListener _listener;
 
-        private bool disposed;
+        private bool _disposed;
 
-        public List<ServerConnection> _clients { get; private set; }
+        public List<ServerConnection> Clients { get; private set; }
 
         public TcpServerModel(int port)
         {
             _listener = new(IPAddress.Any, port);
 
-            _clients = new();
+            Clients = new();
         }
 
         public async Task ListenAsync()
@@ -32,13 +32,13 @@ namespace lawChat.Server.ServerData.Model
 
                     Console.WriteLine("Подключение: " + client.Client.RemoteEndPoint + " > " + client.Client.LocalEndPoint);
 
-                    lock (_clients)
+                    lock (Clients)
                     {
-                        _clients.Add(new ServerConnection(client, _clients, c =>
+                        Clients.Add(new ServerConnection(client, Clients, c =>
                         {
-                            lock (_clients)
+                            lock (Clients)
                             {
-                                _clients.Remove(c);
+                                Clients.Remove(c);
                             }
                         }));
                     }
@@ -52,19 +52,19 @@ namespace lawChat.Server.ServerData.Model
 
         private void Dispose(bool disposing)
         {
-            if (disposed)
+            if (_disposed)
                 throw new ObjectDisposedException(typeof(TcpServerModel).FullName);
-            disposed = true;
+            _disposed = true;
             _listener.Stop();
             if (disposing)
             {
-                lock (_clients)
+                lock (Clients)
                 {
-                    if (_clients.Count > 0)
+                    if (Clients.Count > 0)
                     {
                         Console.WriteLine("Отключаю клиентов...");
 
-                        foreach (var client in _clients)
+                        foreach (var client in Clients)
                         {
                             client.Dispose();
                         }

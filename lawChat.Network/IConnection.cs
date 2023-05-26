@@ -1,5 +1,4 @@
-﻿using System.Net;
-using lawChat.Network.Abstractions.Models;
+﻿using lawChat.Network.Abstractions.Models;
 
 namespace lawChat.Network.Abstractions
 {

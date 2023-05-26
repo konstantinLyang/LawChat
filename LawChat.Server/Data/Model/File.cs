@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using lawChat.Server.Data.Model;
 
 namespace LawChat.Server.Data.Model
 {
@@ -22,8 +21,6 @@ namespace LawChat.Server.Data.Model
         [Required]
         public string SenderLocalFilePath { get; set; }
 
-        [Required]
         public string RecipientLocalFilePath { get; set; }
-
     }
 }

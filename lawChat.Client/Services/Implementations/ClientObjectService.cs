@@ -4,7 +4,7 @@ using System.Threading;
 using lawChat.Network.Abstractions;
 using lawChat.Network.Abstractions.Enums;
 using lawChat.Network.Abstractions.Models;
-using lawChat.Server.Data.Model;
+using LawChat.Server.Data.Model;
 using Newtonsoft.Json;
 using PackageMessage = lawChat.Network.Abstractions.Models.PackageMessage;
 
@@ -15,14 +15,13 @@ namespace lawChat.Client.Services.Implementations
         public event EventHandler<PackageMessage>? MessageReceived;
 
         private readonly IClientData _clientData;
-        
+
         private readonly IConnection _connection;
 
         private PackageMessage _answer;
 
         private bool _isAuthorized;
         
-
         public ClientObjectService(IClientData clientData, IConnection connection)
         {
             _connection = connection;
@@ -33,7 +32,7 @@ namespace lawChat.Client.Services.Implementations
         
         public PackageMessage SignIn(string login, string password)
         {
-            if (!_connection.IsConnected) _connection.Connect("10.10.11.47", 8080);
+            if (!_connection.IsConnected) _connection.Connect("127.0.0.1", 8080);
 
             try
             {
@@ -69,7 +68,7 @@ namespace lawChat.Client.Services.Implementations
 
         public PackageMessage SignUp(byte[] userData)
         {
-            if (!_connection.IsConnected) _connection.Connect("10.10.11.47", 8080);
+            if (!_connection.IsConnected) _connection.Connect("127.0.0.1", 8080);
 
             try
             {
@@ -102,6 +101,7 @@ namespace lawChat.Client.Services.Implementations
             }
             catch { return new PackageMessage() { Header = new Header() { StatusCode = StatusCode.ServerError } }; }
         }
+
         public void CloseConnection()
         {
             if(_connection.IsConnected) _connection.CloseConnection();
@@ -111,6 +111,7 @@ namespace lawChat.Client.Services.Implementations
         {
             _connection.SendMessageAsync(message);
         }
+
         private void HandlerMessageReceive(object sender, PackageMessage message)
         {
             if(_isAuthorized) MessageReceived?.Invoke(this, message);

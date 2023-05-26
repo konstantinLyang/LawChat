@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace lawChat.Server.Data.Model
+namespace LawChat.Server.Data.Model
 {
     public class Message
     {
