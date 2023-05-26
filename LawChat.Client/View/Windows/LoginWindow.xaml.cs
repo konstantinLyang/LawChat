@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Input;
 
 namespace lawChat.Client.View
@@ -18,6 +19,8 @@ namespace lawChat.Client.View
         private void BtnClose_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
+
+            Environment.Exit(0);
         }
         private void BtnHide_Click(object sender, RoutedEventArgs e)
         {

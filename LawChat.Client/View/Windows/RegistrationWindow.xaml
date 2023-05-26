@@ -8,8 +8,9 @@
         mc:Ignorable="d"
         ResizeMode="NoResize"
         SizeToContent="Height"
-        WindowStyle="None" Height="600" Width="800">
-    <Grid>
+        WindowStyle="None" MinHeight="600" Width="800">
+
+    <Grid Background="#FF191C21">
         <Grid.RowDefinitions>
             <RowDefinition MinHeight="25" MaxHeight="25"/>
             <RowDefinition/>
@@ -45,5 +46,224 @@
             </Grid>
         </Border>
         <!--#endregion-->
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition MaxWidth="200" MinWidth="200"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition MaxWidth="200" MinWidth="200"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+
+                <TextBlock Text="Регистрация" FontSize="18" FontFamily="roboto" Foreground="White" FontWeight="Normal" HorizontalAlignment="Center" Margin="0,0,0,15"/>
+                <TextBlock Text="Заполните необходимые поля (*), при возможности заполните дополнительные." FontSize="13" FontFamily="roboto" Width="270" HorizontalAlignment="Center" TextWrapping="Wrap" Foreground="#FF686F79" FontWeight="Normal" Margin="0,0,0,15"/>
+
+                <Grid Margin="0,5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid Margin="5,0" Grid.Column="0">
+                        <TextBox x:Name="UserName" Text="{Binding FirstName}" Style="{StaticResource LoginWindowTextBoxStyle}"/>
+                        <TextBlock Text="Имя*" Foreground="White" Margin="11,12,0,11" Padding="0" Height="17" FontSize="13">
+                            <TextBlock.Style>
+                                <Style TargetType="{x:Type TextBlock}">
+                                    <Setter Property="TextWrapping" Value="NoWrap"/>
+                                    <Setter Property="FontSize" Value="12"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="TextTrimming" Value="None"/>
+                                    <Setter Property="IsHitTestVisible" Value="False"/>
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Text, ElementName=UserName}" Value="">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Grid>
+
+                    <Grid Margin="5,0" Grid.Column="1">
+                        <TextBox x:Name="LastName" Text="{Binding LastName}" Style="{StaticResource LoginWindowTextBoxStyle}"/>
+                        <TextBlock Text="Фамилия*" Foreground="White" Margin="11,12,0,11" Padding="0" Height="17" FontSize="13">
+                            <TextBlock.Style>
+                                <Style TargetType="{x:Type TextBlock}">
+                                    <Setter Property="TextWrapping" Value="NoWrap"/>
+                                    <Setter Property="FontSize" Value="12"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="TextTrimming" Value="None"/>
+                                    <Setter Property="IsHitTestVisible" Value="False"/>
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Text, ElementName=LastName}" Value="">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Grid>
+                </Grid>
+
+                <Grid Margin="5" >
+                    <TextBox x:Name="FatherName" Text="{Binding FatherName}" Style="{StaticResource LoginWindowTextBoxStyle}"/>
+                    <TextBlock Text="Отчество" Foreground="White" Margin="11,12,0,11" Padding="0" Height="17" FontSize="13">
+                        <TextBlock.Style>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="TextWrapping" Value="NoWrap"/>
+                                <Setter Property="FontSize" Value="12"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Setter Property="TextTrimming" Value="None"/>
+                                <Setter Property="IsHitTestVisible" Value="False"/>
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Text, ElementName=FatherName}" Value="">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Grid>
+                <Grid Margin="5" >
+                    <TextBox x:Name="Email" Text="{Binding Email}" Style="{StaticResource LoginWindowTextBoxStyle}"/>
+                    <TextBlock Text="Электронная почта" Foreground="White" Margin="11,12,0,11" Padding="0" Height="17" FontSize="13">
+                        <TextBlock.Style>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="TextWrapping" Value="NoWrap"/>
+                                <Setter Property="FontSize" Value="12"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Setter Property="TextTrimming" Value="None"/>
+                                <Setter Property="IsHitTestVisible" Value="False"/>
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Text, ElementName=Email}" Value="">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Grid>
+                <Grid Margin="5" >
+                    <TextBox x:Name="Login" Text="{Binding Login}" Style="{StaticResource LoginWindowTextBoxStyle}"/>
+                    <TextBlock Text="Логин*" Foreground="White" Margin="11,12,0,11" Padding="0" Height="17" FontSize="13">
+                        <TextBlock.Style>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="TextWrapping" Value="NoWrap"/>
+                                <Setter Property="FontSize" Value="12"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Setter Property="TextTrimming" Value="None"/>
+                                <Setter Property="IsHitTestVisible" Value="False"/>
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Text, ElementName=Login}" Value="">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Grid>
+
+                <Grid Margin="0,5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid Grid.Column="0" Margin="5,0" >
+                        <TextBox x:Name="FirstPassword" Text="{Binding FirstPassword}" Style="{StaticResource LoginWindowTextBoxStyle}"/>
+                        <TextBlock Text="Пароль*" Foreground="White" Margin="11,12,0,11" Padding="0" Height="17" FontSize="13">
+                            <TextBlock.Style>
+                                <Style TargetType="{x:Type TextBlock}">
+                                    <Setter Property="TextWrapping" Value="NoWrap"/>
+                                    <Setter Property="FontSize" Value="12"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="TextTrimming" Value="None"/>
+                                    <Setter Property="IsHitTestVisible" Value="False"/>
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Text, ElementName=FirstPassword}" Value="">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Grid>
+                    <Grid Grid.Column="1" Margin="5,0">
+                        <TextBox x:Name="SecondPassword" Text="{Binding SecondPassword}" Style="{StaticResource LoginWindowTextBoxStyle}"/>
+                        <TextBlock Text="Подтвердите пароль*" Foreground="White" Margin="11,12,0,11" Padding="0" Height="17" FontSize="13">
+                            <TextBlock.Style>
+                                <Style TargetType="{x:Type TextBlock}">
+                                    <Setter Property="TextWrapping" Value="NoWrap"/>
+                                    <Setter Property="FontSize" Value="12"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="TextTrimming" Value="None"/>
+                                    <Setter Property="IsHitTestVisible" Value="False"/>
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Text, ElementName=SecondPassword}" Value="">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Grid>
+
+                </Grid>
+
+                <Grid Margin="0,5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="250"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid Grid.Column="0" Margin="5,0" VerticalAlignment="Center">
+                        <TextBox x:Name="NickName" Text="{Binding NickName}" Style="{StaticResource LoginWindowTextBoxStyle}"/>
+                        <TextBlock Text="Никнейм*" Foreground="White" Margin="11,12,0,11" Padding="0" Height="17" FontSize="13">
+                            <TextBlock.Style>
+                                <Style TargetType="{x:Type TextBlock}">
+                                    <Setter Property="TextWrapping" Value="NoWrap"/>
+                                    <Setter Property="FontSize" Value="12"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="TextTrimming" Value="None"/>
+                                    <Setter Property="IsHitTestVisible" Value="False"/>
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Text, ElementName=NickName}" Value="">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Grid>
+
+
+                    <Grid Grid.Column="1">
+                        <Button Background="Transparent" Width="80" BorderThickness="0" Command="{Binding ChangeUserImageCommand}">
+                            <Ellipse Width="70" Height="70" SnapsToDevicePixels="True" RenderOptions.BitmapScalingMode="HighQuality">
+                                <Ellipse.Fill>
+                                    <ImageBrush Stretch="UniformToFill" ImageSource="{Binding UserPhotoFilePath, FallbackValue='Z://!!!!!ПОЛЬЗОВАТЕЛИ/!КОНСТАНТИН_ЛЯНГ/PROGRAMMS/ПС для рабочего стола/LawChat/client/data/Image/no_photo.jpg', TargetNullValue='Z://!!!!!ПОЛЬЗОВАТЕЛИ/!КОНСТАНТИН_ЛЯНГ/PROGRAMMS/ПС для рабочего стола/LawChat/client/data/Image/no_photo.jpg'}">
+                                    </ImageBrush>
+                                </Ellipse.Fill>
+                            </Ellipse>
+                        </Button>
+                    </Grid>
+
+                </Grid>
+
+                <Button Width="300" Height="35" Style="{StaticResource LoginWindowButtonStyle}" Content="Регистрация"
+                        Command="{Binding RegistrationCommand}" Margin="0,30,0,15"/>
+
+            </StackPanel>
+
+        </Grid>
+
     </Grid>
 </Window>

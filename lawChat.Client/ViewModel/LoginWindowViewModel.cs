@@ -74,6 +74,13 @@ namespace lawChat.Client.ViewModel
             set => Set(ref _loadingIconVisible, value);
         }
 
+        private LambdaCommand _openRegisterWindowCommand;
+        public ICommand OpenRegisterWindowCommand => _openRegisterWindowCommand ??= new(OnOpenRegisterWindowCommand);
+        private void OnOpenRegisterWindowCommand()
+        {
+            _userDialog.ShowRegisterWindow();
+        }
+
         private LambdaCommand _authorizationCommand;
         public ICommand AuthorizationCommand => _authorizationCommand ??= new(OnAuthorizationCommand);
         private void OnAuthorizationCommand(object p)
@@ -85,7 +92,7 @@ namespace lawChat.Client.ViewModel
                     InfoTextBlockVisibility = Visibility.Hidden;
                     LoadingIconVisible = Visibility.Visible;
 
-                    PackageMessage result = _clientObject.OpenConnection(LoginTextBox, PasswordTextBox);
+                    PackageMessage result = _clientObject.SignIn(LoginTextBox, PasswordTextBox);
 
                     _dispatcher.Invoke(() => { BorderBrush = new SolidColorBrush(Color.FromArgb(255, 171, 173, 173)); });
 

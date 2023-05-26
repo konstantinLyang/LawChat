@@ -131,7 +131,7 @@
                                                 </Grid.ColumnDefinitions>
                                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
                                                     <Grid>
-                                                        <Ellipse Width="48" Height="48">
+                                                        <Ellipse Width="48" Height="48" RenderOptions.BitmapScalingMode="HighQuality">
                                                             <Ellipse.Fill>
                                                                 <ImageBrush Stretch="UniformToFill"
                                                                             ImageSource="{Binding ContactPhoto, FallbackValue='C://Program Files (x86)/LawChat/userdata/Images/no_photo.jpg', TargetNullValue='C://Program Files (x86)/LawChat/userdata/Images/no_photo.jpg'}"/>
@@ -272,7 +272,7 @@
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate >
                                         <Button Style="{StaticResource LoginWindowButtonStyle}" Background="Transparent" MaxHeight="25" MaxWidth="25" Margin="5" BorderThickness="0">
-                                            <Image SnapsToDevicePixels="True" Source="{Binding ImageFilePath}"></Image>
+                                            <Image RenderOptions.BitmapScalingMode="HighQuality" SnapsToDevicePixels="True" Source="{Binding ImageFilePath}"></Image>
                                         </Button>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>

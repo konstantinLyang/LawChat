@@ -43,7 +43,7 @@ namespace lawChat.Server.ServerData.Model
                 case MessageType.Command:
                     switch (message.Header.CommandArguments[0])
                     {
-                        case "authorization":
+                        case "signin":
                             try
                             {
                                 string[] loginData = Encoding.UTF8.GetString(message.Data).Split(';');
@@ -156,34 +156,64 @@ namespace lawChat.Server.ServerData.Model
                             break;
 
                         case "messages":
-
-                            int messageSender = _userData.Id;
-                            int messageRecipient = Convert.ToInt32(message.Header.CommandArguments[1]);
-
-                            var result = new List<Message>();
-
-                            foreach (var msg in _context.Messages)
+                            try
                             {
-                                if ((msg.SenderId == messageSender && msg.RecipientId == messageRecipient) ||
-                                    (msg.SenderId == messageRecipient && msg.RecipientId == messageSender))
+                                int messageSender = _userData.Id;
+                                int messageRecipient = Convert.ToInt32(message.Header.CommandArguments[1]);
+
+                                var result = new List<Message>();
+
+                                foreach (var msg in _context.Messages)
                                 {
-                                    result.Add(msg);
+                                    if ((msg.SenderId == messageSender && msg.RecipientId == messageRecipient) ||
+                                        (msg.SenderId == messageRecipient && msg.RecipientId == messageSender))
+                                    {
+                                        result.Add(msg);
+                                    }
+                                }
+
+                                if (result.Count > 0)
+                                {
+                                    await _connection.SendMessageAsync(new PackageMessage()
+                                    {
+                                        Header = new Header()
+                                        {
+                                            MessageType = MessageType.Command,
+                                            StatusCode = StatusCode.OK,
+                                            CommandArguments = new[] { "messages", messageRecipient.ToString() }
+                                        },
+                                        Data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(result))
+                                    });
                                 }
                             }
+                            catch{ throw new Exception("ошибка"); }
+                            break;
 
-                            if (result.Count > 0)
+                        case "signup":
+
+                            User newClient =
+                                JsonConvert.DeserializeObject<User>(Encoding.UTF8.GetString(message.Data));
+
+                            _context.Clients.Add(newClient);
+
+                            _context.SaveChanges();
+
+                            await _connection.SendMessageAsync(new()
                             {
-                                await _connection.SendMessageAsync(new PackageMessage()
+                                Header = new()
                                 {
-                                    Header = new Header()
-                                    {
-                                        MessageType = MessageType.Command,
-                                        StatusCode = StatusCode.OK,
-                                        CommandArguments = new[] { "messages", messageRecipient.ToString() }
-                                    },
-                                    Data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(result))
-                                });
+                                    MessageType = MessageType.Command,
+                                    StatusCode = StatusCode.OK,
+                                    CommandArguments = new[] { "signup" }
+                                },
+                                Data = message.Data
+                            });
+
+                            try
+                            {
+                                
                             }
+                            catch { throw new Exception("ошибка"); }
                             break;
                     }
                     break;
@@ -226,12 +256,58 @@ namespace lawChat.Server.ServerData.Model
 
                 case MessageType.File:
 
-                    var asd = _connectedClients.FirstOrDefault(x =>
-                            x._userData.Id == Convert.ToInt32(message.Header.CommandArguments[0]));
+                    var to_client = _connectedClients.FirstOrDefault(x =>
+                        x._userData.Id == Convert.ToInt32(message.Header.CommandArguments[0]));
 
-                    if (asd != null)
+                    string ServerCopyFile()
                     {
-                        asd._connection
+                        try
+                        {
+                            File.WriteAllBytes(
+                                @$"Z:\!!!!!ПОЛЬЗОВАТЕЛИ\!КОНСТАНТИН_ЛЯНГ\PROGRAMMS\ПС для рабочего стола\LawChat\client\data\Image\TempFiles\{message.Header.CommandArguments[1]}",
+                                message.Data);
+                            return
+                                @$"Z:\!!!!!ПОЛЬЗОВАТЕЛИ\!КОНСТАНТИН_ЛЯНГ\PROGRAMMS\ПС для рабочего стола\LawChat\client\data\Image\TempFiles\{message.Header.CommandArguments[1]}";
+                        }
+                        catch
+                        {
+                            try
+                            {
+                                File.WriteAllBytes(
+                                    @$"Z:\!!!!!ПОЛЬЗОВАТЕЛИ\!КОНСТАНТИН_ЛЯНГ\PROGRAMMS\ПС для рабочего стола\LawChat\client\data\Image\TempFiles\{DateTime.Now:ssss}{message.Header.CommandArguments[1]}",
+                                    message.Data);
+                                return
+                                    @$"Z:\!!!!!ПОЛЬЗОВАТЕЛИ\!КОНСТАНТИН_ЛЯНГ\PROGRAMMS\ПС для рабочего стола\LawChat\client\data\Image\TempFiles\{DateTime.Now:ssss}{message.Header.CommandArguments[1]}";
+                            }
+                            catch
+                            {
+                                return ServerCopyFile();
+                            }
+                        }
+                    }
+
+                    _context.Messages.Add(new()
+                    {
+                        CreateDate = DateTime.Now,
+                        Recipient = _context.Clients.FirstOrDefault(x =>
+                            x.Id == Convert.ToInt32(message.Header.CommandArguments[0])),
+                        Sender = _context.Clients.FirstOrDefault(x => x.Id == _userData.Id),
+                        Text = Encoding.UTF8.GetString(message.Data),
+                        File = new()
+                        {
+                            Name = message.Header.CommandArguments[1],
+                            ServerLocalFilePath = ServerCopyFile(),
+                            SenderLocalFilePath = message.Header.CommandArguments[2],
+                            Sender = _context.Clients.FirstOrDefault(x => x.Id == _userData.Id),
+                            Recipient = _context.Clients.FirstOrDefault(x => x.Id == Convert.ToInt32(message.Header.CommandArguments[0])),
+                        }
+                    });
+
+                    _context.SaveChanges();
+
+                    if (to_client != null)
+                    {
+                        to_client._connection
                             .SendMessageAsync(new PackageMessage()
                             {
                                 Header = new Header()

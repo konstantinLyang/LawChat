@@ -6,7 +6,9 @@ using System.Windows;
 using System.Windows.Threading;
 using lawChat.Client.Model;
 using lawChat.Client.View;
+using LawChat.Client.View.Windows;
 using lawChat.Client.ViewModel;
+using LawChat.Client.ViewModel;
 using lawChat.Network.Abstractions.Enums;
 using lawChat.Network.Abstractions.Models;
 using lawChat.Server.Data.Model;
@@ -30,8 +32,10 @@ namespace lawChat.Client.Services.Implementations
 
         private Window? _loginWindow;
         private Window? _mainWindow;
+        private Window? _registrationWindow;
         
         private MainWindowViewModel? _mainWindowViewModel;
+        private RegistrationWindowViewModel? _registrationWindowViewModel;
 
         public void ShowLoginWindow()
         {
@@ -67,8 +71,15 @@ namespace lawChat.Client.Services.Implementations
                 _clientData.UserData.FatherName;
 
             _loginWindow?.Close();
+            _registrationWindow?.Close();
 
             _mainWindow.Show();
+        }
+
+        public void ShowRegisterWindow()
+        {
+            _registrationWindow = _services.GetRequiredService<RegistrationWindow>();
+            _registrationWindow.Show();
         }
     }
 }

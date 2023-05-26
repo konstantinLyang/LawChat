@@ -5,6 +5,7 @@
         GET,
         SET,
         PUT,
+        UPDATE,
         DELETE,
         OK,
         ServerError,

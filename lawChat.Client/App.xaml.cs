@@ -3,7 +3,9 @@ using System.Windows;
 using lawChat.Client.Services;
 using lawChat.Client.Services.Implementations;
 using lawChat.Client.View;
+using LawChat.Client.View.Windows;
 using lawChat.Client.ViewModel;
+using LawChat.Client.ViewModel;
 using Microsoft.Extensions.DependencyInjection;
 using lawChat.Network.Abstractions;
 using LawChat.Network.Implementations;
@@ -20,6 +22,7 @@ namespace lawChat.Client
                 {
                     services.AddSingleton<LoginWindowViewModel>();
                     services.AddSingleton<MainWindowViewModel>();
+                    services.AddSingleton<RegistrationWindowViewModel>();
                     services.AddSingleton<IUserDialog, UserDialogService>();
                     services.AddSingleton<IClientObject, ClientObjectService>();
                     services.AddSingleton<IClientData, ClientDataService>();
@@ -36,6 +39,13 @@ namespace lawChat.Client
                     {
                         var model = s.GetService<MainWindowViewModel>();
                         var view = new MainWindow { DataContext = model }; ;
+
+                        return view;
+                    });
+                    services.AddTransient(s =>
+                    {
+                        var model = s.GetService<RegistrationWindowViewModel>();
+                        var view = new RegistrationWindow { DataContext = model }; ;
 
                         return view;
                     });

@@ -19,6 +19,39 @@ namespace LawChat.Server.Migrations
                 .HasAnnotation("ProductVersion", "7.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
+            modelBuilder.Entity("LawChat.Server.Data.Model.File", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("RecipientId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RecipientLocalFilePath")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("SenderId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SenderLocalFilePath")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RecipientId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("File");
+                });
+
             modelBuilder.Entity("lawChat.Server.Data.Model.Chat", b =>
                 {
                     b.Property<int>("Id")
@@ -46,11 +79,8 @@ namespace LawChat.Server.Migrations
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("FilePath")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("LocalFilePath")
-                        .HasColumnType("longtext");
+                    b.Property<int?>("FileId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("ReadDateTime")
                         .HasColumnType("datetime(6)");
@@ -67,6 +97,8 @@ namespace LawChat.Server.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ChatId");
+
+                    b.HasIndex("FileId");
 
                     b.HasIndex("RecipientId");
 
@@ -128,11 +160,34 @@ namespace LawChat.Server.Migrations
                     b.ToTable("Clients");
                 });
 
+            modelBuilder.Entity("LawChat.Server.Data.Model.File", b =>
+                {
+                    b.HasOne("lawChat.Server.Data.Model.User", "Recipient")
+                        .WithMany()
+                        .HasForeignKey("RecipientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("lawChat.Server.Data.Model.User", "Sender")
+                        .WithMany()
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Recipient");
+
+                    b.Navigation("Sender");
+                });
+
             modelBuilder.Entity("lawChat.Server.Data.Model.Message", b =>
                 {
                     b.HasOne("lawChat.Server.Data.Model.Chat", null)
                         .WithMany("Messages")
                         .HasForeignKey("ChatId");
+
+                    b.HasOne("LawChat.Server.Data.Model.File", "File")
+                        .WithMany()
+                        .HasForeignKey("FileId");
 
                     b.HasOne("lawChat.Server.Data.Model.User", "Recipient")
                         .WithMany()
@@ -145,6 +200,8 @@ namespace LawChat.Server.Migrations
                         .HasForeignKey("SenderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("File");
 
                     b.Navigation("Recipient");
 

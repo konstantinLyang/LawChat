@@ -30,32 +30,19 @@ namespace lawChat.Client.Services.Implementations
 
             _connection.MessageReceived += HandlerMessageReceive;
         }
-
-        /*public void SendPrivateFileMessage(int recipient, string filePath, string fileName)
-        {
-            Stream FileStream = File.OpenRead(filePath);
-
-            byte[] FileBuffer = new byte[FileStream.Length];
-
-            FileStream.Read(FileBuffer, 0, (int)FileStream.Length);
-
-            NetworkStream.Write(FileBuffer, 0, FileBuffer.GetLength(0));
-
-            NetworkStream.Close();
-        }*/
         
-        public PackageMessage OpenConnection(string login, string password)
+        public PackageMessage SignIn(string login, string password)
         {
-            if (!_connection.IsConnected) _connection.Connect("127.0.0.1", 8080);
+            if (!_connection.IsConnected) _connection.Connect("10.10.11.47", 8080);
 
             try
             {
-                SendMessage(new PackageMessage()
+                SendMessage(new ()
                 {
                     Header = new Header()
                     {
                         MessageType = MessageType.Command,
-                        CommandArguments = new[] { "authorization" }
+                        CommandArguments = new[] { "signin" }
                     },
                     Data = Encoding.UTF8.GetBytes(login + ";" + password),
                 });
@@ -74,12 +61,47 @@ namespace lawChat.Client.Services.Implementations
                     _clientData.UserData = JsonConvert.DeserializeObject<User>(Encoding.UTF8.GetString(_answer.Data));
                     _isAuthorized = true;
                 }
-
+                 
                 return _answer;
             }
             catch { return new PackageMessage() { Header = new Header() { StatusCode = StatusCode.ServerError } }; }
         }
 
+        public PackageMessage SignUp(byte[] userData)
+        {
+            if (!_connection.IsConnected) _connection.Connect("10.10.11.47", 8080);
+
+            try
+            {
+                SendMessage(new()
+                {
+                    Header = new()
+                    {
+                        MessageType = MessageType.Command,
+                        StatusCode = StatusCode.PUT,
+                        CommandArguments = new[] { "signup" }
+                    },
+                    Data = userData
+                });
+
+                WaitForAnswer();
+
+                void WaitForAnswer()
+                {
+                    if (_answer != null) return;
+                    Thread.Sleep(100);
+                    WaitForAnswer();
+                }
+
+                if (_answer.Header.CommandArguments?[0] == "signup" && _answer.Header.StatusCode == StatusCode.OK)
+                {
+                    _clientData.UserData = JsonConvert.DeserializeObject<User>(Encoding.UTF8.GetString(_answer.Data));
+                }
+
+                return _answer;
+            }
+            catch { return new PackageMessage() { Header = new Header() { StatusCode = StatusCode.ServerError } }; }
+        }
         public void CloseConnection()
         {
             if(_connection.IsConnected) _connection.CloseConnection();

@@ -25,8 +25,8 @@ namespace lawChat.Server.Data.Model
 
         public string Text { get; set; }
 
-        public string FilePath{ get; set; }
+        public LawChat.Server.Data.Model.File File { get; set; }
 
-        public string LocalFilePath { get; set; }
+        public bool IsRead { get; set; } = false;
     }
 }

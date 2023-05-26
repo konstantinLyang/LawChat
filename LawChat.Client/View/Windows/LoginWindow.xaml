@@ -109,7 +109,7 @@
                         Command="{Binding AuthorizationCommand}" Margin="0,30,0,15"/>
 
                 <Grid Height="20">
-                    <Button Content="Регистрация" Style="{StaticResource RegistrationButton}" Width="100"/>
+                    <Button Content="Регистрация" Style="{StaticResource RegistrationButton}" Width="100" Command="{Binding OpenRegisterWindowCommand}"/>
                 </Grid>
 
                 <TextBlock Text="{Binding InfoTextBlock}" Foreground="{Binding ForegroundInfoTextBlock}" TextWrapping="Wrap" Visibility="{Binding InfoTextBlockVisibility}" VerticalAlignment="Top" Margin="0,0,0,0"/>

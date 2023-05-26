@@ -118,49 +118,23 @@ namespace lawChat.Client.ViewModel
                 if (fd.ShowDialog() == true)
                 { 
                     string fileName = fd.FileName;
-                    
+
                     FileInfo fileInfo = new FileInfo(fileName);
 
-                    string sendFile = copeSendFile();
-
-                    FileInfo sendFileInfo = new FileInfo(sendFile);
-
-                    string copeSendFile()
-                    {
-                        try
-                        {
-                            File.Copy(fileName, $@"{downloadsPath}\Downloads\{fileInfo.Name}");
-                            return $@"{downloadsPath}\Downloads\{fileInfo.Name}";
-                        }
-                        catch (IOException ex)
-                        {
-                            try
-                            {
-                                string temp = DateTime.Now.Millisecond.ToString();
-                                File.Copy(fileName, $@"{downloadsPath}\Downloads\{temp}{fileInfo.Name}");
-                                return $@"{downloadsPath}\Downloads\{temp}{fileInfo.Name}";
-                            }
-                            catch
-                            {
-                                return copeSendFile();
-                            }
-                        }
-                    }
-
-                    byte[] sendBuffer = File.ReadAllBytes(sendFile);
+                    byte[] sendBuffer = File.ReadAllBytes(fd.FileName);
 
                     Dispatcher.Invoke(() =>
                     {
                         SearchPanelSource.FirstOrDefault(x => x.RecipientId == SelectedChat.RecipientId)!.Messages.Add(new ProcessedMessage()
                         {
-                            Text = sendFileInfo.Name,
+                            Text = fileInfo.Name,
                             CreateDate = DateTime.Now,
                             IsReceivedMessage = false,
                             IsFile = true,
-                            FilePath = sendFile
+                            FilePath = fileName
                         });
 
-                        SearchPanelSource.FirstOrDefault(x => x.RecipientId == SelectedChat.RecipientId)!.LastMessage = sendFileInfo.Name;
+                        SearchPanelSource.FirstOrDefault(x => x.RecipientId == SelectedChat.RecipientId)!.LastMessage = fileInfo.Name;
                         SearchPanelSource.FirstOrDefault(x => x.RecipientId == SelectedChat.RecipientId)!.LastMessageDateTime = DateTime.Now;
                     });
 
@@ -171,7 +145,7 @@ namespace lawChat.Client.ViewModel
                         Header = new Header()
                         {
                             MessageType = MessageType.File,
-                            CommandArguments = new[] { _selectedChat.RecipientId.ToString(), sendFileInfo.Name }
+                            CommandArguments = new[] { _selectedChat.RecipientId.ToString(), fileInfo.Name, fileName }
                         },
                         Data = sendBuffer
                     });
@@ -242,7 +216,8 @@ namespace lawChat.Client.ViewModel
                                         {
                                             Title = friend.NickName,
                                             RecipientId = friend.Id,
-                                            LastMessage = "..."
+                                            LastMessage = "...",
+                                            ContactPhoto = friend.PhotoFilePath
                                         });
 
                                         _clientObject.SendMessage(new PackageMessage()
@@ -331,30 +306,63 @@ namespace lawChat.Client.ViewModel
                         if (!Directory.Exists(@$"{downloadsPath}\Downloads"))
                             Directory.CreateDirectory(@$"{downloadsPath}\Downloads");
 
-                        File.WriteAllBytes(@$"{downloadsPath}\Downloads\{message.Header.CommandArguments[1]}", message.Data);
+                        string CreateFile()
+                        {
+                            try
+                            {
+                                File.WriteAllBytes(@$"{downloadsPath}\Downloads\{message.Header.CommandArguments[1]}", message.Data);
 
-                        var receipient = SearchPanelSource.FirstOrDefault(x =>
+                                return @$"{downloadsPath}\Downloads\{message.Header.CommandArguments[1]}"; }
+
+                            catch
+                            {
+                                try
+                                {
+                                    File.WriteAllBytes(@$"{downloadsPath}\Downloads\{DateTime.Now:ssss}{message.Header.CommandArguments[1]}", message.Data);
+
+                                    return @$"{downloadsPath}\Downloads\{DateTime.Now:ssss}{message.Header.CommandArguments[1]}"; }
+
+                                catch
+                                {
+                                    return CreateFile();
+                                }
+                            }
+                        }
+
+                        var fileInfo = new FileInfo(CreateFile());
+
+                        var recipient = SearchPanelSource.FirstOrDefault(x =>
                             x.RecipientId == Convert.ToInt32(message.Header.CommandArguments[0]));
                         
                         Dispatcher.Invoke(() =>
                         {
-                            receipient!.Messages.Add(new ProcessedMessage()
+                            recipient!.Messages.Add(new ProcessedMessage()
                                 {
                                     CreateDate = DateTime.Now,
                                     IsReceivedMessage = true,
                                     IsFile = true,
-                                    Text = message.Header.CommandArguments[1],
-                                    FilePath = @$"{downloadsPath}\Downloads\{message.Header.CommandArguments[1]}"
+                                    Text = fileInfo.Name,
+                                    FilePath = fileInfo.FullName,
                             });
 
-                            receipient.LastMessage = message.Header.CommandArguments[1];
-                            receipient.LastMessageDateTime = DateTime.Now;
+                            recipient.LastMessage = fileInfo.Name;
+                            recipient.LastMessageDateTime = DateTime.Now;
 
-                            if (SelectedChat != receipient)
+                            if (SelectedChat != recipient)
                             {
-                                receipient.IsRead = false;
+                                recipient.IsRead = false;
                                 try { notification.Play(); } catch { }
-                                notifier.ShowClientMessage($"Файл: {message.Header.CommandArguments[1]}", receipient!.Title, new MessageOptions());
+                                notifier.ShowClientMessage($"Файл: { fileInfo.Name }", recipient.Title, new MessageOptions());
+                            }
+                        });
+
+                        _clientObject.SendMessage(new()
+                        {
+                            Header = new()
+                            {
+                                MessageType = MessageType.Command,
+                                StatusCode = StatusCode.UPDATE,
+                                CommandArguments = new []{ "message recipient filepath", message.Header.CommandArguments[0], fileInfo.FullName}
                             }
                         });
 
