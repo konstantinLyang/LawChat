@@ -233,7 +233,7 @@ namespace lawChat.Server.ServerData.Model
                                 case "message recipient filepath":
 
                                     _context.Files
-                                        .FirstOrDefault(x => x.Id == Convert.ToInt32(message.Header.CommandArguments[3]))
+                                        .FirstOrDefault(x => x.Id == Convert.ToInt32(message.Header.CommandArguments[1]))!
                                         .RecipientLocalFilePath = message.Header.CommandArguments[2];
 
                                     _context.SaveChanges();
@@ -283,10 +283,7 @@ namespace lawChat.Server.ServerData.Model
                 case MessageType.File:
 
                     var toClient = _connectedClients.FirstOrDefault(x =>
-                        x.UserData.Id == Convert.ToInt32(message.Header.CommandArguments[0]));
-
-                    if (!Directory.Exists(@"Client\data\Image\TempFiles\"))
-                        Directory.CreateDirectory(@"Client\data\Image\TempFiles\");
+                        x.UserData.Id == Convert.ToInt32(message.Header.CommandArguments[0])); // получатель
 
                     string ServerCopyFile()
                     {
@@ -315,6 +312,8 @@ namespace lawChat.Server.ServerData.Model
                         }
                     }
 
+                    string filepath = Path.GetFullPath(ServerCopyFile());
+
                     var newMessage = new Message()
                     {
                         CreateDate = DateTime.Now,
@@ -324,7 +323,7 @@ namespace lawChat.Server.ServerData.Model
                         File = new()
                         {
                             Name = message.Header.CommandArguments[1],
-                            ServerLocalFilePath = ServerCopyFile(),
+                            ServerLocalFilePath = filepath,
                             SenderLocalFilePath = message.Header.CommandArguments[2],
                             Sender = _context.Clients.FirstOrDefault(x => x.Id == UserData.Id),
                             Recipient = _context.Clients.FirstOrDefault(x =>
@@ -344,7 +343,7 @@ namespace lawChat.Server.ServerData.Model
                                 Header = new Header()
                                 {
                                     MessageType = MessageType.File,
-                                    CommandArguments = new[] { UserData.Id.ToString(), message.Header.CommandArguments[1], newMessage.File.Id.ToString() }
+                                    CommandArguments = new[] { UserData.Id.ToString(), message.Header.CommandArguments[1], newMessage.File.Id.ToString() } // отправитель, имя файла, айди файла
                                 },
                                 Data = message.Data
                             });

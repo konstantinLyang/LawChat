@@ -10,6 +10,9 @@ class Program
         Console.OutputEncoding = Encoding.UTF8;
         Console.InputEncoding = Encoding.UTF8;
 
+        if (!Directory.Exists(@"Client\data\Image\TempFiles\"))
+            Directory.CreateDirectory(@"Client\data\Image\TempFiles\");
+
         Console.WriteLine("Запуск сервера....");
 
         using (TcpServerModel server = new TcpServerModel(8080))

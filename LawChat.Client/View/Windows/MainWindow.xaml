@@ -113,8 +113,8 @@
                 <Grid Grid.Row="1" Grid.Column="1" >
                     <Border Background="#FF191C21" Margin="0, 0,0.5,0.5">
                         <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch"
-                                  Background="Transparent" SelectedItem="{Binding SelectedChat}"
-                                  BorderThickness="0" ItemsSource="{Binding SearchPanelSource, UpdateSourceTrigger=PropertyChanged}">
+                                 Background="Transparent" SelectedItem="{Binding SelectedChat}"
+                                 BorderThickness="0" ItemsSource="{Binding SearchPanelSource, UpdateSourceTrigger=PropertyChanged}">
                             <b:Interaction.Triggers>
                                 <b:EventTrigger EventName="SelectionChanged">
                                     <b:InvokeCommandAction Command="{Binding ChatChangedCommand}"/>
@@ -224,8 +224,26 @@
                                                     <RowDefinition/>
                                                     <RowDefinition/>
                                                 </Grid.RowDefinitions>
-                                                <Border x:Name="FileBorder" Grid.RowSpan="3" Grid.Column="0" Width="45" Height="45"  Cursor="Hand"
-                                                        CornerRadius="13" VerticalAlignment="Center" Margin="10,10,0,10" Background="SkyBlue"> 
+
+                                                <Image Cursor="Hand" RenderOptions.BitmapScalingMode="HighQuality" MaxHeight="600" MaxWidth="500" Grid.RowSpan="3"  Grid.ColumnSpan="2" Source="{Binding FilePath}">
+                                                    <Image.Style>
+                                                        <Style TargetType="Image">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsImage}" Value="False">
+                                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Image.Style>
+                                                    <b:Interaction.Triggers>
+                                                        <b:EventTrigger EventName="MouseLeftButtonUp">
+                                                            <b:InvokeCommandAction Command="{Binding OpenFileCommand}" CommandParameter="{Binding Id}"/>
+                                                        </b:EventTrigger>
+                                                    </b:Interaction.Triggers>
+                                                </Image>
+
+                                                <Border x:Name="FileBorder" Grid.Row="0" Grid.RowSpan="3" Grid.Column="0" Width="45" Height="45"  Cursor="Hand"
+                                                        CornerRadius="13" VerticalAlignment="Center" Margin="10,10,0,10" Background="SkyBlue">
                                                     <Path VerticalAlignment="Center" Width="30" Height="30" HorizontalAlignment="Center" SnapsToDevicePixels="True" Fill="White"
                                                           Data="M21.25 26.25H8.75C8.08696 26.25 7.45107 25.9866 6.98223 25.5178C6.51339 25.0489 6.25 24.413 6.25 23.75V6.25C6.25 5.58696 6.51339 4.95107 6.98223 4.48223C7.45107 4.01339 8.08696 3.75 8.75 3.75H15.7325C16.064 3.75007 16.3819 3.88181 16.6163 4.11625L23.3838 10.8837C23.6182 11.1181 23.7499 11.436 23.75 11.7675V23.75C23.75 24.413 23.4866 25.0489 23.0178 25.5178C22.5489 25.9866 21.913 26.25 21.25 26.25Z"/>
                                                     <Border.Style>
@@ -234,28 +252,44 @@
                                                                 <DataTrigger Binding="{Binding IsFile}" Value="False">
                                                                     <Setter Property="Visibility" Value="Collapsed"/>
                                                                 </DataTrigger>
+                                                                <DataTrigger Binding="{Binding IsImage}" Value="True">
+                                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                                </DataTrigger>
                                                             </Style.Triggers>
                                                         </Style>
                                                     </Border.Style>
                                                     <b:Interaction.Triggers>
-                                                        <b:EventTrigger EventName="MouseUp">
-                                                            <b:InvokeCommandAction Command="{Binding OpenFileCommand}" CommandParameter="{Binding Id}"/>
+                                                        <b:EventTrigger EventName="MouseLeftButtonUp">
+                                                            <b:InvokeCommandAction Command="{Binding OpenFileFolderCommand}" CommandParameter="{Binding Id}"/>
                                                         </b:EventTrigger>
                                                     </b:Interaction.Triggers>
                                                 </Border>
                                                 <TextBox Grid.Row="0" IsReadOnly="True" MaxWidth="500" Background="Transparent" VerticalAlignment="Center" BorderThickness="0" Margin="15,8,15,0"
                                                          Grid.Column="1" Foreground="White" TextWrapping="Wrap" FontWeight="Normal" FontSize="14" Text="{Binding Text}">
+                                                    <TextBox.Style>
+                                                        <Style TargetType="TextBox">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsImage}" Value="True">
+                                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBox.Style>
                                                 </TextBox>
-                                                <TextBlock Grid.Row="0" Grid.Column="1" x:Name="FileLink" VerticalAlignment="Center">
-                                                    <Hyperlink NavigateUri="{Binding FilePath}" TextDecorations="" RequestNavigate="Hyperlink_OnRequestNavigate">
-                                                        <TextBlock Margin="17,8,15,0" FontSize="14" TextWrapping="Wrap"
-                                                                   Foreground="SkyBlue"
-                                                                   Background="Transparent" FontWeight="Normal" Text="{Binding Text}"/>
-                                                    </Hyperlink>
+                                                <TextBlock Cursor="Hand" Grid.Row="0" Margin="17,8,15,0" FontSize="14"  Grid.Column="1" Foreground="SkyBlue" Text="{Binding Text}" TextWrapping="Wrap"
+                                                           Background="Transparent"  VerticalAlignment="Center" FontWeight="Normal">
+                                                    <b:Interaction.Triggers>
+                                                        <b:EventTrigger EventName="MouseUp">
+                                                            <b:InvokeCommandAction Command="{Binding OpenFileCommand}" CommandParameter="{Binding Id}"/>
+                                                        </b:EventTrigger>
+                                                    </b:Interaction.Triggers>
                                                     <TextBlock.Style>
                                                         <Style TargetType="TextBlock">
                                                             <Style.Triggers>
                                                                 <DataTrigger Binding="{Binding IsFile}" Value="False">
+                                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding IsImage}" Value="True">
                                                                     <Setter Property="Visibility" Value="Collapsed"/>
                                                                 </DataTrigger>
                                                             </Style.Triggers>
@@ -264,7 +298,17 @@
                                                 </TextBlock>
                                                 <TextBlock Grid.Column="1" Grid.Row="1" FontSize="12" VerticalAlignment="Bottom" HorizontalAlignment="Right"
                                                            Margin="50,0,14,3" Foreground="#FFB8C0C3"
-                                                           Text="{Binding CreateDate, Converter={StaticResource DateTimeToDateConverter}}"/>
+                                                           Text="{Binding CreateDate, Converter={StaticResource DateTimeToDateConverter}}">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsImage}" Value="True">
+                                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
                                             </Grid>
                                             <Border.Style>
                                                 <Style TargetType="{x:Type Border}">
@@ -278,6 +322,9 @@
                                                             <Setter Property="HorizontalAlignment" Value="Left"/>
                                                             <Setter Property="Background" Value="#32323E"/>
                                                             <Setter Property="CornerRadius" Value="0,15,15,15"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsImage}" Value="True">
+                                                            <Setter Property="Background" Value="Transparent"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>

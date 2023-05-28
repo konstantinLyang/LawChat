@@ -131,6 +131,28 @@
             <converters:LastMessageTextConverter x:Key="LastMessageTextConverter" />
             <!--#endregion-->
 
+            <Style TargetType="{x:Type ListBoxItem}" x:Key="ListBoxItemStyle">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ListBoxItem">
+                            <Border x:Name="Part_Border"
+                                    SnapsToDevicePixels="True">
+                                <ContentPresenter/>
+                            </Border>
+                            <!--Triggers-->
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter TargetName="Part_Border" Property="Background" Value="AliceBlue"/>
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Part_Border" Property="Background" Value="AliceBlue"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
         </ResourceDictionary>
 
     </Application.Resources>
