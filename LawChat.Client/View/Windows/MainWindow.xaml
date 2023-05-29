@@ -134,7 +134,7 @@
                                                         <Ellipse Width="48" Height="48" RenderOptions.BitmapScalingMode="HighQuality">
                                                             <Ellipse.Fill>
                                                                 <ImageBrush Stretch="UniformToFill"
-                                                                            ImageSource="{Binding ContactPhoto, FallbackValue='Client/data/Image/no_photo.jpg', TargetNullValue='Client/data/Image/no_photo.jpg'}"/>
+                                                                            ImageSource="{Binding ContactPhoto, FallbackValue='Client/data/Image/no_photo.jpg', TargetNullValue={x:Null}}"/>
                                                             </Ellipse.Fill>
                                                         </Ellipse>
                                                     </Grid>
@@ -225,7 +225,7 @@
                                                     <RowDefinition/>
                                                 </Grid.RowDefinitions>
 
-                                                <Image Cursor="Hand" RenderOptions.BitmapScalingMode="HighQuality" MaxHeight="600" MaxWidth="500" Grid.RowSpan="3"  Grid.ColumnSpan="2" Source="{Binding FilePath}">
+                                                <Image Cursor="Hand" RenderOptions.BitmapScalingMode="HighQuality" MaxHeight="600" MaxWidth="500" Grid.RowSpan="3"  Grid.ColumnSpan="2" Source="{Binding FilePath, TargetNullValue={x:Null}}">
                                                     <Image.Style>
                                                         <Style TargetType="Image">
                                                             <Style.Triggers>
@@ -343,7 +343,7 @@
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate >
                                         <Button Style="{StaticResource LoginWindowButtonStyle}" Background="Transparent" MaxHeight="25" MaxWidth="25" Margin="5" BorderThickness="0">
-                                            <Image RenderOptions.BitmapScalingMode="HighQuality" SnapsToDevicePixels="True" Source="{Binding ImageFilePath}"></Image>
+                                            <Image RenderOptions.BitmapScalingMode="HighQuality" SnapsToDevicePixels="True" Source="{Binding ImageFilePath, TargetNullValue={x:Null}}"/>
                                         </Button>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>

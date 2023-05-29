@@ -27,7 +27,6 @@ using Microsoft.Win32;
 using Newtonsoft.Json;
 using Syroot.Windows.IO;
 using ToastNotifications.Core;
-using File = LawChat.Server.Data.Model.File;
 using PackageMessage = lawChat.Network.Abstractions.Models.PackageMessage;
 
 namespace lawChat.Client.ViewModel
@@ -43,39 +42,18 @@ namespace lawChat.Client.ViewModel
         private readonly IClientObject _clientObject;
         private readonly IClientData _clientData;
 
-        private SearchPanelModel _selectedChat = new ()
-        {
-            Messages = new()
-            {
-                new()
-                {
-                    IsFile = true,
-                    IsImage = true,
-                    FilePath = @"C:\Users\konst\OneDrive\Изображения\Снимки экрана\Screenshot 2023-03-16 233942.png",
-                    Text = "zvezdy_noch_zvezdnoe_nebo_177144_1920x1080.png"
-                },
-                new()
-                {
-                IsFile = false,
-                Text = "OMG!"
-                },
-                new()
-                {
-                IsFile = false,
-                Text = "Jlfj orok o asdhfj riiird ffjrrj!"
-                },
-                new()
-                {
-                IsFile = true,
-                Text = "Jlfj orok o asdhfj riiird ffjrrj!",
-                FilePath = @"C:\Users\konst\OneDrive\Изображения\zvezdy_noch_zvezdnoe_nebo_177144_1920x1080.jpg"
-                },
-            }
-        };
+        private SearchPanelModel _selectedChat;
         public SearchPanelModel SelectedChat
         {
             get => _selectedChat;
-            set => Set(ref _selectedChat, value);
+            set
+            {
+                Task.Factory.StartNew(() =>
+                {
+                    Set(ref _selectedChat, value);
+                    OnChatChangedCommand();
+                });
+            } 
         }
 
         private Visibility _stickerBlockVisibility = Visibility.Hidden;
@@ -121,6 +99,7 @@ namespace lawChat.Client.ViewModel
         {
             if (SelectedChat.IsRead == false) SelectedChat.IsRead = true;
         }
+
         private void OnOpenFileCommand(object p)
         {
             if (!Directory.Exists(@$"{_downloadsPath}\Downloads"))
@@ -327,9 +306,9 @@ namespace lawChat.Client.ViewModel
 
                     SelectedChat.LastMessage = CurrentMessageTextBox;
                     SelectedChat.LastMessageDateTime = DateTime.Now;
-                });
 
-                CurrentMessageTextBox = "";
+                    CurrentMessageTextBox = "";
+                });
             }
         }
 
@@ -534,7 +513,7 @@ namespace lawChat.Client.ViewModel
                         
                         Dispatcher.Invoke(() =>
                         {
-                            recipient!.Messages.Add(new ProcessedMessage()
+                            recipient.Messages.Add(new ProcessedMessage()
                                 {
                                     CreateDate = DateTime.Now,
                                     IsReceivedMessage = true,

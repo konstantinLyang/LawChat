@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LawChat.Server.Migrations
 {
     [DbContext(typeof(LawChatDbContext))]
-    [Migration("20230526145301_sfs")]
-    partial class sfs
+    [Migration("20230529024501_filesystemsupport")]
+    partial class filesystemsupport
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

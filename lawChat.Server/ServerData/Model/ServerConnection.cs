@@ -217,12 +217,6 @@ namespace lawChat.Server.ServerData.Model
                                 },
                                 Data = message.Data
                             });
-
-                            try
-                            {
-                                
-                            }
-                            catch { throw new Exception("ошибка"); }
                             break;
                     }
                     switch (message.Header.StatusCode)

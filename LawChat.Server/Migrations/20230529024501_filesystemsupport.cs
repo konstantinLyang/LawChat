@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace LawChat.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class sfs : Migration
+    public partial class filesystemsupport : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
