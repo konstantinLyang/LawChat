@@ -81,6 +81,12 @@ namespace lawChat.Client.Services.Implementations
 
         public void ShowRegisterWindow()
         {
+            if (_registrationWindow is { } registrationWindow)
+            {
+                registrationWindow.Show();
+                return;
+            }
+
             _registrationWindow = _services.GetRequiredService<RegistrationWindow>();
             _registrationWindow.Show();
         }

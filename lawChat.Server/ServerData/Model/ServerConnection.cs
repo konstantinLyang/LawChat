@@ -201,22 +201,30 @@ namespace lawChat.Server.ServerData.Model
                             User newClient =
                                 JsonConvert.DeserializeObject<User>(Encoding.UTF8.GetString(message.Data));
 
-                            _context.Clients.Add(newClient);
-
-                            _context.SaveChanges();
-
-                            UserData = newClient;
-
-                            await Connection.SendMessageAsync(new()
+                            if (_context.Clients.FirstOrDefault(x => x.NickName == newClient.NickName) == null &&
+                                _context.Clients.FirstOrDefault(x => x.Login == newClient.Login) == null)
                             {
-                                Header = new()
+                                _context.Clients.Add(newClient);
+
+                                _context.SaveChanges();
+
+                                UserData = newClient;
+
+                                await Connection.SendMessageAsync(new()
                                 {
-                                    MessageType = MessageType.Command,
-                                    StatusCode = StatusCode.OK,
-                                    CommandArguments = new[] { "signup" }
-                                },
-                                Data = message.Data
-                            });
+                                    Header = new()
+                                    {
+                                        MessageType = MessageType.Command,
+                                        StatusCode = StatusCode.OK,
+                                        CommandArguments = new[] { "signup" }
+                                    },
+                                    Data = message.Data
+                                });
+                            }
+                            else
+                            {
+                                await Connection.SendMessageAsync(new() { Header = new() { StatusCode = StatusCode.Error } });
+                            }
                             break;
                     }
                     switch (message.Header.StatusCode)

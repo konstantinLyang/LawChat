@@ -112,7 +112,7 @@
                 <!--#region Contact Block-->
                 <Grid Grid.Row="1" Grid.Column="1" >
                     <Border Background="#FF191C21" Margin="0, 0,0.5,0.5">
-                        <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch"
+                        <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch" ItemContainerStyle="{StaticResource ListBoxItemStyle}"
                                  Background="Transparent" SelectedItem="{Binding SelectedChat}"
                                  BorderThickness="0" ItemsSource="{Binding SearchPanelSource, UpdateSourceTrigger=PropertyChanged}">
                             <b:Interaction.Triggers>
@@ -207,7 +207,7 @@
                         <RowDefinition MinHeight="45" MaxHeight="300" Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <Border Grid.Row="0" Background="#FF1C1F2B" Margin="0.5, 0,0,0">
+                    <Border Grid.Row="0" Background="#FF262937" Margin="0.5, 0,0,0">
                         <ScrollViewer ScrollChanged="ScrollViewer_OnScrollChanged">
                             <ItemsControl ScrollViewer.VerticalScrollBarVisibility="Auto" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Hidden" AllowDrop="True" 
                                           Background="Transparent" BorderThickness="0" ItemsSource="{Binding SelectedChat.Messages}" VerticalAlignment="Bottom">
@@ -372,7 +372,7 @@
                                 </Grid.RowDefinitions>
 
                                 <!--#region MessageTextBox-->
-                                <TextBox MaxHeight="250" MaxLength="4078" AcceptsReturn="True" Grid.Row="0" Style="{DynamicResource MessageTextBox}" Text="{Binding CurrentMessageTextBox, UpdateSourceTrigger=PropertyChanged}"
+                                <TextBox xml:lang="ru-RU" SpellCheck.IsEnabled="True" MaxHeight="250" MaxLength="4078" AcceptsReturn="True" Grid.Row="0" Style="{DynamicResource MessageTextBox}" Text="{Binding CurrentMessageTextBox, UpdateSourceTrigger=PropertyChanged}"
                                          Grid.RowSpan="2" Grid.Column="1" x:Name="TextMessageBox" SelectionBrush="#FF93CFFF"  SelectionTextBrush="White" CaretBrush="White">
                                     <TextBox.InputBindings>
                                         <KeyBinding Key="Enter" Command="{Binding SendMessageCommand}"/>

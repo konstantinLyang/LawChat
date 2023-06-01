@@ -105,9 +105,10 @@ namespace lawChat.Client.ViewModel
             if (!Directory.Exists(@$"{_downloadsPath}\Downloads"))
                 Directory.CreateDirectory(@$"{_downloadsPath}\Downloads");
 
+
             var message = SelectedChat.Messages.FirstOrDefault(x => x.Id == (int)p);
 
-            if (string.IsNullOrEmpty(message.FilePath) || !System.IO.File.Exists(message.FilePath))
+            if ((string.IsNullOrEmpty(message.FilePath) || !System.IO.File.Exists(message.FilePath)) && (int)p != 0)
             {
                 string CreateFile()
                 {
@@ -233,49 +234,45 @@ namespace lawChat.Client.ViewModel
         {
             if (SelectedChat != null)
             {
-                Task.Factory.StartNew(() =>
+                var fd = new OpenFileDialog();
+
+                if (fd.ShowDialog() == true)
                 {
-                    var fd = new OpenFileDialog();
+                    string fileName = fd.FileName;
 
-                    if (fd.ShowDialog() == true)
+                    FileInfo fileInfo = new FileInfo(fileName);
+
+                    byte[] sendBuffer = System.IO.File.ReadAllBytes(fd.FileName);
+
+                    SelectedChat!.Messages
+                        .Add(new ProcessedMessage()
+                        {
+                            Text = fileInfo.Name,
+                            CreateDate = DateTime.Now,
+                            IsReceivedMessage = false,
+                            IsFile = true,
+                            FilePath = fileName,
+                            IsImage = IsImage(fileInfo),
+                            OpenFileCommand = new LambdaCommand(OnOpenFileCommand),
+                            OpenFileFolderCommand = new LambdaCommand(OnOpenFileCommand),
+                        });
+
+                    SelectedChat.LastMessage = fileInfo.Name;
+                    SelectedChat.LastMessageDateTime = DateTime.Now;
+
+                    CurrentMessageTextBox = "";
+
+                    _clientObject.SendMessage(new PackageMessage()
                     {
-                        string fileName = fd.FileName;
-
-                        FileInfo fileInfo = new FileInfo(fileName);
-
-                        byte[] sendBuffer = System.IO.File.ReadAllBytes(fd.FileName);
-
-                        Dispatcher.Invoke(() =>
+                        Header = new Header()
                         {
-                            SelectedChat!.Messages
-                                .Add(new ProcessedMessage()
-                                {
-                                    Text = fileInfo.Name,
-                                    CreateDate = DateTime.Now,
-                                    IsReceivedMessage = false,
-                                    IsFile = true,
-                                    FilePath = fileName,
-                                    IsImage = IsImage(fileInfo)
-                                });
-
-                            SelectedChat.LastMessage = fileInfo.Name;
-                            SelectedChat.LastMessageDateTime = DateTime.Now;
-                        });
-
-                        CurrentMessageTextBox = "";
-
-                        _clientObject.SendMessage(new PackageMessage()
-                        {
-                            Header = new Header()
-                            {
-                                MessageType = MessageType.File,
-                                CommandArguments = new[]
-                                    { _selectedChat.RecipientId.ToString(), fileInfo.Name, fileName, } // получатель, имя файла, локальный путь файла.
-                            },
-                            Data = sendBuffer // файл
-                        });
-                    }
-                });
+                            MessageType = MessageType.File,
+                            CommandArguments = new[]
+                                { _selectedChat.RecipientId.ToString(), fileInfo.Name, fileName, } // получатель, имя файла, локальный путь файла.
+                        },
+                        Data = sendBuffer // файл
+                    });
+                }
             }
         }
 
@@ -285,6 +282,8 @@ namespace lawChat.Client.ViewModel
         {
             if (!string.IsNullOrWhiteSpace(CurrentMessageTextBox) && SelectedChat != null)
             {
+                StickerBlockVisibility = Visibility.Hidden;
+
                 _clientObject.SendMessage(new PackageMessage()
                 {
                     Header = new Header()
@@ -341,7 +340,7 @@ namespace lawChat.Client.ViewModel
 
                                         SearchPanelSource.Add(new()
                                         {
-                                            Title = friend.NickName,
+                                            Title = friend.LastName + " " + friend.FirstName + " " + friend.FatherName,
                                             RecipientId = friend.Id,
                                             LastMessage = "...",
                                             ContactPhoto = friend.PhotoFilePath
@@ -604,8 +603,10 @@ namespace lawChat.Client.ViewModel
         bool IsImage(FileInfo filePath)
         {
             if ((filePath.Extension == ".jpg" || filePath.Extension == ".png" ||
-                 filePath.Extension == ".jpeg" ||
-                 filePath.Extension == ".bmp") && filePath != null) return true;
+                 filePath.Extension == ".jpeg" || filePath.Extension == ".bmp" ||
+                 filePath.Extension == ".JPG" || filePath.Extension == ".PNG" ||
+                 filePath.Extension == ".JPEG" || filePath.Extension == ".BMP") 
+                && filePath != null) return true;
 
             return false;
         }
