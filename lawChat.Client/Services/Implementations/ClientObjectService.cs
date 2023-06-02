@@ -32,10 +32,10 @@ namespace lawChat.Client.Services.Implementations
         
         public PackageMessage SignIn(string login, string password)
         {
-            if (!_connection.IsConnected) _connection.Connect("10.10.11.47", 8080);
-
             try
             {
+                if (!_connection.IsConnected) _connection.Connect("10.10.11.47", 8080);
+
                 SendMessage(new ()
                 {
                     Header = new Header()
@@ -68,10 +68,10 @@ namespace lawChat.Client.Services.Implementations
 
         public PackageMessage SignUp(byte[] userData)
         {
-            if (!_connection.IsConnected) _connection.Connect("10.10.11.47", 8080);
-
             try
             {
+                if (!_connection.IsConnected) _connection.Connect("10.10.11.47", 8080);
+
                 SendMessage(new()
                 {
                     Header = new()
@@ -88,13 +88,20 @@ namespace lawChat.Client.Services.Implementations
                 void WaitForAnswer()
                 {
                     if (_answer != null) return;
-                    Thread.Sleep(100);
+                    Thread.Sleep(1000);
                     WaitForAnswer();
+                }
+
+                if (_answer.Header.StatusCode == StatusCode.Error)
+                {
+                    _answer = null;
+                    return new PackageMessage(){Header = new Header(){StatusCode = StatusCode.Error}};
                 }
 
                 if (_answer.Header.CommandArguments?[0] == "signup" && _answer.Header.StatusCode == StatusCode.OK)
                 {
                     _clientData.UserData = JsonConvert.DeserializeObject<User>(Encoding.UTF8.GetString(_answer.Data));
+                    _isAuthorized = true;
                 }
 
                 return _answer;

@@ -201,22 +201,30 @@ namespace lawChat.Server.ServerData.Model
                             User newClient =
                                 JsonConvert.DeserializeObject<User>(Encoding.UTF8.GetString(message.Data));
 
-                            _context.Clients.Add(newClient);
-
-                            _context.SaveChanges();
-
-                            UserData = newClient;
-
-                            await Connection.SendMessageAsync(new()
+                            if (_context.Clients.FirstOrDefault(x => x.NickName == newClient.NickName) == null &&
+                                _context.Clients.FirstOrDefault(x => x.Login == newClient.Login) == null)
                             {
-                                Header = new()
+                                _context.Clients.Add(newClient);
+
+                                _context.SaveChanges();
+
+                                UserData = newClient;
+
+                                await Connection.SendMessageAsync(new()
                                 {
-                                    MessageType = MessageType.Command,
-                                    StatusCode = StatusCode.OK,
-                                    CommandArguments = new[] { "signup" }
-                                },
-                                Data = message.Data
-                            });
+                                    Header = new()
+                                    {
+                                        MessageType = MessageType.Command,
+                                        StatusCode = StatusCode.OK,
+                                        CommandArguments = new[] { "signup" }
+                                    },
+                                    Data = message.Data
+                                });
+                            }
+                            else
+                            {
+                                await Connection.SendMessageAsync(new() { Header = new() { StatusCode = StatusCode.Error } });
+                            }
                             break;
                     }
                     switch (message.Header.StatusCode)
@@ -233,6 +241,18 @@ namespace lawChat.Server.ServerData.Model
                                     _context.SaveChanges();
 
                                     break;
+                                case "isread":
+                                    try
+                                    {
+                                        var readMessage = _context.Messages.FirstOrDefault(x =>
+                                                x.Id == Convert.ToInt32(message.Header.CommandArguments[1]));
+                                        readMessage.IsRead = true;
+                                        readMessage.ReadDateTime = DateTime.Now;
+                                        
+                                        _context.SaveChanges();
+                                    }
+                                    catch (Exception ex) {}
+                                    break;
                             }
                             break;
                     }
@@ -241,14 +261,15 @@ namespace lawChat.Server.ServerData.Model
                 case MessageType.Text:
                     try
                     {
-                        _context.Messages.Add(new Message()
+                        var sendTextMessage = new Message()
                         {
                             CreateDate = DateTime.Now,
                             Recipient = _context.Clients.FirstOrDefault(x =>
                                 x.Id == Convert.ToInt32(message.Header.CommandArguments[0])),
                             Sender = _context.Clients.FirstOrDefault(x => x.Id == UserData.Id),
                             Text = Encoding.UTF8.GetString(message.Data)
-                        });
+                        };
+                        _context.Messages.Add(sendTextMessage);
 
                         _context.SaveChanges();
 
@@ -262,7 +283,7 @@ namespace lawChat.Server.ServerData.Model
                                 Header = new Header()
                                 {
                                     MessageType = MessageType.Text,
-                                    CommandArguments = new[] { UserData.Id.ToString() }
+                                    CommandArguments = new[] { UserData.Id.ToString(), sendTextMessage.Id.ToString() }
                                 },
                                 Data = message.Data
                             });

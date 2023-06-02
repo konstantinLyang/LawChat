@@ -5,7 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Navigation;
 
-namespace lawChat.Client.View
+namespace LawChat.Client.View.Windows
 {
     public partial class MainWindow : Window
     {
