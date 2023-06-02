@@ -65,11 +65,13 @@ namespace lawChat.Client.ViewModel
 
         public Dispatcher Dispatcher = Dispatcher.CurrentDispatcher;
 
-        private ObservableCollection<SearchPanelModel> _searchPanelSource = new();
-        public ObservableCollection<SearchPanelModel> SearchPanelSource
+        public ObservableCollection<SearchPanelModel> AllDialogCollection { get; set; } = new();
+
+        private ObservableCollection<SearchPanelModel> _mainDialogCollection = new();
+        public ObservableCollection<SearchPanelModel> MainDialogCollection
         {
-            get => _searchPanelSource;
-            set => Set(ref _searchPanelSource, value);
+            get => _mainDialogCollection;
+            set => Set(ref _mainDialogCollection, value);
         }
 
         private ObservableCollection<StickerModel> _emojiCollection = new();
@@ -86,6 +88,13 @@ namespace lawChat.Client.ViewModel
             set => Set(ref _currentMessageTextBox, value);
         }
 
+        private string? _searchBox = "";
+        public string? SearchBox
+        {
+            get => _searchBox;
+            set => Set(ref _searchBox, value);
+        }
+
         private string? _userNameTextBlock;
         public string? UserNameTextBlock
         {
@@ -97,7 +106,23 @@ namespace lawChat.Client.ViewModel
         public ICommand ChatChangedCommand => _chatChangedCommand ??= new(OnChatChangedCommand);
         private void OnChatChangedCommand()
         {
-            if (SelectedChat.IsRead == false) SelectedChat.IsRead = true;
+            if (SelectedChat.Messages.Count > 0)
+            {
+                var nonReadMessages = SelectedChat.Messages.Where(x => x.IsRead == false && x.IsReceivedMessage == true);
+                foreach (var nonReadMessage in nonReadMessages)
+                {
+                    _clientObject.SendMessage(new PackageMessage()
+                    {
+                        Header = new Header()
+                        {
+                            MessageType = MessageType.Command,
+                            StatusCode = StatusCode.UPDATE,
+                            CommandArguments = new[] { "isread", nonReadMessage.Id.ToString() }
+                        }
+                    });
+                }
+                if (SelectedChat.IsRead == false) SelectedChat.IsRead = true;
+            }
         }
 
         private void OnOpenFileCommand(object p)
@@ -228,6 +253,37 @@ namespace lawChat.Client.ViewModel
             else StickerBlockVisibility = Visibility.Hidden;
         }
 
+        private LambdaCommand _findUserCommand;
+        public ICommand FindUserCommand => _findUserCommand ??= new(OnFindUserCommand);
+        private void OnFindUserCommand()
+        {
+            Task.Factory.StartNew(() =>
+            {
+                try
+                {
+                    if (!string.IsNullOrEmpty(SearchBox))
+                    {
+                        var a = AllDialogCollection.Where(x => x.Title.Contains(SearchBox));
+
+                        MainDialogCollection = new();
+
+                        foreach (var item in a)
+                        {
+                            MainDialogCollection.Add(item);
+                        }
+                    }
+                    else
+                    {
+                        MainDialogCollection = AllDialogCollection;
+                    }
+                }
+                catch(Exception ex)
+                {
+                    MainDialogCollection = AllDialogCollection;
+                }
+            });
+        }
+
         private LambdaCommand _sendFileCommand;
         public ICommand SendFileCommand => _sendFileCommand ??= new(OnSendFileCommand);
         private void OnSendFileCommand()
@@ -247,6 +303,7 @@ namespace lawChat.Client.ViewModel
                     SelectedChat!.Messages
                         .Add(new ProcessedMessage()
                         {
+                            Id = new Random().Next(1476518, 1247512577),
                             Text = fileInfo.Name,
                             CreateDate = DateTime.Now,
                             IsReceivedMessage = false,
@@ -300,7 +357,7 @@ namespace lawChat.Client.ViewModel
                     {
                         Text = CurrentMessageTextBox.Trim(),
                         CreateDate = DateTime.Now,
-                        IsReceivedMessage = false
+                        IsReceivedMessage = false,
                     });
 
                     SelectedChat.LastMessage = CurrentMessageTextBox;
@@ -338,7 +395,7 @@ namespace lawChat.Client.ViewModel
                                             }
                                         });
 
-                                        SearchPanelSource.Add(new()
+                                        AllDialogCollection.Add(new()
                                         {
                                             Title = friend.LastName + " " + friend.FirstName + " " + friend.FatherName,
                                             RecipientId = friend.Id,
@@ -362,7 +419,7 @@ namespace lawChat.Client.ViewModel
                             case "messages":
                                 Dispatcher.Invoke(() =>
                                 {
-                                    var friend = SearchPanelSource.FirstOrDefault(x =>
+                                    var friend = AllDialogCollection.FirstOrDefault(x =>
                                         x.RecipientId == Convert.ToInt32(message.Header.CommandArguments[1]));
 
                                     var messages = JsonConvert.DeserializeObject<List<Message>>(Encoding.UTF8.GetString(message.Data));
@@ -375,11 +432,25 @@ namespace lawChat.Client.ViewModel
                                         {
                                             friend.Messages.Add(new ProcessedMessage()
                                             {
+                                                Id = msg.Id,
                                                 CreateDate = msg.CreateDate,
                                                 IsReceivedMessage = msg.SenderId != _clientData.UserData?.Id,
                                                 Text = msg.Text,
-                                                IsRead = msg.IsRead
+                                                IsRead = IsRead()
                                             });
+
+                                            bool IsRead()
+                                            {
+                                                if (msg.SenderId != _clientData.UserData?.Id)
+                                                {
+                                                    if (!msg.IsRead)
+                                                    {
+                                                        return false;
+                                                    }
+                                                    return true;
+                                                }
+                                                return true;
+                                            }
                                         }
                                         else
                                         {
@@ -435,7 +506,7 @@ namespace lawChat.Client.ViewModel
                                 break;
 
                             case "new client connection":
-                                SearchPanelSource.FirstOrDefault(x =>
+                                AllDialogCollection.FirstOrDefault(x =>
                                             x.RecipientId == Convert.ToInt32(message.Header.CommandArguments[1]))!
                                         .IsOnline =
                                     true;
@@ -444,7 +515,7 @@ namespace lawChat.Client.ViewModel
                             case "client close connection":
                                 Dispatcher.Invoke(() =>
                                 {
-                                    SearchPanelSource.FirstOrDefault(x =>
+                                    AllDialogCollection.FirstOrDefault(x =>
                                             x.RecipientId == Convert.ToInt32(message.Header.CommandArguments[1]))!
                                         .IsOnline = false;
                                 });
@@ -455,25 +526,26 @@ namespace lawChat.Client.ViewModel
                     case MessageType.Text:
                         Dispatcher.Invoke(() =>
                         {
-                            SearchPanelSource
+                            var chat = AllDialogCollection
                                 .FirstOrDefault(x =>
-                                    x.RecipientId == Convert.ToInt32(message.Header.CommandArguments[0]))!
-                                .Messages.Add(new ProcessedMessage()
+                                    x.RecipientId == Convert.ToInt32(message.Header.CommandArguments[0]));
+
+                            chat.Messages.Add(new ProcessedMessage()
                                 {
+                                    Id = Convert.ToInt32(message.Header.CommandArguments[1]),
                                     CreateDate = DateTime.Now,
                                     IsReceivedMessage = true,
                                     Text = Encoding.UTF8.GetString(message.Data)
                                 });
 
-                            SearchPanelSource.FirstOrDefault(x => x.RecipientId == Convert.ToInt32(message.Header.CommandArguments[0]))!.LastMessage = Encoding.UTF8.GetString(message.Data);
-                            SearchPanelSource.FirstOrDefault(x => x.RecipientId == Convert.ToInt32(message.Header.CommandArguments[0]))!.LastMessageDateTime = DateTime.Now;
+                            chat.LastMessage = Encoding.UTF8.GetString(message.Data);
+                            chat.LastMessageDateTime = DateTime.Now;
 
-                            if (SelectedChat !=
-                                SearchPanelSource.FirstOrDefault(x => x.RecipientId == Convert.ToInt32(message.Header.CommandArguments[0])))
+                            if (SelectedChat != chat)
                             {
-                                SearchPanelSource.FirstOrDefault(x => x.RecipientId == Convert.ToInt32(message.Header.CommandArguments[0])).IsRead = false;
+                                chat.IsRead = false;
                                 try { _notification.Play(); } catch { }
-                                _notifier.ShowClientMessage(Encoding.UTF8.GetString(message.Data), SearchPanelSource.FirstOrDefault(x => x.RecipientId == Convert.ToInt32(message.Header.CommandArguments[0])).Title, new MessageOptions());
+                                _notifier.ShowClientMessage(Encoding.UTF8.GetString(message.Data), AllDialogCollection.FirstOrDefault(x => x.RecipientId == Convert.ToInt32(message.Header.CommandArguments[0])).Title, new MessageOptions());
                             }
                         });
                         break;
@@ -507,13 +579,14 @@ namespace lawChat.Client.ViewModel
 
                         var fileInfo = new FileInfo(CreateFile());
 
-                        var recipient = SearchPanelSource.FirstOrDefault(x =>
+                        var recipient = AllDialogCollection.FirstOrDefault(x =>
                             x.RecipientId == Convert.ToInt32(message.Header.CommandArguments[0]));
                         
                         Dispatcher.Invoke(() =>
                         {
                             recipient.Messages.Add(new ProcessedMessage()
                                 {
+                                    Id = Guid.NewGuid().CompareTo(new Guid()),
                                     CreateDate = DateTime.Now,
                                     IsReceivedMessage = true,
                                     IsFile = true,
@@ -550,6 +623,8 @@ namespace lawChat.Client.ViewModel
 
         public MainWindowViewModel(IClientObject clientObject, IClientData clientData) : this()
         {
+            MainDialogCollection = AllDialogCollection;
+
             _clientObject = clientObject;
 
             _clientData = clientData;

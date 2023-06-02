@@ -1,4 +1,4 @@
-﻿<Window x:Class="lawChat.Client.View.MainWindow"
+﻿<Window x:Class="LawChat.Client.View.Windows.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,7 +6,7 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:local="clr-namespace:lawChat.Client.View"
         xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
-        xmlns:dd="clr-namespace:GongSolutions.Wpf.DragDrop;assembly=GongSolutions.Wpf.DragDrop"
+        xmlns:dd="clr-namespace:GongSolutions.Wpf.DragDrop;assembly=GongSolutions.WPF.DragDrop"
         xmlns:viewModel="clr-namespace:lawChat.Client.ViewModel"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance viewModel:MainWindowViewModel, IsDesignTimeCreatable=True}"
@@ -36,9 +36,6 @@
                         <ColumnDefinition/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-
-
-                    <TextBlock Grid.Column="0" Margin="10, 0, 0, 0" Text="{Binding UserNameTextBlock}" VerticalAlignment="Center" Foreground="Chartreuse"/>
 
                     <StackPanel HorizontalAlignment="Right" Grid.Column="1"
                                 Orientation="Horizontal">
@@ -79,16 +76,22 @@
                 <!--#region Search Block-->
                 <Grid Grid.Row="0" Grid.Column="1" Margin="0, 0.5,0.5,0.5">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="45"/>
                         <ColumnDefinition/>
+                        <ColumnDefinition Width="45"/>
                     </Grid.ColumnDefinitions>
 
                     <Border Grid.ColumnSpan="2" Background="#FF191C21"/>
 
                     <!--#region Search TextBox-->
-                    <TextBox x:Name="SearchTextBox" Style="{DynamicResource BorderTextBox}" Grid.ColumnSpan="2"
-                             Grid.Column="0" Margin="15,0"/>
-                    <TextBlock Grid.ColumnSpan="2" Grid.Column="0" Text="Поиск" VerticalAlignment="Center" Margin="28,0,25,0" IsHitTestVisible="False"
+                    <TextBox x:Name="SearchTextBox" Style="{DynamicResource BorderTextBox}" Text="{Binding SearchBox, UpdateSourceTrigger=PropertyChanged}"
+                             Grid.Column="0" Margin="15,0">
+                        <b:Interaction.Triggers>
+                            <b:EventTrigger EventName="TextChanged">
+                                <b:InvokeCommandAction Command="{Binding FindUserCommand}"/>
+                            </b:EventTrigger>
+                        </b:Interaction.Triggers>
+                    </TextBox>
+                    <TextBlock Grid.Column="0" Text="Поиск" VerticalAlignment="Center" Margin="28,0,25,0" IsHitTestVisible="False"
                                Foreground="Gainsboro">
                         <TextBlock.Style>
                             <Style TargetType="{x:Type TextBlock}">
@@ -104,6 +107,9 @@
                     <!--#endregion-->
 
                     <!--#region Dock panel Button-->
+                    <Button Background="Transparent" Grid.Column="1" Style="{StaticResource LeftBarStyle}" Margin="0">
+                        <Path Fill="#FF9C9C9C" Data="M0.918968 17.0473L0.918968 15.0473L20.919 15.0473V17.0473H0.918968ZM0.918968 9.98732L0.918968 7.98732L20.919 7.98732V9.98732H0.918968ZM0.918968 0.927319L0.918968 2.92732L20.919 2.92732V0.927319H0.918968Z"/>
+                    </Button>
                     <!--#endregion-->
 
                 </Grid>
@@ -112,9 +118,9 @@
                 <!--#region Contact Block-->
                 <Grid Grid.Row="1" Grid.Column="1" >
                     <Border Background="#FF191C21" Margin="0, 0,0.5,0.5">
-                        <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch" ItemContainerStyle="{StaticResource ListBoxItemStyle}"
+                        <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch"
                                  Background="Transparent" SelectedItem="{Binding SelectedChat}"
-                                 BorderThickness="0" ItemsSource="{Binding SearchPanelSource, UpdateSourceTrigger=PropertyChanged}">
+                                 BorderThickness="0" ItemsSource="{Binding MainDialogCollection, UpdateSourceTrigger=PropertyChanged}">
                             <b:Interaction.Triggers>
                                 <b:EventTrigger EventName="SelectionChanged">
                                     <b:InvokeCommandAction Command="{Binding ChatChangedCommand}"/>
@@ -423,6 +429,22 @@
 
                 </Grid>
                 <!--#endregion-->
+
+                <Grid Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Background="#FF0E1921">
+                    <Border Background="#7F4E4E4E" CornerRadius="12" Padding="15,5" VerticalAlignment="Center" HorizontalAlignment="Center" >
+                        <TextBlock Text="Выберите чат для начала общения" Foreground="AliceBlue"/>
+                    </Border>
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Setter Property="Visibility" Value="Hidden"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SelectedChat}" Value="{x:Null}">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+                </Grid>
 
                 <GridSplitter Grid.Column="0" Grid.RowSpan="2" Grid.Row="0" Width="2" VerticalAlignment="Stretch" HorizontalAlignment="Right" Margin="0, 0.5" Background="#FF353535" />
 
