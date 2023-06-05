@@ -73,6 +73,8 @@ namespace lawChat.Client.Services.Implementations
                 _clientData.UserData.FirstName + " " +
                 _clientData.UserData.FatherName;
 
+            _mainWindowViewModel.UserPhoto = _clientData.UserData.PhotoFilePath;
+
             _loginWindow?.Close();
             _registrationWindow?.Close();
 

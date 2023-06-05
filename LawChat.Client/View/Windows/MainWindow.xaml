@@ -58,7 +58,7 @@
                         </Button>
                     </StackPanel>
                 </Grid>
-                
+
                 <!--#endregion-->
             </Border>
             <!--#endregion-->
@@ -107,7 +107,7 @@
                     <!--#endregion-->
 
                     <!--#region Dock panel Button-->
-                    <Button Background="Transparent" Grid.Column="1" Style="{StaticResource LeftBarStyle}" Margin="0">
+                    <Button Background="Transparent" Grid.Column="1" Command="{Binding OpenRightPanelCommand}" Style="{StaticResource LeftBarStyle}" Margin="0">
                         <Path Fill="#FF9C9C9C" Data="M0.918968 17.0473L0.918968 15.0473L20.919 15.0473V17.0473H0.918968ZM0.918968 9.98732L0.918968 7.98732L20.919 7.98732V9.98732H0.918968ZM0.918968 0.927319L0.918968 2.92732L20.919 2.92732V0.927319H0.918968Z"/>
                     </Button>
                     <!--#endregion-->
@@ -447,6 +447,53 @@
                 </Grid>
 
                 <GridSplitter Grid.Column="0" Grid.RowSpan="2" Grid.Row="0" Width="2" VerticalAlignment="Stretch" HorizontalAlignment="Right" Margin="0, 0.5" Background="#FF353535" />
+
+                <Grid Grid.Column="0" Grid.ColumnSpan="2" Background="#72000000" Grid.Row="0" Visibility="{Binding RightPanelVisibility}" Grid.RowSpan="2">
+                    <b:Interaction.Triggers>
+                        <b:EventTrigger EventName="MouseLeftButtonUp">
+                            <b:InvokeCommandAction Command="{Binding OpenRightPanelCommand}"/>
+                        </b:EventTrigger>
+                    </b:Interaction.Triggers>
+                </Grid>
+
+                <Grid Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Stretch" HorizontalAlignment="Right" Background="#FF191C21" Width="300" Grid.Row="0" Visibility="{Binding RightPanelVisibility}" Grid.RowSpan="2">
+
+                    <StackPanel Orientation="Vertical">
+
+                        <Grid Height="80">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition Height="30"/>
+                            </Grid.RowDefinitions>
+
+                            <Ellipse Grid.RowSpan="2" Grid.Column="0" HorizontalAlignment="Left" Width="70" Height="70" RenderOptions.BitmapScalingMode="HighQuality" Margin="5">
+                                <Ellipse.Fill>
+                                    <ImageBrush Stretch="UniformToFill"
+                                                ImageSource="{Binding UserPhoto, FallbackValue='Client/data/Image/no_photo.jpg', TargetNullValue={x:Null}}"/>
+                                </Ellipse.Fill>
+                            </Ellipse>
+
+                            <TextBlock Grid.Row="0" Grid.Column="1" Margin="10,0,6,0" HorizontalAlignment="Right" FontSize="14" TextWrapping="Wrap" Text="{Binding UserNameTextBlock}" VerticalAlignment="Bottom" Foreground="White" FontFamily="Roboto"/>
+
+                            <Button Grid.Row="1" Grid.Column="1" Content="Редактировать профиль" Style="{StaticResource RegistrationButton}" Foreground="Gainsboro" Margin="5,0,5,0" Height="20"/>
+
+                        </Grid>
+
+                        <Line Stretch="Fill" Stroke="#FF545454" X1="0" Y1="0" X2="300" Margin="0,10,0,10" Y2="0" HorizontalAlignment="Stretch" StrokeThickness="1"/>
+
+                        <Button Margin="0,15,0,0" Height="50" BorderThickness="0" Background="Transparent" Content="Создать чат" Foreground="White"/>
+                        <Button Height="50" BorderThickness="0" Background="Transparent" Content="Настройки" Foreground="White"/>
+
+                    </StackPanel>
+
+
+                    <TextBlock Text="LawChat Version 0.0.1 Beta"  HorizontalAlignment="Right" Margin="0,0,15,30" FontSize="13" Foreground="Gray" VerticalAlignment="Bottom"/>
+
+                </Grid>
 
             </Grid>
         </Grid>

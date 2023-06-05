@@ -63,6 +63,13 @@ namespace lawChat.Client.ViewModel
             set => Set(ref _stickerBlockVisibility, value);
         }
 
+        private Visibility _rightPanelVisibility = Visibility.Visible;
+        public Visibility RightPanelVisibility
+        {
+            get => _rightPanelVisibility;
+            set => Set(ref _rightPanelVisibility, value);
+        }
+
         public Dispatcher Dispatcher = Dispatcher.CurrentDispatcher;
 
         public ObservableCollection<SearchPanelModel> AllDialogCollection { get; set; } = new();
@@ -100,6 +107,21 @@ namespace lawChat.Client.ViewModel
         {
             get => _userNameTextBlock;
             set => Set(ref _userNameTextBlock, value);
+        }
+
+        private string? _userPhoto;
+        public string? UserPhoto
+        {
+            get => _userPhoto;
+            set => Set(ref _userPhoto, value);
+        }
+
+        private LambdaCommand _openRightPanelCommand;
+        public ICommand OpenRightPanelCommand => _openRightPanelCommand ??= new(OnOpenRightPanelCommand);
+        private void OnOpenRightPanelCommand()
+        {
+            if(RightPanelVisibility == Visibility.Visible) RightPanelVisibility = Visibility.Hidden;
+            else RightPanelVisibility = Visibility.Visible;
         }
 
         private LambdaCommand _chatChangedCommand;
