@@ -128,23 +128,27 @@ namespace lawChat.Client.ViewModel
         public ICommand ChatChangedCommand => _chatChangedCommand ??= new(OnChatChangedCommand);
         private void OnChatChangedCommand()
         {
-            if (SelectedChat.Messages.Count > 0)
+            try
             {
-                var nonReadMessages = SelectedChat.Messages.Where(x => x.IsRead == false && x.IsReceivedMessage == true);
-                foreach (var nonReadMessage in nonReadMessages)
+                if (SelectedChat.Messages.Count > 0)
                 {
-                    _clientObject.SendMessage(new PackageMessage()
+                    var nonReadMessages = SelectedChat.Messages.Where(x => x.IsRead == false && x.IsReceivedMessage == true);
+                    foreach (var nonReadMessage in nonReadMessages)
                     {
-                        Header = new Header()
+                        _clientObject.SendMessage(new PackageMessage()
                         {
-                            MessageType = MessageType.Command,
-                            StatusCode = StatusCode.UPDATE,
-                            CommandArguments = new[] { "isread", nonReadMessage.Id.ToString() }
-                        }
-                    });
+                            Header = new Header()
+                            {
+                                MessageType = MessageType.Command,
+                                StatusCode = StatusCode.UPDATE,
+                                CommandArguments = new[] { "isread", nonReadMessage.Id.ToString() }
+                            }
+                        });
+                    }
+                    if (SelectedChat.IsRead == false) SelectedChat.IsRead = true;
                 }
-                if (SelectedChat.IsRead == false) SelectedChat.IsRead = true;
             }
+            catch { /* ignored */ }
         }
 
         private void OnOpenFileCommand(object p)
@@ -461,18 +465,6 @@ namespace lawChat.Client.ViewModel
                                                 IsRead = IsRead()
                                             });
 
-                                            bool IsRead()
-                                            {
-                                                if (msg.SenderId != _clientData.UserData?.Id)
-                                                {
-                                                    if (!msg.IsRead)
-                                                    {
-                                                        return false;
-                                                    }
-                                                    return true;
-                                                }
-                                                return true;
-                                            }
                                         }
                                         else
                                         {
@@ -495,7 +487,7 @@ namespace lawChat.Client.ViewModel
                                                     Text = msg.File.Name,
                                                     IsFile = true,
                                                     FilePath = filePath,
-                                                    IsRead = msg.IsRead,
+                                                    IsRead = IsRead(),
                                                     IsImage = IsImage(fileInfo),
                                                     ServerFilePath = msg.File.ServerLocalFilePath,
                                                     OpenFileFolderCommand = new LambdaCommand(OnOpenFileFolderCommand),
@@ -512,12 +504,24 @@ namespace lawChat.Client.ViewModel
                                                     IsReceivedMessage = msg.SenderId != _clientData.UserData?.Id,
                                                     Text = msg.File.Name,
                                                     IsFile = true,
-                                                    IsRead = msg.IsRead,
+                                                    IsRead = IsRead(),
                                                     ServerFilePath = msg.File.ServerLocalFilePath,
                                                     OpenFileFolderCommand = new LambdaCommand(OnOpenFileFolderCommand),
                                                     OpenFileCommand = new LambdaCommand(OnOpenFileCommand)
                                                 });
                                             }
+                                        }
+                                        bool IsRead()
+                                        {
+                                            if (msg.SenderId != _clientData.UserData?.Id)
+                                            {
+                                                if (!msg.IsRead)
+                                                {
+                                                    return false;
+                                                }
+                                                return true;
+                                            }
+                                            return true;
                                         }
                                     }
 

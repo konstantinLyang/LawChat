@@ -85,7 +85,7 @@ namespace lawChat.Client.Services.Implementations
         {
             if (_registrationWindow is { } registrationWindow)
             {
-                registrationWindow.Show();
+                try{ registrationWindow.Show(); } catch{ /* ignored */ }
                 return;
             }
 

@@ -5,11 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:lawChat.Client.ViewModel"
         xmlns:fa="http://schemas.fontawesome.io/icons/"
+        xmlns:winex="https://github.com/yariker/WindowExtras.Wpf"
         ResizeMode="NoResize"
-        SizeToContent="Height"
         WindowStyle="None"
+        Title="SignIn"
+        Background="Transparent"
         d:DataContext="{d:DesignInstance vm:LoginWindowViewModel, IsDesignTimeCreatable=True}"
         mc:Ignorable="d" MaxHeight="600" MaxWidth="700">
+
+    <winex:WindowEx.WindowShadow>
+        <winex:WindowShadow OffsetY="0" Opacity="0.4" Radius="30" />
+    </winex:WindowEx.WindowShadow>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -18,12 +24,9 @@
         </Grid.RowDefinitions>
 
         <!--#region Title bar-->
-        <Border Background="#FF21242A">
+        <Border MouseDown="Grid_MouseDown" Background="#FF21242A">
 
-            <Grid MouseDown="Grid_MouseDown">
-                <TextBlock Margin="10,0,0,0"
-                           VerticalAlignment="Center"
-                           Foreground="#FFB9B9B9" FontFamily="Roboto" FontSize="15" FontWeight="Normal"/>
+            <Grid>
 
                 <!--#region Window buttons -->
                 <StackPanel HorizontalAlignment="Right"
@@ -61,7 +64,7 @@
                            FontSize="13" FontFamily="roboto" Foreground="#FF686F79" FontWeight="Normal" Margin="0,5,0,10"/>
 
                 <Grid Margin="0,10,0,10">
-                    <TextBox Name="LoginTextBox" Style="{StaticResource LoginWindowTextBoxStyle}"
+                    <TextBox Name="LoginTextBox" Style="{StaticResource GeneralTextBox}"
                              BorderBrush="{Binding BorderBrush}"
                              Text="{Binding LoginTextBox, UpdateSourceTrigger=PropertyChanged}"/>
                     <TextBlock Text="Логин" Foreground="{Binding TextBlocForegroundBrush}" Margin="11,12,0,11" Padding="0" Height="17" FontSize="13">
@@ -84,7 +87,7 @@
                 </Grid>
 
                 <Grid Margin="0,10">
-                    <TextBox Name="PasswordTextBox" Style="{StaticResource LoginWindowTextBoxStyle}" BorderBrush="{Binding BorderBrush}"
+                    <TextBox Name="PasswordTextBox" Style="{StaticResource GeneralTextBox}" BorderBrush="{Binding BorderBrush}"
                              Text="{Binding PasswordTextBox, UpdateSourceTrigger=PropertyChanged}"/>
                     <TextBlock Text="Пароль" Foreground="{Binding TextBlocForegroundBrush}" Margin="11,12,0,11" Padding="0" Height="17" FontSize="13">
                         <TextBlock.Style>
@@ -105,11 +108,11 @@
                     </TextBlock>
                 </Grid>
 
-                <Button Style="{StaticResource LoginWindowButtonStyle}" Content="Войти"
+                <Button Style="{StaticResource GeneralButton}" Content="Войти" Cursor="Hand"
                         Command="{Binding AuthorizationCommand}" Margin="0,30,0,30"/>
 
                 <Grid Height="20">
-                    <Button Content="Регистрация" Style="{StaticResource RegistrationButton}" Width="100" Command="{Binding OpenRegisterWindowCommand}"/>
+                    <Button Cursor="Hand" Content="Регистрация" Style="{StaticResource TransparentButton}" Width="100" Command="{Binding OpenRegisterWindowCommand}"/>
                 </Grid>
 
                 <TextBlock Text="{Binding InfoTextBlock}" Foreground="{Binding ForegroundInfoTextBlock}" TextWrapping="Wrap" Visibility="{Binding InfoTextBlockVisibility}" VerticalAlignment="Top" Margin="0,30,0,15"/>

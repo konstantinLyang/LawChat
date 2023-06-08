@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.Hosting;
 using System.Windows;
 using lawChat.Client.Services;
+using LawChat.Client.Services;
 using lawChat.Client.Services.Implementations;
+using LawChat.Client.Services.Implementations;
 using lawChat.Client.View;
 using LawChat.Client.View.Windows;
 using lawChat.Client.ViewModel;
@@ -27,6 +29,7 @@ namespace lawChat.Client
                     services.AddSingleton<IClientObject, ClientObjectService>();
                     services.AddSingleton<IClientData, ClientDataService>();
                     services.AddSingleton<IConnection, Connection>();
+                    services.AddTransient<IDataBase, DataBaseService>();
 
                     services.AddTransient(s =>
                     {
