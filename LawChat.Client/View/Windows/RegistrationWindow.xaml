@@ -5,17 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:LawChat.Client.ViewModel"
         xmlns:fa="http://schemas.fontawesome.io/icons/"
-        xmlns:winex="https://github.com/yariker/WindowExtras.Wpf"
         d:DataContext="{d:DesignInstance vm:RegistrationWindowViewModel, IsDesignTimeCreatable=True}"
         mc:Ignorable="d"
         ResizeMode="NoResize"
         SizeToContent="Height"
         Title="SignUp"
         WindowStyle="None" MinHeight="600" Width="800">
-
-    <winex:WindowEx.WindowShadow>
-        <winex:WindowShadow OffsetY="0" Opacity="0.4" Radius="30" />
-    </winex:WindowEx.WindowShadow>
 
     <Grid Background="#FF191C21">
         <Grid.RowDefinitions>
