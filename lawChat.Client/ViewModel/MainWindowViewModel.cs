@@ -63,7 +63,7 @@ namespace lawChat.Client.ViewModel
             set => Set(ref _stickerBlockVisibility, value);
         }
 
-        private Visibility _rightPanelVisibility = Visibility.Visible;
+        private Visibility _rightPanelVisibility = Visibility.Hidden;
         public Visibility RightPanelVisibility
         {
             get => _rightPanelVisibility;
@@ -178,11 +178,7 @@ namespace lawChat.Client.ViewModel
 
                             return @$"{_downloadsPath}\Downloads\{DateTime.Now:ssss}{message.Text}";
                         }
-
-                        catch
-                        {
-                            return CreateFile();
-                        }
+                        catch { return CreateFile(); }
                     }
                 }
 
@@ -329,7 +325,7 @@ namespace lawChat.Client.ViewModel
                     SelectedChat!.Messages
                         .Add(new ProcessedMessage()
                         {
-                            Id = new Random().Next(1476518, 1247512577),
+                            Id = new Random().Next(1, 1247512577),
                             Text = fileInfo.Name,
                             CreateDate = DateTime.Now,
                             IsReceivedMessage = false,
@@ -337,7 +333,7 @@ namespace lawChat.Client.ViewModel
                             FilePath = fileName,
                             IsImage = IsImage(fileInfo),
                             OpenFileCommand = new LambdaCommand(OnOpenFileCommand),
-                            OpenFileFolderCommand = new LambdaCommand(OnOpenFileCommand),
+                            OpenFileFolderCommand = new LambdaCommand(OnOpenFileFolderCommand),
                         });
 
                     SelectedChat.LastMessage = fileInfo.Name;
@@ -612,12 +608,13 @@ namespace lawChat.Client.ViewModel
                         {
                             recipient.Messages.Add(new ProcessedMessage()
                                 {
-                                    Id = Guid.NewGuid().CompareTo(new Guid()),
+                                    Id = Convert.ToInt32(message.Header.CommandArguments[3]),
                                     CreateDate = DateTime.Now,
                                     IsReceivedMessage = true,
                                     IsFile = true,
                                     Text = fileInfo.Name,
                                     FilePath = fileInfo.FullName,
+                                    FileId = Convert.ToInt32(message.Header.CommandArguments[2]),
                                     IsImage = IsImage(fileInfo),
                                     OpenFileCommand = new LambdaCommand(OnOpenFileCommand),
                                     OpenFileFolderCommand = new LambdaCommand(OnOpenFileFolderCommand)

@@ -386,7 +386,7 @@ namespace lawChat.Server.ServerData.Model
                                     Header = new Header()
                                     {
                                         MessageType = MessageType.File,
-                                        CommandArguments = new[] { UserData.Id.ToString(), message.Header.CommandArguments[1], newMessage.File.Id.ToString() } // отправитель, имя файла, айди файла
+                                        CommandArguments = new[] { UserData.Id.ToString(), message.Header.CommandArguments[1], newMessage.File.Id.ToString(), newMessage.Id.ToString() } // отправитель, имя файла, айди файла
                                 },
                                     Data = message.Data
                                 });
