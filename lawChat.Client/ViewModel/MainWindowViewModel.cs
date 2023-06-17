@@ -619,7 +619,9 @@ namespace lawChat.Client.ViewModel
                                     Text = fileInfo.Name,
                                     FilePath = fileInfo.FullName,
                                     IsImage = IsImage(fileInfo),
-                            });
+                                    OpenFileCommand = new LambdaCommand(OnOpenFileCommand),
+                                    OpenFileFolderCommand = new LambdaCommand(OnOpenFileFolderCommand)
+                                });
 
                             recipient.LastMessage = fileInfo.Name;
                             recipient.LastMessageDateTime = DateTime.Now;
