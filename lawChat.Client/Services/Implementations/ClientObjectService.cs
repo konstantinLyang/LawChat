@@ -34,7 +34,7 @@ namespace lawChat.Client.Services.Implementations
         {
             try
             {
-                if (!_connection.IsConnected) _connection.Connect("10.10.11.47", 8080);
+                if (!_connection.IsConnected) _connection.Connect("127.0.0.1", 8080);
 
                 SendMessage(new ()
                 {
@@ -70,7 +70,7 @@ namespace lawChat.Client.Services.Implementations
         {
             try
             {
-                if (!_connection.IsConnected) _connection.Connect("10.10.11.47", 8080);
+                if (!_connection.IsConnected) _connection.Connect("127.0.0.1", 8080);
 
                 SendMessage(new()
                 {
