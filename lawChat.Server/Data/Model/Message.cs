@@ -10,13 +10,13 @@ namespace LawChat.Server.Data.Model
         [Required]
         [ForeignKey("SenderId")]
         public User Sender { get; set; }
-
         public int SenderId { get; set; }
 
         [ForeignKey("RecipientId")]
         public User Recipient { get; set; }
-
         public int RecipientId { get; set; }
+        
+        public Chat Chat { get; set; }
 
         [Required]
         public DateTime CreateDate { get; set; }

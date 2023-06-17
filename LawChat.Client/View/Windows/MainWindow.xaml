@@ -6,9 +6,7 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:local="clr-namespace:lawChat.Client.View"
         xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
-        xmlns:dd="clr-namespace:GongSolutions.Wpf.DragDrop;assembly=GongSolutions.WPF.DragDrop"
         xmlns:viewModel="clr-namespace:lawChat.Client.ViewModel"
-        xmlns:winex="https://github.com/yariker/WindowExtras.Wpf"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance viewModel:MainWindowViewModel, IsDesignTimeCreatable=True}"
         Height="810" Width="850" MinHeight="810" MinWidth="850"
@@ -17,10 +15,6 @@
         ResizeMode="CanResizeWithGrip"
         WindowStartupLocation="CenterScreen"
         WindowStyle="None" WindowState="Normal" StateChanged="Window_StateChanged">
-
-    <winex:WindowEx.WindowShadow>
-        <winex:WindowShadow OffsetY="0" Opacity="0.4" Radius="30" />
-    </winex:WindowEx.WindowShadow>
 
     <Window.InputBindings>
         <KeyBinding Key="Enter" Command="{Binding SendMessageCommand}"/>

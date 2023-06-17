@@ -19,6 +19,25 @@ namespace LawChat.Server.Migrations
                 .HasAnnotation("ProductVersion", "7.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
+            modelBuilder.Entity("LawChat.Server.Data.Model.Chat", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("OwnerId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OwnerId");
+
+                    b.ToTable("Chats");
+                });
+
             modelBuilder.Entity("LawChat.Server.Data.Model.File", b =>
                 {
                     b.Property<int>("Id")
@@ -61,6 +80,9 @@ namespace LawChat.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<int?>("ChatId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime(6)");
 
@@ -84,6 +106,8 @@ namespace LawChat.Server.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ChatId");
+
                     b.HasIndex("FileId");
 
                     b.HasIndex("RecipientId");
@@ -97,6 +121,9 @@ namespace LawChat.Server.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ChatId")
                         .HasColumnType("int");
 
                     b.Property<string>("Email")
@@ -136,9 +163,22 @@ namespace LawChat.Server.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ChatId");
+
                     b.HasIndex("UserId");
 
                     b.ToTable("Clients");
+                });
+
+            modelBuilder.Entity("LawChat.Server.Data.Model.Chat", b =>
+                {
+                    b.HasOne("LawChat.Server.Data.Model.User", "Owner")
+                        .WithMany()
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Owner");
                 });
 
             modelBuilder.Entity("LawChat.Server.Data.Model.File", b =>
@@ -162,6 +202,10 @@ namespace LawChat.Server.Migrations
 
             modelBuilder.Entity("LawChat.Server.Data.Model.Message", b =>
                 {
+                    b.HasOne("LawChat.Server.Data.Model.Chat", "Chat")
+                        .WithMany()
+                        .HasForeignKey("ChatId");
+
                     b.HasOne("LawChat.Server.Data.Model.File", "File")
                         .WithMany()
                         .HasForeignKey("FileId");
@@ -178,6 +222,8 @@ namespace LawChat.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Chat");
+
                     b.Navigation("File");
 
                     b.Navigation("Recipient");
@@ -187,9 +233,18 @@ namespace LawChat.Server.Migrations
 
             modelBuilder.Entity("LawChat.Server.Data.Model.User", b =>
                 {
+                    b.HasOne("LawChat.Server.Data.Model.Chat", null)
+                        .WithMany("Users")
+                        .HasForeignKey("ChatId");
+
                     b.HasOne("LawChat.Server.Data.Model.User", null)
                         .WithMany("Friends")
                         .HasForeignKey("UserId");
+                });
+
+            modelBuilder.Entity("LawChat.Server.Data.Model.Chat", b =>
+                {
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("LawChat.Server.Data.Model.User", b =>

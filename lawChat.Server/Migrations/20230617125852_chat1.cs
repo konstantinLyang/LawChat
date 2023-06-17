@@ -7,12 +7,28 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace LawChat.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class filesystemsupport : Migration
+    public partial class chat1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterDatabase()
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Chats",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    OwnerId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Chats", x => x.Id);
+                })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
@@ -39,11 +55,17 @@ namespace LawChat.Server.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     PhotoFilePath = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
+                    ChatId = table.Column<int>(type: "int", nullable: true),
                     UserId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Clients", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Clients_Chats_ChatId",
+                        column: x => x.ChatId,
+                        principalTable: "Chats",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Clients_Clients_UserId",
                         column: x => x.UserId,
@@ -95,6 +117,7 @@ namespace LawChat.Server.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     SenderId = table.Column<int>(type: "int", nullable: false),
                     RecipientId = table.Column<int>(type: "int", nullable: false),
+                    ChatId = table.Column<int>(type: "int", nullable: true),
                     CreateDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     ReadDateTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     Text = table.Column<string>(type: "longtext", nullable: true)
@@ -105,6 +128,11 @@ namespace LawChat.Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Messages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Messages_Chats_ChatId",
+                        column: x => x.ChatId,
+                        principalTable: "Chats",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Messages_Clients_RecipientId",
                         column: x => x.RecipientId,
@@ -126,6 +154,16 @@ namespace LawChat.Server.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Chats_OwnerId",
+                table: "Chats",
+                column: "OwnerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Clients_ChatId",
+                table: "Clients",
+                column: "ChatId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Clients_UserId",
                 table: "Clients",
                 column: "UserId");
@@ -141,6 +179,11 @@ namespace LawChat.Server.Migrations
                 column: "SenderId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Messages_ChatId",
+                table: "Messages",
+                column: "ChatId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Messages_FileId",
                 table: "Messages",
                 column: "FileId");
@@ -154,11 +197,23 @@ namespace LawChat.Server.Migrations
                 name: "IX_Messages_SenderId",
                 table: "Messages",
                 column: "SenderId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Chats_Clients_OwnerId",
+                table: "Chats",
+                column: "OwnerId",
+                principalTable: "Clients",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_Chats_Clients_OwnerId",
+                table: "Chats");
+
             migrationBuilder.DropTable(
                 name: "Messages");
 
@@ -167,6 +222,9 @@ namespace LawChat.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "Clients");
+
+            migrationBuilder.DropTable(
+                name: "Chats");
         }
     }
 }
