@@ -4,7 +4,6 @@ using lawChat.Client.Services;
 using LawChat.Client.Services;
 using lawChat.Client.Services.Implementations;
 using LawChat.Client.Services.Implementations;
-using lawChat.Client.View;
 using LawChat.Client.View.Windows;
 using lawChat.Client.ViewModel;
 using LawChat.Client.ViewModel;

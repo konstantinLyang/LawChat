@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Windows;
-using lawChat.Client.View;
 using LawChat.Client.View.Windows;
 using lawChat.Client.ViewModel;
-using LawChat.Client.ViewModel;
 using lawChat.Network.Abstractions.Enums;
 using lawChat.Network.Abstractions.Models;
 using Microsoft.Extensions.DependencyInjection;
@@ -83,7 +81,7 @@ namespace lawChat.Client.Services.Implementations
         {
             if (_registrationWindow is { } registrationWindow)
             {
-                try { registrationWindow.Show(); } catch { /* ignored */ }
+                registrationWindow.Show();
                 return;
             }
 
