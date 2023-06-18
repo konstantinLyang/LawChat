@@ -14,7 +14,7 @@
         Title="{Binding SelectedChat.Title, TargetNullValue=LawChat}"
         ResizeMode="CanResizeWithGrip"
         WindowStartupLocation="CenterScreen"
-        WindowStyle="None" WindowState="Normal" StateChanged="Window_StateChanged">
+        WindowStyle="None" WindowState="Normal">
 
     <Window.InputBindings>
         <KeyBinding Key="Enter" Command="{Binding SendMessageCommand}"/>
@@ -140,7 +140,7 @@
                                                         <Ellipse Width="48" Height="48" RenderOptions.BitmapScalingMode="HighQuality">
                                                             <Ellipse.Fill>
                                                                 <ImageBrush Stretch="UniformToFill"
-                                                                            ImageSource="{Binding ContactPhoto, FallbackValue='Client/data/Image/no_photo.jpg', TargetNullValue={x:Null}}"/>
+                                                                            ImageSource="{Binding ContactPhoto, FallbackValue='no_avatar.jpg'}"/>
                                                             </Ellipse.Fill>
                                                         </Ellipse>
                                                     </Grid>

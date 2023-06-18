@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Diagnostics.Tracing;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -9,6 +11,7 @@ namespace LawChat.Client.View.Windows
 {
     public partial class MainWindow : Window
     {
+        private bool _restoreIfMove;
         public MainWindow()
         {
             InitializeComponent();
@@ -22,64 +25,44 @@ namespace LawChat.Client.View.Windows
         }
         private void BtnHide_Click(object sender, RoutedEventArgs e)
         {
-            WindowState = WindowState.Minimized;
+            this.Hide();
         }
         private void BtnMinimize_Click_1(object sender, RoutedEventArgs e)
         {
-            var screen = WpfScreenHelper.Screen.FromWindow(this);
-            if (screen != null)
+            SwitchWindowState();
+        }
+        private void SwitchWindowState()
+        {
+            switch (WindowState)
             {
-                if (Width == screen.WpfWorkingArea.Width && Height == screen.WpfWorkingArea.Height && Top == screen.WpfWorkingArea.Top && Left == screen.WpfWorkingArea.Left)
-                {
-                    this.WindowState = WindowState.Normal;
-                    this.Left = screen.WpfWorkingArea.Left / 2;
-                    this.Top = screen.WpfWorkingArea.Top / 2;
-                    this.Width = MinWidth;
-                    this.Height = MinHeight;
-                }
-                else if (this.WindowState == WindowState.Normal)
-                {
-                    this.WindowState = WindowState.Normal;
-                    this.Left = screen.WpfWorkingArea.Left;
-                    this.Top = screen.WpfWorkingArea.Top;
-                    this.Width = screen.WpfWorkingArea.Width;
-                    this.Height = screen.WpfWorkingArea.Height;
-                }
+                case WindowState.Normal:
+                    WindowState = WindowState.Maximized;
+                    break;
+
+                case WindowState.Maximized:
+                    WindowState = WindowState.Normal;
+                    break;
             }
         }
-        private void Window_StateChanged(object sender, EventArgs e)
+        private void Grid_MouseDown(object sender, MouseButtonEventArgs eventArgs)
         {
+            if (eventArgs.ClickCount == 2)
+            {
+                if (ResizeMode == ResizeMode.CanResize || ResizeMode == ResizeMode.CanResizeWithGrip)
+                {
+                    SwitchWindowState();
+                }
+
+                return;
+            }
+
             if (WindowState == WindowState.Maximized)
             {
-                var screen = WpfScreenHelper.Screen.FromWindow(this);
-                if (screen != null)
-                {
-                    this.WindowState = WindowState.Normal;
-                    this.Left = screen.WpfWorkingArea.Left;
-                    this.Top = screen.WpfWorkingArea.Top;
-                    this.Width = screen.WpfWorkingArea.Width;
-                    this.Height = screen.WpfWorkingArea.Height;
-                }
+                _restoreIfMove = true;
+                return;
             }
-        }
-        private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            var screen = WpfScreenHelper.Screen.FromWindow(this);
-            if (e.LeftButton == MouseButtonState.Pressed)
-            {
-                if (Width == screen.WpfWorkingArea.Width
-                    && Height == screen.WpfWorkingArea.Height
-                    && screen != null)
-                {
 
-                    this.WindowState = WindowState.Normal;
-                    this.Left = WpfScreenHelper.MouseHelper.MousePosition.X - MinWidth / 2;
-                    this.Top = screen.WpfWorkingArea.Top;
-                    this.Width = MinWidth;
-                    this.Height = MinHeight;
-                }
-                DragMove();
-            }
+            DragMove();
         }
         private void ScrollViewer_OnScrollChanged(object sender, ScrollChangedEventArgs e)
         {
@@ -90,10 +73,103 @@ namespace LawChat.Client.View.Windows
             }
         }
 
-        private void Hyperlink_OnRequestNavigate(object sender, RequestNavigateEventArgs e)
+        #region SetMaxMinInfo
+
+        private static IntPtr ProcessWindow(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            Process.Start("explorer.exe", e.Uri.OriginalString);
-            e.Handled = true;
+            switch (msg)
+            {
+                case 0x0024:
+                    SetMinMaxInfo(hwnd, lParam);
+                    break;
+            }
+
+            return IntPtr.Zero;
         }
+
+        private static void SetMinMaxInfo(IntPtr hwnd, IntPtr minMaxInfoPointer)
+        {
+            GetCursorPos(out var mousePosition);
+            var currentScreenPointer = MonitorFromPoint(mousePosition, MonitorOptions.MONITOR_DEFAULTTONEAREST);
+            var currentScreen = new MONITORINFO();
+
+            if (!GetMonitorInfo(currentScreenPointer, currentScreen))
+            {
+                return;
+            }
+
+            MINMAXINFO minMaxInfo = (MINMAXINFO)Marshal.PtrToStructure(minMaxInfoPointer, typeof(MINMAXINFO))!;
+            minMaxInfo.ptMaxPosition.X = currentScreen.rcWork.Left - currentScreen.rcMonitor.Left;
+            minMaxInfo.ptMaxPosition.Y = currentScreen.rcWork.Top - currentScreen.rcMonitor.Top;
+            minMaxInfo.ptMaxSize.X = currentScreen.rcWork.Right - currentScreen.rcWork.Left;
+            minMaxInfo.ptMaxSize.Y = currentScreen.rcWork.Bottom - currentScreen.rcWork.Top;
+
+            Marshal.StructureToPtr(minMaxInfo, minMaxInfoPointer, true);
+        }
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool GetCursorPos(out POINT point);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern IntPtr MonitorFromPoint(POINT point, MonitorOptions dwFlags);
+
+        private enum MonitorOptions : uint
+        {
+            MONITOR_DEFAULTTONULL = 0x00000000,
+            MONITOR_DEFAULTTOPRIMARY = 0x00000001,
+            MONITOR_DEFAULTTONEAREST = 0x00000002
+        }
+
+        [DllImport("user32.dll")]
+        private static extern bool GetMonitorInfo(IntPtr hMonitor, MONITORINFO lpmi);
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct POINT
+        {
+            public int X;
+            public int Y;
+
+            public POINT(int x, int y)
+            {
+                X = x;
+                Y = y;
+            }
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MINMAXINFO
+        {
+            public POINT ptReserved;
+            public POINT ptMaxSize;
+            public POINT ptMaxPosition;
+            public POINT ptMinTrackSize;
+            public POINT ptMaxTrackSize;
+        }
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+        public class MONITORINFO
+        {
+            public int cbSize = Marshal.SizeOf(typeof(MONITORINFO));
+            public RECT rcMonitor = new RECT();
+            public RECT rcWork = new RECT();
+            public int dwFlags = 0;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct RECT
+        {
+            public int Left, Top, Right, Bottom;
+
+            public RECT(int left, int top, int right, int bottom)
+            {
+                Left = left;
+                Top = top;
+                Right = right;
+                Bottom = bottom;
+            }
+        }
+
+        #endregion
     }
 }

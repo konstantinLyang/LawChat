@@ -252,6 +252,9 @@ namespace LawChat.Client.ViewModel
         {
             if (!string.IsNullOrWhiteSpace(NickName))
             {
+                if (!Directory.Exists("D:\\Users\\superuser\\Source\\Repos\\konstantinLyang\\LawChat\\lawChat.Client\\bin\\Debug\\net6.0-windows\\client\\data\\Image\\UserPhotos"))
+                    Directory.CreateDirectory("D:\\Users\\superuser\\Source\\Repos\\konstantinLyang\\LawChat\\lawChat.Client\\bin\\Debug\\net6.0-windows\\client\\data\\Image\\UserPhotos");
+
                 OpenFileDialog ofd = new();
 
                 ofd.Filter = "Image Files|*.jpg;*.jpeg;*.png;";
@@ -262,18 +265,18 @@ namespace LawChat.Client.ViewModel
 
                     FileInfo image = new FileInfo(ofd.FileName);
 
-                    if (!System.IO.File.Exists($@"Z:\!!!!!ПОЛЬЗОВАТЕЛИ\!КОНСТАНТИН_ЛЯНГ\PROGRAMMS\ПС для рабочего стола\LawChat\client\data\Image\UserPhotos\{NickName}.{image.Extension}"))
+                    if (!System.IO.File.Exists($@"D:\Users\superuser\Source\Repos\konstantinLyang\LawChat\lawChat.Client\bin\Debug\net6.0-windows\client\data\Image\UserPhotos\{NickName}{image.Extension}"))
                     {
-                        System.IO.File.Copy(ofd.FileName, $@"Z:\!!!!!ПОЛЬЗОВАТЕЛИ\!КОНСТАНТИН_ЛЯНГ\PROGRAMMS\ПС для рабочего стола\LawChat\client\data\Image\UserPhotos\{NickName}.{image.Extension}", true);
+                        System.IO.File.Copy(ofd.FileName, $@"D:\Users\superuser\Source\Repos\konstantinLyang\LawChat\lawChat.Client\bin\Debug\net6.0-windows\client\data\Image\UserPhotos\{NickName}{image.Extension}", true);
                     }
                     else
                     {
-                        System.IO.File.Delete($@"Z:\!!!!!ПОЛЬЗОВАТЕЛИ\!КОНСТАНТИН_ЛЯНГ\PROGRAMMS\ПС для рабочего стола\LawChat\client\data\Image\UserPhotos\{NickName}.{image.Extension}");
-                        System.IO.File.Copy(ofd.FileName, $@"Z:\!!!!!ПОЛЬЗОВАТЕЛИ\!КОНСТАНТИН_ЛЯНГ\PROGRAMMS\ПС для рабочего стола\LawChat\client\data\Image\UserPhotos\{NickName}.{image.Extension}", true);
+                        System.IO.File.Delete($@"D:\Users\superuser\Source\Repos\konstantinLyang\LawChat\lawChat.Client\bin\Debug\net6.0-windows\client\data\Image\UserPhotos\{NickName}.{image.Extension}");
+                        System.IO.File.Copy(ofd.FileName, $@"D:\Users\superuser\Source\Repos\konstantinLyang\LawChat\lawChat.Client\bin\Debug\net6.0-windows\client\data\Image\UserPhotos\{NickName}{image.Extension}", true);
                     }
 
                     UserPhotoFilePath =
-                        $@"Z:\!!!!!ПОЛЬЗОВАТЕЛИ\!КОНСТАНТИН_ЛЯНГ\PROGRAMMS\ПС для рабочего стола\LawChat\client\data\Image\UserPhotos\{NickName}.{image.Extension}";
+                        $@"D:\Users\superuser\Source\Repos\konstantinLyang\LawChat\lawChat.Client\bin\Debug\net6.0-windows\client\data\Image\UserPhotos\{NickName}{image.Extension}";
                 }
             }
             else

@@ -250,7 +250,7 @@
                         <Button Width="80" BorderThickness="0" Style="{StaticResource ImageButton}" Command="{Binding ChangeUserImageCommand}" Cursor="Hand">
                             <Ellipse Width="70" Height="70" SnapsToDevicePixels="True" RenderOptions.BitmapScalingMode="HighQuality">
                                 <Ellipse.Fill>
-                                    <ImageBrush Stretch="UniformToFill" ImageSource="{Binding UserPhotoFilePath, FallbackValue='Z://!!!!!ПОЛЬЗОВАТЕЛИ/!КОНСТАНТИН_ЛЯНГ/PROGRAMMS/ПС для рабочего стола/LawChat/client/data/Image/no_photo.jpg', TargetNullValue='Z://!!!!!ПОЛЬЗОВАТЕЛИ/!КОНСТАНТИН_ЛЯНГ/PROGRAMMS/ПС для рабочего стола/LawChat/client/data/Image/no_photo.jpg'}">
+                                    <ImageBrush Stretch="UniformToFill" ImageSource="{Binding UserPhotoFilePath, FallbackValue='no_avatar.jpg'}">
                                     </ImageBrush>
                                 </Ellipse.Fill>
                             </Ellipse>
