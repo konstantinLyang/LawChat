@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace LawChat.Client.View.Windows
@@ -18,5 +19,11 @@ namespace LawChat.Client.View.Windows
                 scrollViewer.ScrollToBottom();
             }
         }
+
+        public override void HandleCloseButtonClick(object sender, RoutedEventArgs e)
+        {
+            Close();
+            Environment.Exit(0);
+        } 
     }
 }

@@ -5,6 +5,7 @@ using lawChat.Network.Abstractions;
 using lawChat.Network.Abstractions.Enums;
 using lawChat.Network.Abstractions.Models;
 using LawChat.Server.Data.Model;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using PackageMessage = lawChat.Network.Abstractions.Models.PackageMessage;
 
@@ -13,7 +14,7 @@ namespace lawChat.Client.Services.Implementations
     public class ClientObjectService : IClientObject
     {
         public event EventHandler<PackageMessage>? MessageReceived;
-
+        
         private readonly IClientData _clientData;
 
         private readonly IConnection _connection;
@@ -59,9 +60,19 @@ namespace lawChat.Client.Services.Implementations
                 {
                     _clientData.UserData = JsonConvert.DeserializeObject<User>(Encoding.UTF8.GetString(_answer.Data));
                     _isAuthorized = true;
+
+                    return _answer;
                 }
-                 
+
+                if (_answer.Header.CommandArguments?[0] == "authorization incorrect user data")
+                {
+                    var temp = _answer;
+                    _answer = null;
+                    return temp;
+                }
+
                 return _answer;
+
             }
             catch { return new PackageMessage() { Header = new Header() { StatusCode = StatusCode.ServerError } }; }
         }
