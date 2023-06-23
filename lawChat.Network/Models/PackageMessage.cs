@@ -1,4 +1,4 @@
-﻿namespace lawChat.Network.Abstractions.Models
+﻿namespace LawChat.Network.Abstractions.Models
 {
     [Serializable]
     public class PackageMessage

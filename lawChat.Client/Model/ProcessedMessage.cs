@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Windows.Input;
-using lawChat.Client.ViewModel.Base;
+using LawChat.Client.ViewModel.Base;
 
-namespace lawChat.Client.Model
+namespace LawChat.Client.Model
 {
     public class ProcessedMessage : ViewModelBase
     {

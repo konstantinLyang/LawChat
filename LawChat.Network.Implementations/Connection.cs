@@ -1,5 +1,5 @@
-﻿using lawChat.Network.Abstractions;
-using lawChat.Network.Abstractions.Models;
+﻿using LawChat.Network.Abstractions;
+using LawChat.Network.Abstractions.Models;
 using System.Buffers.Binary;
 using System.Net.Sockets;
 using System.Text;

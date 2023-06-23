@@ -1,14 +1,14 @@
 ﻿using System.Net.Sockets;
 using System.Text;
-using lawChat.Network.Abstractions.Models;
+using LawChat.Network.Abstractions.Models;
 using LawChat.Network.Implementations;
 using LawChat.Server.Data;
-using lawChat.Network.Abstractions.Enums;
+using LawChat.Network.Abstractions.Enums;
 using LawChat.Server.Data.Model;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
-namespace lawChat.Server.ServerData.Model
+namespace LawChat.Server.ServerData.Model
 {
     public class ServerConnection
     {

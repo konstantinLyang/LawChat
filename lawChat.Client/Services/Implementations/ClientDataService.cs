@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using LawChat.Server.Data.Model;
 
-namespace lawChat.Client.Services.Implementations
+namespace LawChat.Client.Services.Implementations
 {
     public class ClientDataService : IClientData
     {

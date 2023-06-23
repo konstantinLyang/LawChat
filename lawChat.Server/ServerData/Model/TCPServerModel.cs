@@ -1,7 +1,7 @@
 ﻿using System.Net.Sockets;
 using System.Net;
 
-namespace lawChat.Server.ServerData.Model
+namespace LawChat.Server.ServerData.Model
 {
     public class TcpServerModel : IDisposable
     {

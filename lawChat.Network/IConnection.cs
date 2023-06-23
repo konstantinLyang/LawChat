@@ -1,6 +1,6 @@
-﻿using lawChat.Network.Abstractions.Models;
+﻿using LawChat.Network.Abstractions.Models;
 
-namespace lawChat.Network.Abstractions
+namespace LawChat.Network.Abstractions
 {
     public interface IConnection
     {

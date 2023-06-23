@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "lawChat.Server": {
+    "LawChat.Server": {
       "commandName": "Project"
     },
     "WSL": {

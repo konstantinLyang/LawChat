@@ -1,4 +1,4 @@
-﻿namespace lawChat.Client.Services
+﻿namespace LawChat.Client.Services
 {
     public interface IUserDialog
     {

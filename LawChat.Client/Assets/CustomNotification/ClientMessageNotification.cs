@@ -9,7 +9,7 @@ namespace LawChat.Client.Assets.CustomNotification
     {
         private ClientMessageDisplayPart _displayPart;
 
-        public override NotificationDisplayPart DisplayPart => _displayPart ?? (_displayPart = new ClientMessageDisplayPart(this));
+        public override NotificationDisplayPart DisplayPart => _displayPart ??= new ClientMessageDisplayPart(this);
 
         public ClientMessageNotification(string message, string senderName, MessageOptions options) : base(message, options)
         {

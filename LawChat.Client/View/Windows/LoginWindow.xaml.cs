@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Input;
 
-namespace lawChat.Client.View
+namespace LawChat.Client.View
 {
     /// <summary>
     /// Логика взаимодействия для LoginWindow.xaml

@@ -1,4 +1,4 @@
-﻿namespace lawChat.Network.Abstractions.Enums
+﻿namespace LawChat.Network.Abstractions.Enums
 {
     public enum PrivacyType
     {

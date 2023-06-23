@@ -1,18 +1,15 @@
 ﻿using Microsoft.Extensions.Hosting;
 using System.Windows;
-using lawChat.Client.Services;
 using LawChat.Client.Services;
-using lawChat.Client.Services.Implementations;
 using LawChat.Client.Services.Implementations;
-using lawChat.Client.View;
+using LawChat.Client.View;
 using LawChat.Client.View.Windows;
-using lawChat.Client.ViewModel;
 using LawChat.Client.ViewModel;
-using Microsoft.Extensions.DependencyInjection;
-using lawChat.Network.Abstractions;
+using LawChat.Network.Abstractions;
 using LawChat.Network.Implementations;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace lawChat.Client
+namespace LawChat.Client
 {
     public partial class App : Application
     {

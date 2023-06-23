@@ -1,5 +1,5 @@
 ﻿using System.Text;
-using lawChat.Server.ServerData.Model;
+using LawChat.Server.ServerData.Model;
 
 namespace LawChat.Server;
 

@@ -1,6 +1,6 @@
-﻿using lawChat.Network.Abstractions.Enums;
+﻿using LawChat.Network.Abstractions.Enums;
 
-namespace lawChat.Network.Abstractions.Models
+namespace LawChat.Network.Abstractions.Models
 {
     public class Header
     {

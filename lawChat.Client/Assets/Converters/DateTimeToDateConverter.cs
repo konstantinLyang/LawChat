@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace lawChat.Client.Assets.Converters
+namespace LawChat.Client.Assets.Converters
 {
     public class DateTimeToDateConverter : IValueConverter
     {

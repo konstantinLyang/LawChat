@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace lawChat.Client.ViewModel.Base
+namespace LawChat.Client.ViewModel.Base
 {
     public abstract class ViewModelBase : INotifyPropertyChanged
     {

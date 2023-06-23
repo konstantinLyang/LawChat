@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace lawChat.Client.Infrastructure.Base
+namespace LawChat.Client.Infrastructure.Base
 {
     internal abstract class Command : ICommand
     {

@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace lawChat.Client.Model
+namespace LawChat.Client.Model
 {
     public class SearchPanelModel : INotifyPropertyChanged
     {

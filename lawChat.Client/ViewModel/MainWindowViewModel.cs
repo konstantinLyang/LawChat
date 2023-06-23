@@ -14,22 +14,21 @@ using ToastNotifications.Position;
 using System.Windows.Input;
 using System.Windows.Threading;
 using LawChat.Client.Assets.CustomNotification;
-using lawChat.Client.Infrastructure;
-using lawChat.Client.Model;
+using LawChat.Client.Infrastructure;
 using LawChat.Client.Model;
 using LawChat.Client.Model.Enums;
-using lawChat.Client.Services;
-using lawChat.Client.ViewModel.Base;
-using lawChat.Network.Abstractions.Enums;
-using lawChat.Network.Abstractions.Models;
+using LawChat.Client.Services;
+using LawChat.Client.ViewModel.Base;
+using LawChat.Network.Abstractions.Enums;
+using LawChat.Network.Abstractions.Models;
 using LawChat.Server.Data.Model;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using Syroot.Windows.IO;
 using ToastNotifications.Core;
-using PackageMessage = lawChat.Network.Abstractions.Models.PackageMessage;
+using PackageMessage = LawChat.Network.Abstractions.Models.PackageMessage;
 
-namespace lawChat.Client.ViewModel
+namespace LawChat.Client.ViewModel
 {
     internal class MainWindowViewModel : ViewModelBase
     {

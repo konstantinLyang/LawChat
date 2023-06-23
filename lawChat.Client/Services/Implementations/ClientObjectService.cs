@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Text;
 using System.Threading;
-using lawChat.Network.Abstractions;
-using lawChat.Network.Abstractions.Enums;
-using lawChat.Network.Abstractions.Models;
+using LawChat.Network.Abstractions;
+using LawChat.Network.Abstractions.Enums;
+using LawChat.Network.Abstractions.Models;
 using LawChat.Server.Data.Model;
 using Newtonsoft.Json;
-using PackageMessage = lawChat.Network.Abstractions.Models.PackageMessage;
+using PackageMessage = LawChat.Network.Abstractions.Models.PackageMessage;
 
-namespace lawChat.Client.Services.Implementations
+namespace LawChat.Client.Services.Implementations
 {
     public class ClientObjectService : IClientObject
     {

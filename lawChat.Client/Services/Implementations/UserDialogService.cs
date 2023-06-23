@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Windows;
-using lawChat.Client.View;
+using LawChat.Client.View;
 using LawChat.Client.View.Windows;
-using lawChat.Client.ViewModel;
 using LawChat.Client.ViewModel;
-using lawChat.Network.Abstractions.Enums;
-using lawChat.Network.Abstractions.Models;
+using LawChat.Client.ViewModel;
+using LawChat.Network.Abstractions.Enums;
+using LawChat.Network.Abstractions.Models;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace lawChat.Client.Services.Implementations
+namespace LawChat.Client.Services.Implementations
 {
     internal class UserDialogService : IUserDialog
     {

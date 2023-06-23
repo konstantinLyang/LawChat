@@ -3,13 +3,13 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
-using lawChat.Client.Infrastructure;
-using lawChat.Client.Services;
-using lawChat.Client.ViewModel.Base;
-using lawChat.Network.Abstractions.Enums;
-using lawChat.Network.Abstractions.Models;
+using LawChat.Client.Infrastructure;
+using LawChat.Client.Services;
+using LawChat.Client.ViewModel.Base;
+using LawChat.Network.Abstractions.Enums;
+using LawChat.Network.Abstractions.Models;
 
-namespace lawChat.Client.ViewModel
+namespace LawChat.Client.ViewModel
 {
     internal class LoginWindowViewModel : ViewModelBase
     {

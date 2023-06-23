@@ -1,7 +1,7 @@
 ﻿using System;
-using lawChat.Network.Abstractions.Models;
+using LawChat.Network.Abstractions.Models;
 
-namespace lawChat.Client.Services
+namespace LawChat.Client.Services
 {
     public interface IClientObject
     {

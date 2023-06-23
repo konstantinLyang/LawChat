@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Data;
 
-namespace lawChat.Client.Assets.Converters
+namespace LawChat.Client.Assets.Converters
 {
     public class LastMessageTextConverter : IValueConverter
     {

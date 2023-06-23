@@ -1,7 +1,7 @@
-﻿using lawChat.Client.Infrastructure.Base;
+﻿using LawChat.Client.Infrastructure.Base;
 using System;
 
-namespace lawChat.Client.Infrastructure
+namespace LawChat.Client.Infrastructure
 {
     internal class LambdaCommand : Command
     {
