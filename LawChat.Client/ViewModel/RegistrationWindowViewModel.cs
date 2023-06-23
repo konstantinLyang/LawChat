@@ -25,7 +25,6 @@ namespace LawChat.Client.ViewModel
         private readonly IUserDialog _userDialog;
 
         #region Text blocks
-
         private string _firstName = "";
         public string FirstName
         {
