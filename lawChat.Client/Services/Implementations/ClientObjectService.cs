@@ -5,6 +5,7 @@ using LawChat.Network.Abstractions;
 using LawChat.Network.Abstractions.Enums;
 using LawChat.Network.Abstractions.Models;
 using LawChat.Server.Data.Model;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using PackageMessage = LawChat.Network.Abstractions.Models.PackageMessage;
 
@@ -13,7 +14,7 @@ namespace LawChat.Client.Services.Implementations
     public class ClientObjectService : IClientObject
     {
         public event EventHandler<PackageMessage>? MessageReceived;
-
+        
         private readonly IClientData _clientData;
 
         private readonly IConnection _connection;
@@ -34,7 +35,7 @@ namespace LawChat.Client.Services.Implementations
         {
             try
             {
-                if (!_connection.IsConnected) _connection.Connect("10.10.11.47", 8080);
+                if (!_connection.IsConnected) _connection.Connect("127.0.0.1", 8080);
 
                 SendMessage(new ()
                 {
@@ -59,9 +60,19 @@ namespace LawChat.Client.Services.Implementations
                 {
                     _clientData.UserData = JsonConvert.DeserializeObject<User>(Encoding.UTF8.GetString(_answer.Data));
                     _isAuthorized = true;
+
+                    return _answer;
                 }
-                 
+
+                if (_answer.Header.CommandArguments?[0] == "authorization incorrect user data")
+                {
+                    var temp = _answer;
+                    _answer = null;
+                    return temp;
+                }
+
                 return _answer;
+
             }
             catch { return new PackageMessage() { Header = new Header() { StatusCode = StatusCode.ServerError } }; }
         }
@@ -70,7 +81,7 @@ namespace LawChat.Client.Services.Implementations
         {
             try
             {
-                if (!_connection.IsConnected) _connection.Connect("10.10.11.47", 8080);
+                if (!_connection.IsConnected) _connection.Connect("127.0.0.1", 8080);
 
                 SendMessage(new()
                 {

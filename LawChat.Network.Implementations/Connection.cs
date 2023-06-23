@@ -38,7 +38,10 @@ namespace LawChat.Network.Implementations
 
         public void CloseConnection()
         {
-            Dispose();
+            _channel.Writer.Complete();
+            _stream.Close();
+            Task.WaitAll(_readingTask, _writingTask);
+            _client.Dispose();
         }
 
         public bool IsConnected

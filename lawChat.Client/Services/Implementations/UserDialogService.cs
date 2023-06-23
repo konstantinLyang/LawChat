@@ -38,8 +38,6 @@ namespace LawChat.Client.Services.Implementations
 
         private MainWindowViewModel? _mainWindowViewModel;
 
-        private RegistrationWindowViewModel? _registrationWindowViewModel;
-
         public void ShowLoginWindow()
         {
             _loginWindow = _services.GetRequiredService<LoginWindow>();
@@ -85,7 +83,7 @@ namespace LawChat.Client.Services.Implementations
         {
             if (_registrationWindow is { } registrationWindow)
             {
-                try{ registrationWindow.Show(); } catch{ /* ignored */ }
+                registrationWindow.Show();
                 return;
             }
 

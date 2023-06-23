@@ -76,9 +76,7 @@ namespace LawChat.Server.ServerData.Model
                                                 }
                                             }
                                         }
-                                        catch (Exception ex)
-                                        {
-                                        }
+                                        catch (Exception ex) { }
 
                                         await Connection.SendMessageAsync(new PackageMessage()
                                         {
@@ -132,10 +130,7 @@ namespace LawChat.Server.ServerData.Model
                                         Data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(_context.Clients))
                                     });
                                 }
-                                catch
-                                {
-                                    throw new Exception("ошибка");
-                                }
+                                catch { }
 
                                 break;
 
@@ -164,10 +159,7 @@ namespace LawChat.Server.ServerData.Model
                                         }
                                     }
                                 }
-                                catch
-                                {
-                                    throw new Exception("ошибка");
-                                }
+                                catch { }
 
                                 break;
 
@@ -208,10 +200,7 @@ namespace LawChat.Server.ServerData.Model
                                         }
                                     }
                                 }
-                                catch
-                                {
-                                    throw new Exception("ошибка");
-                                }
+                                catch { }
 
                                 break;
 
@@ -239,7 +228,7 @@ namespace LawChat.Server.ServerData.Model
                                                 StatusCode = StatusCode.OK,
                                                 CommandArguments = new[] { "signup" }
                                             },
-                                            Data = message.Data
+                                            Data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(newClient))
                                         });
                                     }
                                     else
@@ -248,9 +237,7 @@ namespace LawChat.Server.ServerData.Model
                                             { Header = new() { StatusCode = StatusCode.Error } });
                                     }
                                 }
-                                catch
-                                {
-                                }
+                                catch { }
 
                                 break;
                         }
@@ -329,9 +316,9 @@ namespace LawChat.Server.ServerData.Model
                             });
                         }
                     }
-                    catch
+                    catch (Exception ex)
                     {
-                        // ignored
+
                     }
                     break;
 
@@ -399,7 +386,7 @@ namespace LawChat.Server.ServerData.Model
                                     Header = new Header()
                                     {
                                         MessageType = MessageType.File,
-                                        CommandArguments = new[] { UserData.Id.ToString(), message.Header.CommandArguments[1], newMessage.File.Id.ToString() } // отправитель, имя файла, айди файла
+                                        CommandArguments = new[] { UserData.Id.ToString(), message.Header.CommandArguments[1], newMessage.File.Id.ToString(), newMessage.Id.ToString() } // отправитель, имя файла, айди файла
                                 },
                                     Data = message.Data
                                 });
@@ -432,7 +419,7 @@ namespace LawChat.Server.ServerData.Model
                     }
                 }
             }
-            catch (Exception ex) { }
+            catch { }
             Connection.Dispose();
             _dispose(this);
         }

@@ -5,6 +5,7 @@ namespace LawChat.Server.Data
 {
     public class LawChatDbContext : DbContext
     {
+        public DbSet<Chat> Chats { get; set; }
         public DbSet<User> Clients { get; set; }
         public DbSet<Message> Messages { get; set; }
         public DbSet<Model.File> Files { get; set; }
