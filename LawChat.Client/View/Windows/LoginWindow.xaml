@@ -9,13 +9,14 @@
         xmlns:hc="https://handyorg.github.io/handycontrol"
         hc:WindowAttach.IsDragElement="True"
         mc:Ignorable="d"
+        hc:ShowTitle="False"
         d:DataContext="{d:DesignInstance vm:LoginWindowViewModel, IsDesignTimeCreatable=True}"
         Title="Авторизация" ResizeMode="NoResize"
         MaxHeight="700" MaxWidth="800" MinHeight="600" MinWidth="700">
 
 
     <Grid>
-        <Grid Background="#FF191C21">
+        <Grid Background="White">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition MaxWidth="200" MinWidth="200"/>
                 <ColumnDefinition/>
@@ -23,7 +24,7 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="1" Margin="0,100,0,50" VerticalAlignment="Center">
-                <TextBlock Text="Приветствую, пользователь!" FontSize="18" FontFamily="roboto" Foreground="White" FontWeight="Normal" Margin="0,0,0,15"/>
+                <TextBlock Text="Приветствую, пользователь!" FontSize="18" FontFamily="roboto" Foreground="Black" FontWeight="Normal" Margin="0,0,0,15"/>
                 <TextBlock TextWrapping="Wrap" Width="270" HorizontalAlignment="Left" Text="Пожалуйста, пройдите верификацию. Если Вы тут впервые, пройдите регистрацию."
                            FontSize="13" FontFamily="roboto" Foreground="#FF686F79" FontWeight="Normal" Margin="0,5,0,10"/>
 

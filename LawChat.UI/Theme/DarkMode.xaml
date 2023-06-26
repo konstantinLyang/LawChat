@@ -1,0 +1,22 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:hc="https://handyorg.github.io/handycontrol">
+
+    <ResourceDictionary.MergedDictionaries>
+        <hc:ThemeResources UsingSystemTheme="True"/>
+        <hc:Theme/>
+        <ResourceDictionary Source="/Assets/Style/TitleBarIconButton.xaml"/>
+        <ResourceDictionary Source="/Assets/Style/TitleBarIcon.xaml"/>
+        <ResourceDictionary Source="/Assets/Style/WindowIconButton.xaml"/>
+        <ResourceDictionary Source="/Assets/Style/WindowIcon.xaml"/>
+        <ResourceDictionary Source="/Assets/Style/MessageBox.xaml"/>
+        <ResourceDictionary Source="/Assets/Style/BorderTextBox.xaml"/>
+        <ResourceDictionary Source="/Assets/Style/MainWindow/MainWindowListViewStyle.xaml"/>
+        <ResourceDictionary Source="pack://application:,,,/ToastNotifications.Messages;component/Themes/Default.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/LawChat.UI;component/ElementStyles/Button.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/LawChat.UI;component/ElementStyles/TextBox.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/LawChat.UI;component/ElementStyles/TransparentButton.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/LawChat.UI;component/ElementStyles/ImageButton.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+</ResourceDictionary>
