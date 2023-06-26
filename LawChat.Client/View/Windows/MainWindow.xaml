@@ -1,72 +1,21 @@
-﻿<base:DefaultWindow x:Class="LawChat.Client.View.Windows.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
-        xmlns:viewModel="clr-namespace:LawChat.Client.ViewModel"
-        xmlns:base="clr-namespace:LawChat.Client.View.Windows.Base"
-        mc:Ignorable="d"
-        d:DataContext="{d:DesignInstance viewModel:MainWindowViewModel, IsDesignTimeCreatable=True}"
-        Title="{Binding SelectedChat.Title, TargetNullValue=LawChat}"
-        Height="810" Width="850" MinHeight="810" MinWidth="850"
-        WindowState="Normal" WindowStyle="None"
-        SourceInitialized="Window_SourceInitialized">
+﻿<hc:Window x:Class="LawChat.Client.View.Windows.MainWindow"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+                  xmlns:viewModel="clr-namespace:LawChat.Client.ViewModel"
+                  xmlns:hc="https://handyorg.github.io/handycontrol"
+                  mc:Ignorable="d"
+                  hc:WindowAttach.IsDragElement="True"
+                  Background="{DynamicResource MainContentBackgroundBrush}"
+                  d:DataContext="{d:DesignInstance viewModel:MainWindowViewModel, IsDesignTimeCreatable=True}"
+                  Title="{Binding SelectedChat.Title, TargetNullValue=LawChat}"
+                  MinHeight="800" MinWidth="800" Height="800" Width="800">
 
-    <WindowChrome.WindowChrome>
-        <WindowChrome CaptionHeight="0"/>
-    </WindowChrome.WindowChrome>
-
-    <Border Background="#FF5D5D5D">
+    <Border Background="{DynamicResource MainContentForegroundDrawingBrush}">
         <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition MinHeight="25" MaxHeight="25"/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-
-            <!--#region Title bar-->
-            <Border Grid.ColumnSpan="2"
-                    Background="#FF21242A">
-                <!--#region Window buttons -->
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-
-                    <StackPanel HorizontalAlignment="Right" Grid.Column="1"
-                                Orientation="Horizontal">
-                        <Button x:Name="BtnHide"
-                                Style="{StaticResource WindowChromeButtonStyle}" Click="HandleMinimazeButtonClick">
-                            <Path Data="M0 1H9"
-                                  Style="{StaticResource TitleBarIcon}"/>
-                        </Button>
-
-                        <Button x:Name="BtnMinimize"
-                                Style="{StaticResource WindowChromeButtonStyle}" Click="HandleMaximazeButtonClick">
-                            <Path Data="M1 10V1H10V10H1Z"
-                                  Style="{StaticResource TitleBarIcon}"/>
-                        </Button>
-
-                        <Button x:Name="BtnClose"
-                                Style="{StaticResource WindowChromeButtonStyle}" Click="HandleCloseButtonClick">
-                            <Path Data="M1 1L14 14M14 1L1 14"
-                                  Style="{StaticResource TitleBarIcon}"/>
-                        </Button>
-                    </StackPanel>
-
-                    <Border Grid.Column="0" Background="Transparent"
-                            PreviewMouseLeftButtonDown="HandleTopBarPreviewMouseLeftButtonDown"
-                            PreviewMouseLeftButtonUp="HandleTopBarPreviewMouseLeftButtonUp"
-                            PreviewMouseMove="HandleTopBarPreviewMouseMove"/>
-
-                </Grid>
-
-                <!--#endregion-->
-            </Border>
-            <!--#endregion-->
-
-            <Grid Grid.Row="1" Grid.Column="0">
+            <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="45"/>
                     <RowDefinition/>
@@ -216,13 +165,13 @@
                         <RowDefinition MinHeight="45" MaxHeight="300" Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <Border Grid.Row="0" Background="Transparent" Margin="0.5, 0,0,5">
-                        <ScrollViewer ScrollChanged="ScrollViewer_OnScrollChanged">
+                    <Border Grid.Row="0" Background="Transparent" Margin="0.5, 0,5,0">
+                        <hc:ScrollViewer ScrollChanged="ScrollViewer_OnScrollChanged">
                             <ItemsControl ScrollViewer.VerticalScrollBarVisibility="Auto" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Hidden" AllowDrop="True" 
                                           Background="Transparent" BorderThickness="0" ItemsSource="{Binding SelectedChat.Messages}" VerticalAlignment="Bottom">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Border Margin="5,2,0,2">
+                                        <Border Margin="5,2,12,2">
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition MaxWidth="60" Width="*"/>
@@ -342,7 +291,7 @@
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
-                        </ScrollViewer>
+                        </hc:ScrollViewer>
                     </Border>
 
                     <Border Margin="5" Grid.Row="0" Visibility="{Binding StickerBlockVisibility}"
@@ -502,4 +451,4 @@
             </Grid>
         </Grid>
     </Border>
-</base:DefaultWindow>
+</hc:Window>

@@ -11,7 +11,6 @@ using System.Windows;
 using ToastNotifications;
 using ToastNotifications.Lifetime;
 using ToastNotifications.Position;
-using System.Windows.Input;
 using System.Windows.Threading;
 using DevExpress.Mvvm;
 using LawChat.Client.Assets.CustomNotification;
@@ -19,7 +18,6 @@ using LawChat.Client.Infrastructure;
 using LawChat.Client.Model;
 using LawChat.Client.Model.Enums;
 using LawChat.Client.Services;
-using LawChat.Client.ViewModel.Base;
 using LawChat.Network.Abstractions.Enums;
 using LawChat.Network.Abstractions.Models;
 using LawChat.Server.Data.Model;
@@ -31,29 +29,80 @@ using PackageMessage = LawChat.Network.Abstractions.Models.PackageMessage;
 
 namespace LawChat.Client.ViewModel
 {
-    internal class MainWindowViewModel : BindableBase
+    public class MainWindowViewModel : BindableBase
     {
-        readonly string _downloadsPath = KnownFolders.Downloads.Path;
+        public MainWindowViewModel(IClientObject clientObject, IClientData clientData)
+        {
+            Dispatcher = Dispatcher.CurrentDispatcher;
 
-        public Dispatcher Dispatcher = Dispatcher.CurrentDispatcher;
+            _downloadsPath = KnownFolders.Downloads.Path;
+
+            MainDialogCollection = AllDialogCollection;
+
+            _clientObject = clientObject;
+
+            _clientData = clientData;
+
+            _clientObject.MessageReceived += MessageHandler;
+
+            _notification.SoundLocation = @"Client\data\Sound\notificationSound.wav";
+
+            try { _notification.Load(); } catch { /* ignored */ }
+
+            _notifier = new Notifier(cfg =>
+            {
+                cfg.PositionProvider = new PrimaryScreenPositionProvider(
+                    Corner.BottomRight,
+                    offsetX: 10,
+                    offsetY: 10);
+
+                cfg.LifetimeSupervisor = new TimeAndCountBasedLifetimeSupervisor(
+                    notificationLifetime: TimeSpan.FromSeconds(3),
+                    maximumNotificationCount: MaximumNotificationCount.FromCount(3));
+
+                cfg.Dispatcher = Application.Current.Dispatcher;
+
+                cfg.DisplayOptions.Width = 400;
+            });
+
+            GetEmoji();
+        }
+
+        public readonly Dispatcher Dispatcher;
+
+        private readonly string _downloadsPath;
 
         private readonly Notifier _notifier;
 
-        readonly SoundPlayer _notification = new ();
+        private readonly SoundPlayer _notification = new ();
 
         private readonly IClientObject _clientObject;
+
         private readonly IClientData _clientData;
-        
+
+        #region Elements
+
         public Visibility StickerBlockVisibility { get; set; } = Visibility.Hidden;
+
         public Visibility RightPanelVisibility { get; set; } = Visibility.Hidden;
+
         public SearchPanelModel SelectedChat { get; set; } = new ();
+
         public ObservableCollection<SearchPanelModel> AllDialogCollection { get; set; } = new();
-        public ObservableCollection<SearchPanelModel> MainDialogCollection { get; set; } = new();
+
+        public ObservableCollection<SearchPanelModel> MainDialogCollection { get; set; }
+
         public ObservableCollection<StickerModel> EmojiCollection { get; set; } = new();
+
         public string? CurrentMessageTextBox { get; set; }
+
         public string? SearchBox { get; set; }
+
         public string? UserNameTextBlock { get; set; }
+
         public string? UserPhoto { get; set; }
+
+        #endregion
 
         #region Commands
 
@@ -200,6 +249,8 @@ namespace LawChat.Client.ViewModel
 
         #endregion
 
+        #region Private voids
+
         private void OnOpenFileCommand(object p)
         {
             if (!Directory.Exists(@$"{_downloadsPath}\Downloads"))
@@ -257,6 +308,7 @@ namespace LawChat.Client.ViewModel
                 Process.Start("explorer.exe", message.FilePath);
             }
         }
+
         private void OnOpenFileFolderCommand(object p)
         {
             if (!Directory.Exists(@$"{_downloadsPath}\Downloads"))
@@ -315,6 +367,7 @@ namespace LawChat.Client.ViewModel
                 Process.Start("explorer.exe", openFile.DirectoryName);
             }
         }
+
         private void GetEmoji()
         {
             try
@@ -336,6 +389,7 @@ namespace LawChat.Client.ViewModel
             }
             catch { }
         }
+
         private static bool IsImage(FileInfo filePath)
         {
             if ((filePath.Extension == ".jpg" || filePath.Extension == ".png" ||
@@ -346,6 +400,8 @@ namespace LawChat.Client.ViewModel
 
             return false;
         }
+
+        #endregion
 
         private void MessageHandler(object? sender, PackageMessage message)
         {
@@ -604,39 +660,6 @@ namespace LawChat.Client.ViewModel
                         break;
                 }
             });
-        }
-
-        public MainWindowViewModel(IClientObject clientObject, IClientData clientData)
-        {
-            MainDialogCollection = AllDialogCollection;
-
-            _clientObject = clientObject;
-
-            _clientData = clientData;
-
-            _clientObject.MessageReceived += MessageHandler;
-
-            _notification.SoundLocation = @"Client\data\Sound\notificationSound.wav";
-
-            try{ _notification.Load(); } catch {}
-
-            _notifier = new Notifier(cfg =>
-            {
-                cfg.PositionProvider = new PrimaryScreenPositionProvider(
-                    Corner.BottomRight,
-                    offsetX: 10,
-                    offsetY: 10);
-
-                cfg.LifetimeSupervisor = new TimeAndCountBasedLifetimeSupervisor(
-                    notificationLifetime: TimeSpan.FromSeconds(3),
-                    maximumNotificationCount: MaximumNotificationCount.FromCount(3));
-
-                cfg.Dispatcher = Application.Current.Dispatcher;
-
-                cfg.DisplayOptions.Width = 400;
-            });
-
-            GetEmoji();
         }
     }
 }

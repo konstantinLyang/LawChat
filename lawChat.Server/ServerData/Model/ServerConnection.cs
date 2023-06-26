@@ -102,7 +102,7 @@ namespace LawChat.Server.ServerData.Model
                                         });
                                     }
                                 }
-                                catch
+                                catch (Exception ex)
                                 {
                                     await Connection.SendMessageAsync(new PackageMessage()
                                     {

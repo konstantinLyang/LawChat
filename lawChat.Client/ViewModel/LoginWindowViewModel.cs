@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using DevExpress.Mvvm;
@@ -10,11 +9,21 @@ using LawChat.Network.Abstractions.Models;
 
 namespace LawChat.Client.ViewModel
 {
-    internal class LoginWindowViewModel : BindableBase
+    public class LoginWindowViewModel : BindableBase
     {
+        public LoginWindowViewModel(IClientObject clientObject, IUserDialog userDialog)
+        {
+            _clientObject = clientObject;
+
+            _userDialog = userDialog;
+
+            _dispatcher = Dispatcher.CurrentDispatcher;
+        }
+
         private readonly Dispatcher _dispatcher;
 
         private readonly IClientObject _clientObject;
+
         private readonly IUserDialog _userDialog;
 
         #region Elements
@@ -37,7 +46,9 @@ namespace LawChat.Client.ViewModel
 
         #endregion
 
-        public ICommand OpenRegisterWindowCommand => new DelegateCommand(() => { _userDialog.ShowRegisterWindow(); });
+        #region Commands
+
+        public DelegateCommand OpenRegisterWindowCommand => new DelegateCommand(() => { _userDialog.ShowRegisterWindow(); });
 
         public AsyncCommand AuthorizationCommand => new(() =>
         {
@@ -94,11 +105,6 @@ namespace LawChat.Client.ViewModel
             });
         });
 
-        public LoginWindowViewModel(IClientObject clientObject, IUserDialog userDialog)
-        {
-            _clientObject = clientObject;
-            _userDialog = userDialog;
-            _dispatcher = Dispatcher.CurrentDispatcher;
-        }
+        #endregion
     }
 }

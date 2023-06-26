@@ -5,7 +5,6 @@ using LawChat.Network.Abstractions;
 using LawChat.Network.Abstractions.Enums;
 using LawChat.Network.Abstractions.Models;
 using LawChat.Server.Data.Model;
-using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using PackageMessage = LawChat.Network.Abstractions.Models.PackageMessage;
 
@@ -35,6 +34,8 @@ namespace LawChat.Client.Services.Implementations
         {
             try
             {
+                var temp = new PackageMessage();
+
                 if (!_connection.IsConnected) _connection.Connect("127.0.0.1", 8080);
 
                 SendMessage(new ()
@@ -47,13 +48,10 @@ namespace LawChat.Client.Services.Implementations
                     Data = Encoding.UTF8.GetBytes(login + ";" + password),
                 });
 
-                WaitForAnswer();
-
-                void WaitForAnswer()
+                for (int i = 0; i < 150; i++)
                 {
-                    if (_answer != null) return;
+                    if (_answer != null) break;
                     Thread.Sleep(100);
-                    WaitForAnswer();
                 }
 
                 if (_answer.Header.CommandArguments?[0] == "authorization successfully")
@@ -63,15 +61,16 @@ namespace LawChat.Client.Services.Implementations
 
                     return _answer;
                 }
-
-                if (_answer.Header.CommandArguments?[0] == "authorization incorrect user data")
+                else if (_answer.Header.CommandArguments?[0] == "authorization incorrect user data")
                 {
-                    var temp = _answer;
+                    temp = _answer;
                     _answer = null;
                     return temp;
                 }
 
-                return _answer;
+                temp = _answer;
+                _answer = null;
+                return temp;
 
             }
             catch { return new PackageMessage() { Header = new Header() { StatusCode = StatusCode.ServerError } }; }

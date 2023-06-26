@@ -17,12 +17,20 @@ namespace LawChat.Client.ViewModel
 {
     public class RegistrationWindowViewModel : BindableBase
     {
+        public RegistrationWindowViewModel(IClientObject clientObject, IUserDialog userDialog)
+        {
+            _clientObject = clientObject;
+            _userDialog = userDialog;
+            _dispatcher = Dispatcher.CurrentDispatcher;
+        }
+
         private readonly Dispatcher _dispatcher;
 
         private readonly IClientObject _clientObject;
+
         private readonly IUserDialog _userDialog;
 
-        #region Text blocks
+        #region Elements
 
         public string? FirstName { get; set; }
         public Brush FirstNameColor { get; set; } = new SolidColorBrush(Color.FromArgb(255, 171, 173, 173));
@@ -53,7 +61,9 @@ namespace LawChat.Client.ViewModel
         public Visibility LoadingIconVisible { get; set; } = Visibility.Hidden;
 
         #endregion
-        
+
+        #region Commands
+
         public DelegateCommand RegistrationCommand => new(() =>
         {
             InfoTextBlock = "";
@@ -188,11 +198,6 @@ namespace LawChat.Client.ViewModel
             }
         });
 
-        public RegistrationWindowViewModel(IClientObject clientObject, IUserDialog userDialog)
-        {
-            _clientObject = clientObject;
-            _userDialog = userDialog;
-            _dispatcher = Dispatcher.CurrentDispatcher;
-        }
+        #endregion
     }
 }

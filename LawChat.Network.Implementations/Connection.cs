@@ -12,7 +12,7 @@ namespace LawChat.Network.Implementations
     {
         public event EventHandler<PackageMessage> MessageReceived;
 
-        public TcpClient _client;
+        public TcpClient Client;
         
         private NetworkStream _stream;
         
@@ -41,21 +41,18 @@ namespace LawChat.Network.Implementations
             _channel.Writer.Complete();
             _stream.Close();
             Task.WaitAll(_readingTask, _writingTask);
-            _client.Dispose();
+            Client.Dispose();
         }
 
-        public bool IsConnected
-        {
-            get => _isConnected;
-        }
+        public bool IsConnected { get => _isConnected; }
 
         public void Connect(string ipAddress, int port)
         {
             if (IsConnected) throw new Exception("Connection already exist.");
 
-            _client = new TcpClient(ipAddress, port);
+            Client = new TcpClient(ipAddress, port);
 
-            _stream = _client.GetStream();
+            _stream = Client.GetStream();
 
             _isConnected = true;
 
@@ -70,9 +67,9 @@ namespace LawChat.Network.Implementations
         {
             if (IsConnected) throw new Exception("Connection already exist.");
 
-            _client = tcpClient;
+            Client = tcpClient;
 
-            _stream = _client.GetStream();
+            _stream = Client.GetStream();
 
             _isConnected = true;
 
@@ -114,7 +111,7 @@ namespace LawChat.Network.Implementations
             }
             catch (IOException ex)
             {
-                Console.WriteLine($"Подключение к {_client.Client.AddressFamily} закрыто сервером.");
+                Console.WriteLine($"Подключение к {Client.Client.AddressFamily} закрыто сервером.");
             }
             catch (Exception ex)
             {
@@ -160,7 +157,7 @@ namespace LawChat.Network.Implementations
             
             _disposed = true;
 
-            if (_client.Connected)
+            if (Client.Connected)
             {
                 _channel.Writer.Complete();
                 _stream.Close();
@@ -168,7 +165,7 @@ namespace LawChat.Network.Implementations
             }
             if (disposing)
             {
-                _client.Dispose();
+                Client.Dispose();
             }
         }
 

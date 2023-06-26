@@ -19,10 +19,5 @@ namespace LawChat.Client.View.Windows
                 scrollViewer.ScrollToBottom();
             }
         }
-        public override void HandleCloseButtonClick(object sender, RoutedEventArgs e)
-        {
-            Close();
-            Environment.Exit(0);
-        } 
     }
 }
