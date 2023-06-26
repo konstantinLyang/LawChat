@@ -1,8 +1,4 @@
-﻿using System;
-using System.Windows;
-using System.Windows.Input;
-
-namespace LawChat.Client.View
+﻿namespace LawChat.Client.View.Windows
 {
     public partial class LoginWindow
     {

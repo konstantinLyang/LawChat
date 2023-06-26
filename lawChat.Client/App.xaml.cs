@@ -17,6 +17,7 @@ namespace LawChat.Client
         public App()
         {
             AppHost = Host.CreateDefaultBuilder()
+
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.AddSingleton<LoginWindowViewModel>();
