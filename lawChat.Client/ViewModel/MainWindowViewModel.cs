@@ -13,6 +13,7 @@ using ToastNotifications.Lifetime;
 using ToastNotifications.Position;
 using System.Windows.Input;
 using System.Windows.Threading;
+using DevExpress.Mvvm;
 using LawChat.Client.Assets.CustomNotification;
 using LawChat.Client.Infrastructure;
 using LawChat.Client.Model;
@@ -30,9 +31,11 @@ using PackageMessage = LawChat.Network.Abstractions.Models.PackageMessage;
 
 namespace LawChat.Client.ViewModel
 {
-    internal class MainWindowViewModel : ViewModelBase
+    internal class MainWindowViewModel : BindableBase
     {
         readonly string _downloadsPath = KnownFolders.Downloads.Path;
+
+        public Dispatcher Dispatcher = Dispatcher.CurrentDispatcher;
 
         private readonly Notifier _notifier;
 
@@ -40,92 +43,26 @@ namespace LawChat.Client.ViewModel
 
         private readonly IClientObject _clientObject;
         private readonly IClientData _clientData;
-
-        private SearchPanelModel _selectedChat;
-        public SearchPanelModel SelectedChat
-        {
-            get => _selectedChat;
-            set
-            {
-                Task.Factory.StartNew(() =>
-                {
-                    Set(ref _selectedChat, value);
-                    OnChatChangedCommand();
-                });
-            } 
-        }
-
-        private Visibility _stickerBlockVisibility = Visibility.Hidden;
-        public Visibility StickerBlockVisibility
-        {
-            get => _stickerBlockVisibility;
-            set => Set(ref _stickerBlockVisibility, value);
-        }
-
-        private Visibility _rightPanelVisibility = Visibility.Hidden;
-        public Visibility RightPanelVisibility
-        {
-            get => _rightPanelVisibility;
-            set => Set(ref _rightPanelVisibility, value);
-        }
-
-        public Dispatcher Dispatcher = Dispatcher.CurrentDispatcher;
-
+        
+        public Visibility StickerBlockVisibility { get; set; } = Visibility.Hidden;
+        public Visibility RightPanelVisibility { get; set; } = Visibility.Hidden;
+        public SearchPanelModel SelectedChat { get; set; } = new ();
         public ObservableCollection<SearchPanelModel> AllDialogCollection { get; set; } = new();
+        public ObservableCollection<SearchPanelModel> MainDialogCollection { get; set; } = new();
+        public ObservableCollection<StickerModel> EmojiCollection { get; set; } = new();
+        public string? CurrentMessageTextBox { get; set; }
+        public string? SearchBox { get; set; }
+        public string? UserNameTextBlock { get; set; }
+        public string? UserPhoto { get; set; }
 
-        private ObservableCollection<SearchPanelModel> _mainDialogCollection = new();
-        public ObservableCollection<SearchPanelModel> MainDialogCollection
-        {
-            get => _mainDialogCollection;
-            set => Set(ref _mainDialogCollection, value);
-        }
+        #region Commands
 
-        private ObservableCollection<StickerModel> _emojiCollection = new();
-        public ObservableCollection<StickerModel> EmojiCollection
+        public DelegateCommand OpenRightPanelCommand => new(() =>
         {
-            get => _emojiCollection;
-            set => Set(ref _emojiCollection, value);
-        }
-
-        private string? _currentMessageTextBox = "";
-        public string? CurrentMessageTextBox
-        {
-            get => _currentMessageTextBox;
-            set => Set(ref _currentMessageTextBox, value);
-        }
-
-        private string? _searchBox = "";
-        public string? SearchBox
-        {
-            get => _searchBox;
-            set => Set(ref _searchBox, value);
-        }
-
-        private string? _userNameTextBlock;
-        public string? UserNameTextBlock
-        {
-            get => _userNameTextBlock;
-            set => Set(ref _userNameTextBlock, value);
-        }
-
-        private string? _userPhoto;
-        public string? UserPhoto
-        {
-            get => _userPhoto;
-            set => Set(ref _userPhoto, value);
-        }
-
-        private LambdaCommand _openRightPanelCommand;
-        public ICommand OpenRightPanelCommand => _openRightPanelCommand ??= new(OnOpenRightPanelCommand);
-        private void OnOpenRightPanelCommand()
-        {
-            if(RightPanelVisibility == Visibility.Visible) RightPanelVisibility = Visibility.Hidden;
+            if (RightPanelVisibility == Visibility.Visible) RightPanelVisibility = Visibility.Hidden;
             else RightPanelVisibility = Visibility.Visible;
-        }
-
-        private LambdaCommand _chatChangedCommand;
-        public ICommand ChatChangedCommand => _chatChangedCommand ??= new(OnChatChangedCommand);
-        private void OnChatChangedCommand()
+        });
+        public DelegateCommand ChatChangedCommand => new(() =>
         {
             try
             {
@@ -148,7 +85,120 @@ namespace LawChat.Client.ViewModel
                 }
             }
             catch { /* ignored */ }
-        }
+        });
+        public DelegateCommand SendStickerCommand => new(() =>
+        {
+            if (StickerBlockVisibility == Visibility.Hidden) StickerBlockVisibility = Visibility.Visible;
+            else StickerBlockVisibility = Visibility.Hidden;
+        });
+        public DelegateCommand SendFileCommand => new(() =>
+        {
+            if (SelectedChat != null)
+            {
+                var fd = new OpenFileDialog();
+
+                if (fd.ShowDialog() == true)
+                {
+                    string fileName = fd.FileName;
+
+                    FileInfo fileInfo = new FileInfo(fileName);
+
+                    byte[] sendBuffer = System.IO.File.ReadAllBytes(fd.FileName);
+
+                    SelectedChat!.Messages
+                        .Add(new ProcessedMessage()
+                        {
+                            Id = new Random().Next(1, 1247512577),
+                            Text = fileInfo.Name,
+                            CreateDate = DateTime.Now,
+                            IsReceivedMessage = false,
+                            IsFile = true,
+                            FilePath = fileName,
+                            IsImage = IsImage(fileInfo),
+                            OpenFileCommand = new LambdaCommand(OnOpenFileCommand),
+                            OpenFileFolderCommand = new LambdaCommand(OnOpenFileFolderCommand),
+                        });
+
+                    SelectedChat.LastMessage = fileInfo.Name;
+                    SelectedChat.LastMessageDateTime = DateTime.Now;
+
+                    CurrentMessageTextBox = "";
+
+                    _clientObject.SendMessage(new PackageMessage()
+                    {
+                        Header = new Header()
+                        {
+                            MessageType = MessageType.File,
+                            CommandArguments = new[]
+                                { SelectedChat.RecipientId.ToString(), fileInfo.Name, fileName, } // получатель, имя файла, локальный путь файла.
+                        },
+                        Data = sendBuffer // файл
+                    });
+                }
+            }
+        });
+        public DelegateCommand SendMessageCommand => new(() =>
+        {
+            if (!string.IsNullOrWhiteSpace(CurrentMessageTextBox) && SelectedChat != null)
+            {
+                StickerBlockVisibility = Visibility.Hidden;
+
+                _clientObject.SendMessage(new PackageMessage()
+                {
+                    Header = new Header()
+                    {
+                        MessageType = MessageType.Text,
+                        CommandArguments = new[] { SelectedChat.RecipientId.ToString() }
+                    },
+                    Data = Encoding.UTF8.GetBytes(CurrentMessageTextBox.Trim())
+                });
+
+                Dispatcher.Invoke(() =>
+                {
+                    SelectedChat!.Messages.Add(new ProcessedMessage()
+                    {
+                        Text = CurrentMessageTextBox.Trim(),
+                        CreateDate = DateTime.Now,
+                        IsReceivedMessage = false,
+                    });
+
+                    SelectedChat.LastMessage = CurrentMessageTextBox;
+                    SelectedChat.LastMessageDateTime = DateTime.Now;
+
+                    CurrentMessageTextBox = "";
+                });
+            }
+        });
+        public AsyncCommand FindUserCommand => new(() =>
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                try
+                {
+                    if (!string.IsNullOrEmpty(SearchBox))
+                    {
+                        var a = AllDialogCollection.Where(x => x.Title.Contains(SearchBox));
+
+                        MainDialogCollection = new();
+
+                        foreach (var item in a)
+                        {
+                            MainDialogCollection.Add(item);
+                        }
+                    }
+                    else
+                    {
+                        MainDialogCollection = AllDialogCollection;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MainDialogCollection = AllDialogCollection;
+                }
+            });
+        });
+
+        #endregion
 
         private void OnOpenFileCommand(object p)
         {
@@ -198,7 +248,7 @@ namespace LawChat.Client.ViewModel
                     {
                         MessageType = MessageType.Command,
                         StatusCode = StatusCode.UPDATE,
-                        CommandArguments = new [] { "message recipient filepath", message.FileId.ToString(), createdLocalFilePath }
+                        CommandArguments = new[] { "message recipient filepath", message.FileId.ToString(), createdLocalFilePath }
                     }
                 });
             }
@@ -255,7 +305,7 @@ namespace LawChat.Client.ViewModel
                     {
                         MessageType = MessageType.Command,
                         StatusCode = StatusCode.UPDATE,
-                        CommandArguments = new [] { "message recipient filepath", message.FileId.ToString(), fileInfo.FullName }
+                        CommandArguments = new[] { "message recipient filepath", message.FileId.ToString(), fileInfo.FullName }
                     }
                 });
             }
@@ -265,128 +315,36 @@ namespace LawChat.Client.ViewModel
                 Process.Start("explorer.exe", openFile.DirectoryName);
             }
         }
-
-        private LambdaCommand _sendStickerCommand;
-        public ICommand SendStickerCommand => _sendStickerCommand ??= new(OnSendStickerCommand);
-        private void OnSendStickerCommand()
+        private void GetEmoji()
         {
-            if (StickerBlockVisibility == Visibility.Hidden) StickerBlockVisibility = Visibility.Visible;
-            else StickerBlockVisibility = Visibility.Hidden;
-        }
-
-        private LambdaCommand _findUserCommand;
-        public ICommand FindUserCommand => _findUserCommand ??= new(OnFindUserCommand);
-        private void OnFindUserCommand()
-        {
-            Task.Factory.StartNew(() =>
+            try
             {
-                try
+                var files = new DirectoryInfo(@"Z:\!!!!!ПОЛЬЗОВАТЕЛИ\!КОНСТАНТИН_ЛЯНГ\PROGRAMMS\ПС для рабочего стола\LawChat\client\data\Image\Stickers\Emoji").GetFiles();
+
+                foreach (var emoji in files)
                 {
-                    if (!string.IsNullOrEmpty(SearchBox))
+                    if (emoji.Extension == ".png")
                     {
-                        var a = AllDialogCollection.Where(x => x.Title.Contains(SearchBox));
-
-                        MainDialogCollection = new();
-
-                        foreach (var item in a)
+                        EmojiCollection.Add(new()
                         {
-                            MainDialogCollection.Add(item);
-                        }
-                    }
-                    else
-                    {
-                        MainDialogCollection = AllDialogCollection;
-                    }
-                }
-                catch(Exception ex)
-                {
-                    MainDialogCollection = AllDialogCollection;
-                }
-            });
-        }
-
-        private LambdaCommand _sendFileCommand;
-        public ICommand SendFileCommand => _sendFileCommand ??= new(OnSendFileCommand);
-        private void OnSendFileCommand()
-        {
-            if (SelectedChat != null)
-            {
-                var fd = new OpenFileDialog();
-
-                if (fd.ShowDialog() == true)
-                {
-                    string fileName = fd.FileName;
-
-                    FileInfo fileInfo = new FileInfo(fileName);
-
-                    byte[] sendBuffer = System.IO.File.ReadAllBytes(fd.FileName);
-
-                    SelectedChat!.Messages
-                        .Add(new ProcessedMessage()
-                        {
-                            Id = new Random().Next(1, 1247512577),
-                            Text = fileInfo.Name,
-                            CreateDate = DateTime.Now,
-                            IsReceivedMessage = false,
-                            IsFile = true,
-                            FilePath = fileName,
-                            IsImage = IsImage(fileInfo),
-                            OpenFileCommand = new LambdaCommand(OnOpenFileCommand),
-                            OpenFileFolderCommand = new LambdaCommand(OnOpenFileFolderCommand),
+                            ImageFilePath = emoji.FullName,
+                            Name = emoji.Name,
+                            Type = EmojiType.Emoji
                         });
-
-                    SelectedChat.LastMessage = fileInfo.Name;
-                    SelectedChat.LastMessageDateTime = DateTime.Now;
-
-                    CurrentMessageTextBox = "";
-
-                    _clientObject.SendMessage(new PackageMessage()
-                    {
-                        Header = new Header()
-                        {
-                            MessageType = MessageType.File,
-                            CommandArguments = new[]
-                                { _selectedChat.RecipientId.ToString(), fileInfo.Name, fileName, } // получатель, имя файла, локальный путь файла.
-                        },
-                        Data = sendBuffer // файл
-                    });
+                    }
                 }
             }
+            catch { }
         }
-
-        private LambdaCommand _sendMessageCommand;
-        public ICommand SendMessageCommand => _sendMessageCommand ??= new(OnSendMessageCommand);
-        private void OnSendMessageCommand()
+        private static bool IsImage(FileInfo filePath)
         {
-            if (!string.IsNullOrWhiteSpace(CurrentMessageTextBox) && SelectedChat != null)
-            {
-                StickerBlockVisibility = Visibility.Hidden;
+            if ((filePath.Extension == ".jpg" || filePath.Extension == ".png" ||
+                 filePath.Extension == ".jpeg" || filePath.Extension == ".bmp" ||
+                 filePath.Extension == ".JPG" || filePath.Extension == ".PNG" ||
+                 filePath.Extension == ".JPEG" || filePath.Extension == ".BMP")
+                && filePath != null) return true;
 
-                _clientObject.SendMessage(new PackageMessage()
-                {
-                    Header = new Header()
-                    {
-                        MessageType = MessageType.Text,
-                        CommandArguments = new []{_selectedChat.RecipientId.ToString()}
-                    },
-                    Data = Encoding.UTF8.GetBytes(CurrentMessageTextBox.Trim())
-                });
-
-                Dispatcher.Invoke(() =>
-                {
-                    SelectedChat!.Messages.Add(new ProcessedMessage()
-                    {
-                        Text = CurrentMessageTextBox.Trim(),
-                        CreateDate = DateTime.Now,
-                        IsReceivedMessage = false,
-                    });
-
-                    SelectedChat.LastMessage = CurrentMessageTextBox;
-                    SelectedChat.LastMessageDateTime = DateTime.Now;
-
-                    CurrentMessageTextBox = "";
-                });
-            }
+            return false;
         }
 
         private void MessageHandler(object? sender, PackageMessage message)
@@ -551,7 +509,9 @@ namespace LawChat.Client.ViewModel
                                 .FirstOrDefault(x =>
                                     x.RecipientId == Convert.ToInt32(message.Header.CommandArguments[0]));
 
-                            chat.Messages.Add(new ProcessedMessage()
+                            if (chat != null)
+                            {
+                                chat.Messages.Add(new ProcessedMessage()
                                 {
                                     Id = Convert.ToInt32(message.Header.CommandArguments[1]),
                                     CreateDate = DateTime.Now,
@@ -559,14 +519,15 @@ namespace LawChat.Client.ViewModel
                                     Text = Encoding.UTF8.GetString(message.Data)
                                 });
 
-                            chat.LastMessage = Encoding.UTF8.GetString(message.Data);
-                            chat.LastMessageDateTime = DateTime.Now;
+                                chat.LastMessage = Encoding.UTF8.GetString(message.Data);
+                                chat.LastMessageDateTime = DateTime.Now;
 
-                            if (SelectedChat != chat)
-                            {
-                                chat.IsRead = false;
-                                try { _notification.Play(); } catch { }
-                                _notifier.ShowClientMessage(Encoding.UTF8.GetString(message.Data), AllDialogCollection.FirstOrDefault(x => x.RecipientId == Convert.ToInt32(message.Header.CommandArguments[0])).Title, new MessageOptions());
+                                if (SelectedChat != chat)
+                                {
+                                    chat.IsRead = false;
+                                    try { _notification.Play(); } catch { }
+                                    _notifier.ShowClientMessage(Encoding.UTF8.GetString(message.Data), chat.Title, chat.ContactPhoto, new MessageOptions());
+                                }
                             }
                         });
                         break;
@@ -626,7 +587,7 @@ namespace LawChat.Client.ViewModel
                             {
                                 recipient.IsRead = false;
                                 try { _notification.Play(); } catch { }
-                                _notifier.ShowClientMessage($"Файл: { fileInfo.Name }", recipient.Title, new MessageOptions());
+                                _notifier.ShowClientMessage($"Файл: { fileInfo.Name }", recipient.Title, recipient.ContactPhoto, new MessageOptions());
                             }
                         });
 
@@ -645,7 +606,7 @@ namespace LawChat.Client.ViewModel
             });
         }
 
-        public MainWindowViewModel(IClientObject clientObject, IClientData clientData) : this()
+        public MainWindowViewModel(IClientObject clientObject, IClientData clientData)
         {
             MainDialogCollection = AllDialogCollection;
 
@@ -655,8 +616,7 @@ namespace LawChat.Client.ViewModel
 
             _clientObject.MessageReceived += MessageHandler;
 
-            _notification.SoundLocation =
-                @"Client\data\Sound\notificationSound.wav";
+            _notification.SoundLocation = @"Client\data\Sound\notificationSound.wav";
 
             try{ _notification.Load(); } catch {}
 
@@ -673,41 +633,10 @@ namespace LawChat.Client.ViewModel
 
                 cfg.Dispatcher = Application.Current.Dispatcher;
 
-                cfg.DisplayOptions.Width = 300;
+                cfg.DisplayOptions.Width = 400;
             });
 
-            try
-            {
-                var files = new DirectoryInfo(@"Z:\!!!!!ПОЛЬЗОВАТЕЛИ\!КОНСТАНТИН_ЛЯНГ\PROGRAMMS\ПС для рабочего стола\LawChat\client\data\Image\Stickers\Emoji").GetFiles();
-
-                foreach (var emoji in files)
-                {
-                    if (emoji.Extension == ".png")
-                    {
-                        EmojiCollection.Add(new()
-                        {
-                            ImageFilePath = emoji.FullName,
-                            Name = emoji.Name,
-                            Type = EmojiType.Emoji
-                        });
-                    }
-                }
-            }
-            catch{}
-
-        }
-
-        public MainWindowViewModel() { }
-
-        bool IsImage(FileInfo filePath)
-        {
-            if ((filePath.Extension == ".jpg" || filePath.Extension == ".png" ||
-                 filePath.Extension == ".jpeg" || filePath.Extension == ".bmp" ||
-                 filePath.Extension == ".JPG" || filePath.Extension == ".PNG" ||
-                 filePath.Extension == ".JPEG" || filePath.Extension == ".BMP") 
-                && filePath != null) return true;
-
-            return false;
+            GetEmoji();
         }
     }
 }

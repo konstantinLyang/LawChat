@@ -11,19 +11,17 @@ namespace LawChat.Client.Assets.CustomNotification
 
         public override NotificationDisplayPart DisplayPart => _displayPart ??= new ClientMessageDisplayPart(this);
 
-        public ClientMessageNotification(string message, string senderName, MessageOptions options) : base(message, options)
+        public ClientMessageNotification(string message, string senderName, string senderPhoto, MessageOptions options) : base(message, options)
         {
             Message = message;
             UserName = senderName;
+            SenderPhoto = senderPhoto;
         }
 
         private string _message;
         public string Message
         {
-            get
-            {
-                return _message;
-            }
+            get => _message;
             set
             {
                 _message = value;
@@ -34,13 +32,21 @@ namespace LawChat.Client.Assets.CustomNotification
         private string _userName;
         public string UserName
         {
-            get
-            {
-                return _userName;
-            }
+            get => _userName;
             set
             {
                 _userName = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _senderPhoto;
+        public string SenderPhoto
+        {
+            get => _senderPhoto;
+            set
+            {
+                _senderPhoto = value;
                 OnPropertyChanged();
             }
         }

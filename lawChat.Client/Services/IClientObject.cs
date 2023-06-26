@@ -7,7 +7,7 @@ namespace LawChat.Client.Services
     {
         event EventHandler<PackageMessage> MessageReceived;
 
-        PackageMessage SignIn(string login, string password);
+        PackageMessage SignIn(string? login, string? password);
 
         PackageMessage SignUp(byte[] userData);
 

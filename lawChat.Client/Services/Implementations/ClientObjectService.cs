@@ -31,7 +31,7 @@ namespace LawChat.Client.Services.Implementations
             _connection.MessageReceived += HandlerMessageReceive;
         }
         
-        public PackageMessage SignIn(string login, string password)
+        public PackageMessage SignIn(string? login, string? password)
         {
             try
             {

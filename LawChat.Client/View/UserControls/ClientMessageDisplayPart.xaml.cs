@@ -1,4 +1,5 @@
-﻿using LawChat.Client.Assets.CustomNotification;
+﻿using System.Windows.Input;
+using LawChat.Client.Assets.CustomNotification;
 using ToastNotifications.Core;
 
 namespace LawChat.Client.View.UserControls
@@ -10,5 +11,6 @@ namespace LawChat.Client.View.UserControls
             InitializeComponent();
             Bind(clientMessageNotification);
         }
+        protected override void OnMouseEnter(MouseEventArgs e) { }
     }
 }

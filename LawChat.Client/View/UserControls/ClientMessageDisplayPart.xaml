@@ -6,16 +6,26 @@
                               xmlns:core="clr-namespace:ToastNotifications.Core;assembly=ToastNotifications"
                               xmlns:local="clr-namespace:LawChat.Client.Assets.CustomNotification"
                               mc:Ignorable="d"  Background="Transparent"
-                              d:DesignHeight="70" d:DesignWidth="280"
+                              d:DesignHeight="100" d:DesignWidth="400"
                               d:DataContext="{d:DesignInstance local:ClientMessageNotification, IsDesignTimeCreatable=False}">
-    <Border CornerRadius="5"  Background="#FF21242A">
+    <Border CornerRadius="3"  Background="#FF21242A">
         <Grid  Margin="10">
             <Grid.RowDefinitions>
                 <RowDefinition/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <TextBlock Text="{Binding UserName}" FontWeight="Normal" Foreground="#FFD8D8D8" FontSize="20" Grid.Row="0"/>
-            <TextBlock Text="{Binding Message}" FontSize="15" VerticalAlignment="Center"  Foreground="White" Grid.Row="1"/>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="90"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Ellipse Grid.Column="0" Grid.RowSpan="2" Width="70" Height="70" RenderOptions.BitmapScalingMode="HighQuality">
+                <Ellipse.Fill>
+                    <ImageBrush Stretch="UniformToFill"
+                                ImageSource="{Binding SenderPhoto, FallbackValue='Z:\!!!!!ПОЛЬЗОВАТЕЛИ\!КОНСТАНТИН_ЛЯНГ\PROGRAMMS\ПС для рабочего стола\LawChat\client\data\Image\no_photo.jpg'}"/>
+                </Ellipse.Fill>
+            </Ellipse>
+            <TextBlock Grid.Column="0" Text="{Binding UserName}" FontWeight="Normal" Foreground="#FFD8D8D8" FontSize="20" Grid.Row="0"/>
+            <TextBlock Grid.Column="0" Text="{Binding Message}" FontSize="15" VerticalAlignment="Center"  Foreground="White" Grid.Row="1"/>
         </Grid>
     </Border>
 </core:NotificationDisplayPart>

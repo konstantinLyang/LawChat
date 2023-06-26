@@ -3,89 +3,45 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
-using LawChat.Client.Infrastructure;
+using DevExpress.Mvvm;
 using LawChat.Client.Services;
-using LawChat.Client.ViewModel.Base;
 using LawChat.Network.Abstractions.Enums;
 using LawChat.Network.Abstractions.Models;
 
 namespace LawChat.Client.ViewModel
 {
-    internal class LoginWindowViewModel : ViewModelBase
+    internal class LoginWindowViewModel : BindableBase
     {
-        Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
+        private readonly Dispatcher _dispatcher;
 
         private readonly IClientObject _clientObject;
         private readonly IUserDialog _userDialog;
 
-        private string _loginTextBox;
-        public string LoginTextBox
-        {
-            get => _loginTextBox;
-            set => Set(ref _loginTextBox, value);
-        }
+        #region Elements
 
-        private string _passwordTextBox;
-        public string PasswordTextBox
-        {
-            get => _passwordTextBox;
-            set => Set(ref _passwordTextBox, value);
-        }
+        public string? LoginTextBox { get; set; }
 
-        private string _infoTextBlock;
-        public string InfoTextBlock
-        {
-            get => _infoTextBlock;
-            set => Set(ref _infoTextBlock, value);
-        }
+        public string? PasswordTextBox { get; set; }
 
-        private Brush _borderBrush = new SolidColorBrush(Color.FromArgb(255,171,173,173)); 
-        public Brush BorderBrush
-        {
-            get => _borderBrush;
-            set => Set(ref _borderBrush, value);
-        }
+        public string? InfoTextBlock { get; set; }
 
-        private Brush _textBlocForegroundBrush = new SolidColorBrush(Color.FromArgb(255,255,255,255)); 
-        public Brush TextBlocForegroundBrush
-        {
-            get => _textBlocForegroundBrush;
-            set => Set(ref _textBlocForegroundBrush, value);
-        }
+        public Brush BorderBrush { get; set; } = new SolidColorBrush(Color.FromArgb(255, 171, 173, 173));
 
-        private Brush _foregroundInfoTextBlock = new SolidColorBrush(Color.FromArgb(255,255,255,255)); 
-        public Brush ForegroundInfoTextBlock
-        {
-            get => _foregroundInfoTextBlock;
-            set => Set(ref _foregroundInfoTextBlock, value);
-        }
+        public Brush TextBlocForegroundBrush { get; set; } = new SolidColorBrush(Color.FromArgb(255, 255, 255, 255));
 
-        private Visibility _infoTextBlockVisibility = Visibility.Hidden; 
-        public Visibility InfoTextBlockVisibility
-        {
-            get => _infoTextBlockVisibility;
-            set => Set(ref _infoTextBlockVisibility, value);
-        }
+        public Brush ForegroundInfoTextBlock { get; set; } = new SolidColorBrush(Color.FromArgb(255, 255, 255, 255));
 
-        private Visibility _loadingIconVisible = Visibility.Hidden; 
-        public Visibility LoadingIconVisible
-        {
-            get => _loadingIconVisible;
-            set => Set(ref _loadingIconVisible, value);
-        }
+        public Visibility InfoTextBlockVisibility { get; set; } = Visibility.Hidden;
 
-        private LambdaCommand _openRegisterWindowCommand;
-        public ICommand OpenRegisterWindowCommand => _openRegisterWindowCommand ??= new(OnOpenRegisterWindowCommand);
-        private void OnOpenRegisterWindowCommand()
-        {
-            _userDialog.ShowRegisterWindow();
-        }
+        public Visibility LoadingIconVisible { get; set; } = Visibility.Hidden;
 
-        private LambdaCommand _authorizationCommand;
-        public ICommand AuthorizationCommand => _authorizationCommand ??= new(OnAuthorizationCommand);
-        private void OnAuthorizationCommand(object p)
+        #endregion
+
+        public ICommand OpenRegisterWindowCommand => new DelegateCommand(() => { _userDialog.ShowRegisterWindow(); });
+
+        public AsyncCommand AuthorizationCommand => new(() =>
         {
-            Task.Factory.StartNew(() =>
+            return Task.Factory.StartNew(() =>
             {
                 if (!string.IsNullOrEmpty(LoginTextBox) && !string.IsNullOrEmpty(PasswordTextBox))
                 {
@@ -98,7 +54,7 @@ namespace LawChat.Client.ViewModel
 
                     if (result.Header.StatusCode != StatusCode.ServerError)
                     {
-                        if (result.Header.CommandArguments?[0] ==  "authorization successfully")
+                        if (result.Header.CommandArguments?[0] == "authorization successfully")
                         {
                             _dispatcher.Invoke(() =>
                             {
@@ -127,7 +83,7 @@ namespace LawChat.Client.ViewModel
                         _dispatcher.Invoke(() =>
                         {
                             LoadingIconVisible = Visibility.Hidden;
-                            ForegroundInfoTextBlock = new SolidColorBrush(Color.FromArgb(255, 255, 88,88));
+                            ForegroundInfoTextBlock = new SolidColorBrush(Color.FromArgb(255, 255, 88, 88));
 
                             InfoTextBlockVisibility = Visibility.Visible;
 
@@ -136,13 +92,13 @@ namespace LawChat.Client.ViewModel
                     }
                 }
             });
-        }
+        });
 
-        public LoginWindowViewModel(IClientObject clientObject, IUserDialog userDialog) : this()
+        public LoginWindowViewModel(IClientObject clientObject, IUserDialog userDialog)
         {
             _clientObject = clientObject;
             _userDialog = userDialog;
+            _dispatcher = Dispatcher.CurrentDispatcher;
         }
-        public LoginWindowViewModel() { }
     }
 }

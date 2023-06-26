@@ -451,6 +451,7 @@
 
                 <GridSplitter Grid.Column="0" Grid.RowSpan="2" Grid.Row="0" Width="2" VerticalAlignment="Stretch" HorizontalAlignment="Right" Margin="0, 0.5" Background="#FF353535" />
 
+                <!--->
                 <Grid Grid.Column="0" Grid.ColumnSpan="2" Background="#72000000" Grid.Row="0" Visibility="{Binding RightPanelVisibility}" Grid.RowSpan="2">
                     <b:Interaction.Triggers>
                         <b:EventTrigger EventName="MouseLeftButtonUp">
@@ -496,6 +497,7 @@
                     <TextBlock Text="LawChat Version 0.0.1 Beta"  HorizontalAlignment="Right" Margin="0,0,15,30" FontSize="13" Foreground="Gray" VerticalAlignment="Bottom"/>
 
                 </Grid>
+                </-->
 
             </Grid>
         </Grid>
