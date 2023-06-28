@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <Style x:Key="WindowIcon" TargetType="{x:Type Path}">
+    <Style x:Key="PathIcon" TargetType="{x:Type Path}">
         <Style.Setters>
             <Setter Property="Stroke" Value="#FFB9B9B9"/>
             <Setter Property="Fill" Value="#FFB9B9B9"/>

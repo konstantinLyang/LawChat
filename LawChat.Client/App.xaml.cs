@@ -2,7 +2,6 @@
 using System.Windows;
 using LawChat.Client.Services;
 using LawChat.Client.Services.Implementations;
-using LawChat.Client.View;
 using LawChat.Client.View.Windows;
 using LawChat.Client.ViewModel;
 using LawChat.Network.Abstractions;
@@ -23,6 +22,7 @@ namespace LawChat.Client
                     services.AddSingleton<LoginWindowViewModel>();
                     services.AddSingleton<MainWindowViewModel>();
                     services.AddSingleton<RegistrationWindowViewModel>();
+
                     services.AddSingleton<IUserDialog, UserDialogService>();
                     services.AddSingleton<IClientObject, ClientObjectService>();
                     services.AddSingleton<IClientData, ClientDataService>();
@@ -59,6 +59,7 @@ namespace LawChat.Client
             await AppHost!.StartAsync();
 
             var startupForm = AppHost.Services.GetRequiredService<IUserDialog>();
+
             startupForm.ShowLoginWindow();
 
             base.OnStartup(e);

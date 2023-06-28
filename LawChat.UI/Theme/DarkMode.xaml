@@ -3,13 +3,20 @@
 
     <ResourceDictionary.MergedDictionaries>
 
-        <hc:ThemeResources/>
+        <hc:ThemeResources RequestedTheme="Dark"/>
         <hc:Theme/>
-        <ResourceDictionary Source="pack://application:,,,/ToastNotifications.Messages;component/Themes/Default.xaml" />
-        <ResourceDictionary Source="/Theme/Dark/ElementStyles/Button.xaml" />
-        <ResourceDictionary Source="/Theme/Dark/ElementStyles/TextBox.xaml" />
-        <ResourceDictionary Source="/Theme/Dark/ElementStyles/TransparentButton.xaml" />
-        <ResourceDictionary Source="/Theme/Dark/ElementStyles/ImageButton.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/ToastNotifications.Messages;component/Themes/Default.xaml"/>
+        <ResourceDictionary Source="Dark/ElementStyles/BorderTextBox.xaml"/>
+        <ResourceDictionary Source="Dark/ElementStyles/Button.xaml"/>
+        <ResourceDictionary Source="Dark/ElementStyles/TextBlock.xaml"/>
+        <ResourceDictionary Source="Dark/ElementStyles/Grid.xaml"/>
+        <ResourceDictionary Source="Dark/ElementStyles/TextBox.xaml"/>
+        <ResourceDictionary Source="Dark/ElementStyles/TransparentButton.xaml"/>
+        <ResourceDictionary Source="Dark/ElementStyles/ImageButton.xaml"/>
+        <ResourceDictionary Source="Dark/ElementStyles/IconButton.xaml"/>
+        <ResourceDictionary Source="Dark/ElementStyles/IconPath.xaml"/>
+        <ResourceDictionary Source="Dark/ElementStyles/MessageBox.xaml"/>
+        <ResourceDictionary Source="Dark/ElementStyles/Border.xaml"/>
 
     </ResourceDictionary.MergedDictionaries>
 
