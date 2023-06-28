@@ -3,11 +3,11 @@
 
     <Style TargetType="{x:Type TextBox}" x:Key="GeneralTextBox">
         <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="BorderBrush" Value="#bfbfbf"/>
+        <Setter Property="BorderBrush" Value="#FFabadad"/>
         <Setter Property="BorderThickness" Value="0,0,0,1"/>
-        <Setter Property="SelectionBrush" Value="White"/>
+        <Setter Property="SelectionBrush" Value="Black"/>
         <Setter Property="KeyboardNavigation.TabNavigation" Value="None"/>
-        <Setter Property="CaretBrush" Value="White"/>
+        <Setter Property="CaretBrush" Value="Black"/>
         <Setter Property="HorizontalContentAlignment" Value="Left"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
@@ -15,7 +15,7 @@
         <Setter Property="AllowDrop" Value="true"/>
         <Setter Property="Padding" Value="8,0,0,0"/>
         <Setter Property="FontSize" Value="15"/>
-        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Foreground" Value="Black"/>
         <Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst"/>
         <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
         <Setter Property="Template">
@@ -32,7 +32,7 @@
                         <Trigger Property="IsMouseOver" Value="true">
                         </Trigger>
                         <Trigger Property="IsKeyboardFocused" Value="true">
-                            <Setter Property="BorderBrush" TargetName="border" Value="White"/>
+                            <Setter Property="BorderBrush" TargetName="border" Value="Black"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

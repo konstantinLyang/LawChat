@@ -6,6 +6,6 @@
         <Setter Property="FontWeight" Value="Normal"/>
         <Setter Property="TextTrimming" Value="None"/>
         <Setter Property="IsHitTestVisible" Value="False"/>
-        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Foreground" Value="#FF414141"/>
     </Style>
 </ResourceDictionary>
