@@ -1,4 +1,16 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    
+                    xmlns:hc="https://handyorg.github.io/handycontrol">
+
+    <ResourceDictionary.MergedDictionaries>
+
+        <hc:ThemeResources/>
+        <hc:Theme/>
+        <ResourceDictionary Source="pack://application:,,,/ToastNotifications.Messages;component/Themes/Default.xaml" />
+        <ResourceDictionary Source="/Theme/Dark/ElementStyles/Button.xaml" />
+        <ResourceDictionary Source="/Theme/Dark/ElementStyles/TextBox.xaml" />
+        <ResourceDictionary Source="/Theme/Dark/ElementStyles/TransparentButton.xaml" />
+        <ResourceDictionary Source="/Theme/Dark/ElementStyles/ImageButton.xaml" />
+
+    </ResourceDictionary.MergedDictionaries>
+
 </ResourceDictionary>
