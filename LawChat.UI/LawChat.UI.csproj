@@ -15,27 +15,27 @@
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Theme\WhiteMode.xaml">
+    <Page Update="Theme\LightMode.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Theme\White\ElementStyles\Button.xaml">
+    <Page Update="Theme\Light\ElementStyles\Button.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Theme\White\ElementStyles\ImageButton.xaml">
+    <Page Update="Theme\Light\ElementStyles\ImageButton.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Theme\White\ElementStyles\ScrollThumb.xaml">
+    <Page Update="Theme\Light\ElementStyles\ScrollThumb.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Theme\White\ElementStyles\TextBox.xaml">
+    <Page Update="Theme\Light\ElementStyles\TextBox.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Theme\White\ElementStyles\TransparentButton.xaml">
+    <Page Update="Theme\Light\ElementStyles\TransparentButton.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
