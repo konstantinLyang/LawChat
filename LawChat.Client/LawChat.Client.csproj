@@ -39,8 +39,4 @@
     <ProjectReference Include="..\LawChat.UI\LawChat.UI.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Assets\Style\LoginWindow\" />
-  </ItemGroup>
-
 </Project>

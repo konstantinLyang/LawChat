@@ -1,8 +1,8 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <Style TargetType="Grid" x:Key="GeneralGrid">
-        <Setter Property="Background" Value="#FF191C21"/>
+    <Style TargetType="TextBlock" x:Key="TextBlockMessageBlock">
+        <Setter Property="Foreground" Value="#FFDBDBDB"/>
     </Style>
 
 </ResourceDictionary>

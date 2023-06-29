@@ -17,6 +17,8 @@
         <ResourceDictionary Source="Light/ElementStyles/IconPath.xaml"/>
         <ResourceDictionary Source="Light/ElementStyles/MessageBox.xaml"/>
         <ResourceDictionary Source="Light/ElementStyles/Border.xaml"/>
+        <ResourceDictionary Source="Light/ElementStyles/ContactBlockStyles/TextBlock.xaml"/>
+        <ResourceDictionary Source="Light/ElementStyles/ContactBlockStyles/TitleTextBlock.xaml"/>
 
     </ResourceDictionary.MergedDictionaries>
 

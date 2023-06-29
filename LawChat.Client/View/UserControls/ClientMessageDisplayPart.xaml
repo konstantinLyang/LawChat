@@ -8,7 +8,7 @@
                               mc:Ignorable="d"  Background="Transparent"
                               d:DesignHeight="100" d:DesignWidth="400"
                               d:DataContext="{d:DesignInstance local:ClientMessageNotification, IsDesignTimeCreatable=False}">
-    <Border CornerRadius="3"  Background="#FF21242A">
+    <Border CornerRadius="3" Style="{StaticResource GeneralBorder}">
         <Grid  Margin="10">
             <Grid.RowDefinitions>
                 <RowDefinition/>
@@ -24,8 +24,8 @@
                                 ImageSource="{Binding SenderPhoto, FallbackValue='Z:\!!!!!ПОЛЬЗОВАТЕЛИ\!КОНСТАНТИН_ЛЯНГ\PROGRAMMS\ПС для рабочего стола\LawChat\client\data\Image\no_photo.jpg'}"/>
                 </Ellipse.Fill>
             </Ellipse>
-            <TextBlock Grid.Column="0" Text="{Binding UserName}" FontWeight="Normal" Foreground="#FFD8D8D8" FontSize="20" Grid.Row="0"/>
-            <TextBlock Grid.Column="0" Text="{Binding Message}" FontSize="15" VerticalAlignment="Center"  Foreground="White" Grid.Row="1"/>
+            <TextBlock Grid.Column="1" Text="{Binding UserName}" FontWeight="Normal"  FontSize="20" Grid.Row="0" Style="{StaticResource TitleTextBlock}"/>
+            <TextBlock Grid.Column="1" Text="{Binding Message}" FontSize="15" VerticalAlignment="Center" Style="{StaticResource TextBlockMessageBlock}" Grid.Row="1"/>
         </Grid>
     </Border>
 </core:NotificationDisplayPart>
