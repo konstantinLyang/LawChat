@@ -9,12 +9,12 @@
                   mc:Ignorable="d"
                   hc:ShowIcon="False"
                   ShowTitle="False"
-                  Background="{DynamicResource MainContentBackgroundBrush}"
+                  BorderThickness="0"
                   d:DataContext="{d:DesignInstance viewModel:MainWindowViewModel, IsDesignTimeCreatable=True}"
                   Title="{Binding SelectedChat.Title, TargetNullValue=LawChat}"
-                  MinHeight="800" MinWidth="800" Height="800" Width="800">
+                  MinHeight="400" MinWidth="700" Height="500" Width="800">
 
-    <Border Background="DarkGray">
+    <Border Background="{StaticResource ThemeBorderBrush}">
         <Grid>
             <Grid>
                 <Grid.RowDefinitions>
@@ -27,7 +27,7 @@
                 </Grid.ColumnDefinitions>
 
                 <!--#region Search Block-->
-                <Grid Grid.Row="0" Grid.Column="1" Margin="0, 0.5">
+                <Grid Grid.Row="0" Grid.Column="1" Margin="0, 1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
                         <ColumnDefinition Width="45"/>
@@ -80,7 +80,7 @@
                             </b:Interaction.Triggers>
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <Border MaxHeight="60" BorderThickness="0.5">
+                                    <Border MaxHeight="60" BorderThickness="1">
                                         <Border Margin="0,5,0,5">
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
@@ -143,7 +143,7 @@
                 <!--#endregion-->
 
                 <!--#region Top chat bar-->
-                <Grid Grid.Column="0" Grid.Row="0" Margin="0,0.5,0.5,0.5">
+                <Grid Grid.Column="0" Grid.Row="0" Margin="0,1,1,1">
                     <Border Style="{StaticResource GeneralBorder}" AllowDrop="True">
                         <b:Interaction.Triggers>
                             <b:EventTrigger EventName="Drop">
@@ -159,7 +159,7 @@
                 <!--#endregion-->
 
                 <!--#region Messages Box-->
-                <Border Grid.Row="1" Grid.Column="0" BorderThickness="0,0,0.5,0">
+                <Border Grid.Row="1" Grid.Column="0" BorderThickness="0,0,1,0">
                     <Grid Style="{StaticResource GeneralGrid}">
                         <Grid.RowDefinitions>
                             <RowDefinition/>
@@ -168,7 +168,7 @@
 
                         <Border Grid.Row="0" Style="{StaticResource GeneralBorder}" Margin="1, 0,5,0">
                             <Grid>
-                                <Image Source="Z:\!!!!!ПОЛЬЗОВАТЕЛИ\!КОНСТАНТИН_ЛЯНГ\PROGRAMMS\ПС для рабочего стола\LawChat\client\data\Image\Backrgound\pattern1.jpg" RenderOptions.BitmapScalingMode="HighQuality" Stretch="UniformToFill" />
+                                <Image RenderOptions.BitmapScalingMode="HighQuality" Stretch="UniformToFill" />
                                 <hc:ScrollViewer ScrollChanged="ScrollViewer_OnScrollChanged">
                                     <ItemsControl ScrollViewer.VerticalScrollBarVisibility="Auto" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Hidden" AllowDrop="True" 
                                           Background="Transparent" BorderThickness="0" ItemsSource="{Binding SelectedChat.Messages}" VerticalAlignment="Bottom">
@@ -297,8 +297,8 @@
                                 </hc:ScrollViewer>
                             </Grid>
                         </Border>
- 
-                        <Border Margin="5" Grid.Row="0" Visibility="{Binding StickerBlockVisibility}" BorderThickness="1" BorderBrush="DarkGray"
+
+                        <Border Margin="5" Grid.Row="0" Visibility="{Binding StickerBlockVisibility}" BorderThickness="1" BorderBrush="{StaticResource ThemeBorderBrush}"
                             Height="150" Width="300" VerticalAlignment="Bottom" HorizontalAlignment="Right" CornerRadius="6,6,0,6" Style="{StaticResource GeneralBorder}">
                             <ScrollViewer>
                                 <ItemsControl ItemsSource="{Binding EmojiCollection}" VerticalContentAlignment="Center">
@@ -320,7 +320,7 @@
 
                         <!--#region TextBox to send message-->
                         <Grid Grid.Row="1" Margin="0,1,0,0">
-                            <Border Style="{StaticResource GeneralBorder}" BorderThickness="0,0.5,0,0" BorderBrush="DarkGray">
+                            <Border Style="{StaticResource GeneralBorder}" BorderThickness="0,1,0,0" BorderBrush="{StaticResource ThemeBorderBrush}">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition MinWidth="50" MaxWidth="50"/>
@@ -403,7 +403,7 @@
                     </Grid.Style>
                 </Grid>
 
-                <GridSplitter Grid.Column="0" Grid.RowSpan="2" Grid.Row="0" Width="5" VerticalAlignment="Stretch" HorizontalAlignment="Right" Margin="0, 0.5" Background="Transparent" />
+                <GridSplitter Grid.Column="0" Grid.RowSpan="2" Grid.Row="0" Width="5" VerticalAlignment="Stretch" HorizontalAlignment="Right" Margin="0, 1" Background="Transparent" />
 
                 <!--->
                 <Grid Grid.Column="0" Grid.ColumnSpan="2" Background="#72000000" Grid.Row="0" Visibility="{Binding RightPanelVisibility}" Grid.RowSpan="2">

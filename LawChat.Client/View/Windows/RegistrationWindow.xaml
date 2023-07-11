@@ -8,7 +8,7 @@
         xmlns:hc="https://handyorg.github.io/handycontrol"
         mc:Ignorable="d"
         hc:ShowTitle="False"
-        ResizeMode="NoResize"
+        ResizeMode="NoResize" BorderThickness="0"
         d:DataContext="{d:DesignInstance vm:RegistrationWindowViewModel, IsDesignTimeCreatable=True}"
         Title="Регистрация" 
         MaxHeight="650" MaxWidth="800">
