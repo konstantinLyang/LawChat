@@ -36,7 +36,7 @@
                     <Border Grid.ColumnSpan="2" Style="{StaticResource GeneralBorder}"/>
 
                     <!--#region Search TextBox-->
-                    <TextBox x:Name="SearchTextBox" Style="{StaticResource BorderTextBox}" Text="{Binding SearchBox, UpdateSourceTrigger=PropertyChanged}"
+                    <TextBox x:Name="SearchTextBox" Style="{StaticResource BorderTextBox}" Padding="14,0,0,0" Text="{Binding SearchBox, UpdateSourceTrigger=PropertyChanged}"
                              Grid.Column="0" Margin="10,0,0,0">
                         <b:Interaction.Triggers>
                             <b:EventTrigger EventName="TextChanged">
@@ -59,7 +59,7 @@
                     <!--#endregion-->
 
                     <!--#region Dock panel Button-->
-                    <Button Grid.Column="1" Cursor="Hand" Command="{Binding OpenRightPanelCommand}" Style="{StaticResource ImageButton}">
+                    <Button Grid.Column="1" Cursor="Hand" Command="{Binding OpenRightPanelCommand}" Style="{StaticResource ImageButton}" BorderThickness="0">
                         <Path Fill="#FF9C9C9C" Data="M0.918968 17.0473L0.918968 15.0473L20.919 15.0473V17.0473H0.918968ZM0.918968 9.98732L0.918968 7.98732L20.919 7.98732V9.98732H0.918968ZM0.918968 0.927319L0.918968 2.92732L20.919 2.92732V0.927319H0.918968Z"/>
                     </Button>
                     <!--#endregion-->
@@ -335,7 +335,7 @@
 
                                     <!--#region MessageTextBox-->
                                     <TextBox xml:lang="ru-RU" SpellCheck.IsEnabled="True" MaxHeight="250" MaxLength="4078" AcceptsReturn="True" Grid.Row="0" Style="{StaticResource MessageTextBox}" Text="{Binding CurrentMessageTextBox, UpdateSourceTrigger=PropertyChanged}"
-                                         Grid.RowSpan="2" Grid.Column="1" x:Name="TextMessageBox" SelectionBrush="#FF93CFFF" SelectionTextBrush="White" CaretBrush="White">
+                                         Grid.RowSpan="2" Grid.Column="1" x:Name="TextMessageBox">
                                         <TextBox.InputBindings>
                                             <KeyBinding Key="Enter" Command="{Binding SendMessageCommand}"/>
                                         </TextBox.InputBindings>
